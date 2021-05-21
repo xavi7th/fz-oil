@@ -21,7 +21,7 @@ class SuperAdmin extends Model
 
   protected $fillable = [];
 
-  const DASHBOARD_ROUTE_PREFIX = 'superadmin';
+  const DASHBOARD_ROUTE_PREFIX = 'super-admin';
   const ROUTE_NAME_PREFIX = 'superadmin.';
 
 

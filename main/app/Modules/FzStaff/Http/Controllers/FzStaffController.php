@@ -20,6 +20,6 @@ class FzStaffController extends Controller
 
   public function index(Request $request)
   {
-    return Inertia::render('FzStaff,UserDashboard');
+    return Inertia::render('FzStaff::UserDashboard');
   }
 }

@@ -1,5 +1,5 @@
 <div class="menu-mobile menu-activated-on-click color-scheme-dark">
-        <div class="mm-logo-buttons-w"><a class="mm-logo" href="index.html"><img src="img/logo.png"><span>FZ Oil</span></a>
+        <div class="mm-logo-buttons-w"><a class="mm-logo" href="index.html"><img src="img/logo.png" alt=""><span>FZ Oil</span></a>
           <div class="mm-buttons">
             <div class="mobile-menu-trigger">
               <div class="os-icon os-icon-hamburger-menu-1"></div>

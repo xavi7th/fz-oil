@@ -20,6 +20,8 @@ class FzStockManagementController extends Controller
       });
       Route::prefix(FzProductBatch::DASHBOARD_ROUTE_PREFIX)->name(FzProductBatch::ROUTE_NAME_PREFIX)->group(function () {
         Route::get('', [self::class, 'getProductBatches'])->name('index');
+        Route::get('trade-in', [self::class, 'manageSwapWithoutPurchase'])->name('trade-in');
+        Route::get('{customer}/purchase-orders', [self::class, 'manageCustomerPurchaseOrder'])->name('customer.purchase_order');
       });
     });
   }
@@ -27,6 +29,22 @@ class FzStockManagementController extends Controller
   public function getProductBatches(Request $request)
   {
     return Inertia::render('FzStockManagement::ManageProductBatches')->withViewData([
+      'title' => 'Hello theEects',
+      'metaDesc' => ' This page is ...'
+    ]);
+  }
+
+  public function manageSwapWithoutPurchase(Request $request)
+  {
+    return Inertia::render('FzStockManagement::ManageTradeIns')->withViewData([
+      'title' => 'Hello theEects',
+      'metaDesc' => ' This page is ...'
+    ]);
+  }
+
+  public function manageCustomerPurchaseOrder(Request $request)
+  {
+    return Inertia::render('FzStockManagement::ManageCustomerPurchaseOrder')->withViewData([
       'title' => 'Hello theEects',
       'metaDesc' => ' This page is ...'
     ]);
