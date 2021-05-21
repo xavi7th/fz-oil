@@ -1,0 +1,13 @@
+{
+    "name": "SuperAdmin",
+    "alias": "superadmin",
+    "description": "",
+    "keywords": [],
+    "order": 10,
+    "providers": [
+        "App\\Modules\\SuperAdmin\\Providers\\SuperAdminServiceProvider"
+    ],
+    "aliases": {},
+    "files": [],
+    "requires": []
+}

@@ -1,0 +1,22 @@
+{
+	"compilerOptions": {
+		"target": "es2017",
+		"allowSyntheticDefaultImports": true,
+		"baseUrl": "./",
+		"paths": {
+			"@public-pages/*": ["main/app/Modules/PublicPages/Resources/js/Pages/*"],
+			"@public-shared/*": ["main/app/Modules/PublicPages/Resources/js/Shared/*"],
+			"@public-assets/*": ["main/app/Modules/PublicPages/Resources/*"],
+			"@userpages/*": ["main/app/Modules/AppUser/Resources/js/Pages/*"],
+			"@usershared/*": ["main/app/Modules/AppUser/Resources/js/Shared/*"],
+			"@userassets/*": ["main/app/Modules/AppUser/Resources/*"],
+			"@superadmin-pages/*": ["main/app/Modules/SuperAdmin/Resources/js/Pages/*"],
+			"@superadmin-shared/*": ["main/app/Modules/SuperAdmin/Resources/js/Shared/*"],
+			"@superadmin-assets/*": ["main/app/Modules/SuperAdmin/Resources/*"],
+			"@salesrep-pages/*": ["main/app/Modules/SalesRep/Resources/js/Pages/*"],
+			"@salesrep-shared/*": ["main/app/Modules/SalesRep/Resources/js/Shared/*"],
+			"@salesrep-assets/*": ["main/app/Modules/SalesRep/Resources/*"],
+		}
+	},
+	"include": ["main/app", "main/config/", "main/database/", "main/resources/", "main/routes/"]
+}
