@@ -55,7 +55,7 @@ use App\Modules\SuperAdmin\Interfaces\ShopItem as ShopItemInterface;
  * @method static \Illuminate\Database\Eloquent\Builder|SwapDeal whereSwappedWithType($value)
  * @method static \Illuminate\Database\Eloquent\Builder|SwapDeal whereUpdatedAt($value)
  * @mixin \Eloquent
- * @property-read \App\Modules\AppUser\Models\ProductReceipt|null $sale_receipt
+ * @property-read \App\Modules\FzStaff\Models\ProductReceipt|null $sale_receipt
  */
 class SwapDeal extends ShopItem implements ShopItemInterface
 {

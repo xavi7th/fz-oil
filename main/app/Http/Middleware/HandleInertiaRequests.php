@@ -83,7 +83,7 @@ class HandleInertiaRequests extends Middleware
      if ($request->user()) {
       return strtolower($request->user()->getType()) . '::app';
     } elseif (Str::contains(\Route::currentRouteName(), 'login')) {
-      return 'appuser::app';
+      return 'fzstaff::app';
     } else {
       return $this->rootView;
     }

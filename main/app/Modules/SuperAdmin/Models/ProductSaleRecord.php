@@ -4,9 +4,8 @@ namespace App\Modules\SuperAdmin\Models;
 
 use App\BaseModel;
 use Awobaz\Compoships\Compoships;
-use Illuminate\Support\Collection;
 use Illuminate\Database\Eloquent\SoftDeletes;
-use App\Modules\AppUser\Models\ProductReceipt;
+
 
 /**
  * App\Modules\SuperAdmin\Models\ProductSaleRecord

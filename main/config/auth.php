@@ -1,14 +1,8 @@
 <?php
 
 use App\Modules\Admin\Models\Admin;
-use App\Modules\AppUser\Models\AppUser;
-use App\Modules\SalesRep\Models\SalesRep;
-use App\Modules\WebAdmin\Models\WebAdmin;
-use App\Modules\Accountant\Models\Accountant;
+use App\Modules\FzStaff\Models\FzStaff;
 use App\Modules\SuperAdmin\Models\SuperAdmin;
-use App\Modules\StockKeeper\Models\StockKeeper;
-use App\Modules\DispatchAdmin\Models\DispatchAdmin;
-use App\Modules\QualityControl\Models\QualityControl;
 
 return [
 
@@ -24,8 +18,8 @@ return [
     */
 
   'defaults' => [
-    'guard' => 'app_user',
-    'passwords' => 'app_users',
+    'guard' => 'fz_staff',
+    'passwords' => 'fz_staff',
   ],
 
   /*
@@ -46,45 +40,17 @@ return [
     */
 
   'guards' => [
-    'app_user' => [
+    'fz_staff' => [
       'driver' => 'session',
-      'provider' => 'app_users',
-    ],
-    'app_user_api' => [
-      'driver' => 'jwt',
-      'provider' => 'app_users',
-    ],
-    'accountant' => [
-      'driver' => 'session',
-      'provider' => 'accountants',
+      'provider' => 'fz_staff',
     ],
     'admin' => [
       'driver' => 'session',
       'provider' => 'admins',
     ],
-    'dispatch_admin' => [
-      'driver' => 'session',
-      'provider' => 'dispatch_admins',
-    ],
-    'quality_control' => [
-      'driver' => 'session',
-      'provider' => 'quality_controls',
-    ],
-    'sales_rep' => [
-      'driver' => 'session',
-      'provider' => 'sales_reps',
-    ],
-    'stock_keeper' => [
-      'driver' => 'session',
-      'provider' => 'stock_keepers',
-    ],
     'super_admin' => [
       'driver' => 'session',
       'provider' => 'super_admins',
-    ],
-    'web_admin' => [
-      'driver' => 'session',
-      'provider' => 'web_admins',
     ],
   ],
 
@@ -106,41 +72,17 @@ return [
     */
 
   'providers' => [
-    'app_users' => [
+    'fz_staff' => [
       'driver' => 'eloquent',
-      'model' => AppUser::class,
-    ],
-    'accountants' => [
-      'driver' => 'eloquent',
-      'model' => Accountant::class,
+      'model' => FzStaff::class,
     ],
     'admins' => [
       'driver' => 'eloquent',
       'model' => Admin::class,
     ],
-    'dispatch_admins' => [
-      'driver' => 'eloquent',
-      'model' => DispatchAdmin::class,
-    ],
-    'quality_controls' => [
-      'driver' => 'eloquent',
-      'model' => QualityControl::class,
-    ],
-    'sales_reps' => [
-      'driver' => 'eloquent',
-      'model' => SalesRep::class,
-    ],
-    'stock_keepers' => [
-      'driver' => 'eloquent',
-      'model' => StockKeeper::class,
-    ],
     'super_admins' => [
       'driver' => 'eloquent',
       'model' => SuperAdmin::class,
-    ],
-    'web_admins' => [
-      'driver' => 'eloquent',
-      'model' => WebAdmin::class,
     ],
   ],
 
@@ -160,8 +102,8 @@ return [
     */
 
   'passwords' => [
-    'app_users' => [
-      'provider' => 'app_users',
+    'fz_staff' => [
+      'provider' => 'fz_staff',
       'table' => 'password_resets',
       'expire' => 60,
       'throttle' => 60,

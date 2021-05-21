@@ -1,0 +1,25 @@
+{
+    "name": "nwidart/fzstaff",
+    "description": "",
+    "authors": [
+        {
+            "name": "Leinad Ose",
+            "email": "xavi7th@gmail.com"
+        }
+    ],
+    "extra": {
+        "laravel": {
+            "providers": [
+                "App\\Modules\\FzStaff\\Providers\\FzStaffServiceProvider"
+            ],
+            "aliases": {
+
+            }
+        }
+    },
+    "autoload": {
+        "psr-4": {
+            "App\\Modules\\FzStaff\\": ""
+        }
+    }
+}

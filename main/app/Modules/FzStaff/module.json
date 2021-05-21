@@ -1,0 +1,13 @@
+{
+    "name": "FzStaff",
+    "alias": "fzstaff",
+    "description": "",
+    "keywords": [],
+    "order": 0,
+    "providers": [
+        "App\\Modules\\FzStaff\\Providers\\FzStaffServiceProvider"
+    ],
+    "aliases": {},
+    "files": [],
+    "requires": []
+}

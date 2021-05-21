@@ -41,7 +41,7 @@ use App\Modules\SuperAdmin\Interfaces\ShopItem as ShopItemInterface;
  * @property \Illuminate\Support\Carbon|null $deleted_at
  * @property-read \Illuminate\Database\Eloquent\Collection|\App\Modules\SuperAdmin\Models\ProductSaleRecord[] $product_sales_record
  * @property-read int|null $product_sales_record_count
- * @property-read \App\Modules\AppUser\Models\ProductReceipt|null $sale_receipt
+ * @property-read \App\Modules\FzStaff\Models\ProductReceipt|null $sale_receipt
  * @method static \Illuminate\Database\Eloquent\Builder|Product newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|Product newQuery()
  * @method static \Illuminate\Database\Query\Builder|Product onlyTrashed()

@@ -1,31 +1,37 @@
 <?php
 
-/** @var \Illuminate\Database\Eloquent\Factory $factory */
+namespace App\Modules\SuperAdmin\Database\Factories;
 
-use Faker\Factory;
+use Faker\Generator;
 use Illuminate\Support\Str;
-use Faker\Generator as Faker;
-use App\Modules\SuperAdmin\Models\SuperAdmin;
+use Faker\Factory as FakerFactory;
+use Illuminate\Database\Eloquent\Factories\Factory;
 
-/*
-|--------------------------------------------------------------------------
-| Model Factories
-|--------------------------------------------------------------------------
-|
-| This directory should contain each of the model factory definitions for
-| your application. Factories provide a convenient way to generate new
-| model instances for testing / seeding your application's database.
-| factory('App\User', 5)->create();
-|
-*/
+class SuperAdminFactory extends Factory
+{
 
-$fakerNG = Factory::create('en_NG');
+  protected $model = SuperAdmin::class;
+  private $fakerNG;
 
-$factory->define(SuperAdmin::class, function (Faker $faker) use ($fakerNG) {
-  return [
-    'full_name' => $name = $fakerNG->unique()->firstName,
-    'email' => $name . '@' . strtolower(str_replace(" ", "", config('app.name'))) . '.com',
-    'password' => 'pass',
-    'remember_token' => Str::random(10),
-  ];
-});
+  public function __construct()
+  {
+    parent::__construct();
+
+    $this->fakerNG = FakerFactory::create('en_NG');
+  }
+
+  /**
+   * Define the model's default state.
+   *
+   * @return array
+   */
+  public function definition()
+  {
+    return [
+      'full_name' => $name = $this->fakerNG->unique()->firstName,
+      'email' => strtolower($name) . '@' . strtolower(str_replace(" ", "", config('app.name'))) . '.com',
+      'password' => 'pass',
+      'remember_token' => Str::random(10),
+    ];
+  }
+}

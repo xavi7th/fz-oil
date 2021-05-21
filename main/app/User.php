@@ -2,7 +2,7 @@
 
 namespace App;
 
-use App\Modules\AppUser\Models\AppUser;
+use App\Modules\FzStaff\Models\FzStaff;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Foundation\Auth\User as Authenticatable;
@@ -58,9 +58,9 @@ class User extends Authenticatable
     $this->attributes['password'] = bcrypt($value);
   }
 
-  public function isAppUser(): bool
+  public function isFzStaff(): bool
   {
-    return $this instanceof AppUser;
+    return $this instanceof FzStaff;
   }
 
   public function get_navigation_routes(): array

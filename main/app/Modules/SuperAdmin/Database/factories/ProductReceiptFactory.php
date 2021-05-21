@@ -2,8 +2,7 @@
 
 /** @var \Illuminate\Database\Eloquent\Factory $factory */
 
-use App\Modules\AppUser\Models\ProductReceipt;
-use App\Modules\SuperAdmin\Models\Product;
+use App\Modules\FzStaff\Models\ProductReceipt;
 use App\Modules\SuperAdmin\Models\ProductSaleRecord;
 use Faker\Generator as Faker;
 

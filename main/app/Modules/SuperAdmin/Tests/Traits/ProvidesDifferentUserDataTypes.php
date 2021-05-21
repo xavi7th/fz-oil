@@ -3,7 +3,7 @@
 namespace App\Modules\SuperAdmin\Tests\Traits;
 
 use App\Modules\Admin\Models\Admin;
-use App\Modules\AppUser\Models\AppUser;
+use App\Modules\FzStaff\Models\FzStaff;
 use App\Modules\SalesRep\Models\SalesRep;
 use App\Modules\WebAdmin\Models\WebAdmin;
 use Illuminate\Foundation\Testing\WithFaker;
@@ -22,27 +22,27 @@ trait ProvidesDifferentUserDataTypes
 
   public function provideDifferentUserTypesWithoutAccountant()
   {
-    return $this->provideDifferentUserTypes(['accountant', 'appuser']);
+    return $this->provideDifferentUserTypes(['accountant', 'fzstaff']);
   }
 
   public function provideDifferentUserTypesWithoutDispatchAdmin()
   {
-    return $this->provideDifferentUserTypes(['dispatchadmin', 'appuser']);
+    return $this->provideDifferentUserTypes(['dispatchadmin', 'fzstaff']);
   }
 
   public function provideDifferentUserTypesWithoutSuperAdmin()
   {
-    return $this->provideDifferentUserTypes(['superadmin', 'appuser']);
+    return $this->provideDifferentUserTypes(['superadmin', 'fzstaff']);
   }
 
   public function provideDifferentUserTypesWithoutSuperAdminAndAccountant()
   {
-    return $this->provideDifferentUserTypes(['superadmin', 'accountant', 'appuser']);
+    return $this->provideDifferentUserTypes(['superadmin', 'accountant', 'fzstaff']);
   }
 
   public function provideDifferentUserTypesWithAllUsers()
   {
-    return $this->provideDifferentUserTypes(['appuser']);
+    return $this->provideDifferentUserTypes(['fzstaff']);
   }
 
 
@@ -79,8 +79,8 @@ trait ProvidesDifferentUserDataTypes
       'superadmin' => [
         fn () => [factory(SuperAdmin::class)->create(['id' => 2])],
       ],
-      'appuser' => [
-        fn () => [factory(AppUser::class)->create(['id' => 2])],
+      'fzstaff' => [
+        fn () => [factory(FzStaff::class)->create(['id' => 2])],
       ],
     ])->reject(fn ($val, $key) => in_array($key, $typesToSkip))->all();
   }

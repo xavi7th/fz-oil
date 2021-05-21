@@ -20,8 +20,8 @@ class ProductSaleRecordTest extends TestCase
     $prodSaleRec = ProductSaleRecord::first();
 
     $this->assertCount(1, ProductSaleRecord::all());
-    $this->assertCount(1, AppUser::all());
-    $this->assertTrue($prodSaleRec->buyer->is(AppUser::first()));
+    $this->assertCount(1, FzStaff::all());
+    $this->assertTrue($prodSaleRec->buyer->is(FzStaff::first()));
 
     $rsp = $this->actingAs(factory(SuperAdmin::class)->create(), 'super_admin')->get(route('generic.product_sales_records.show', $prodSaleRec))
       // ->dumpSession()

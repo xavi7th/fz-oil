@@ -1,6 +1,5 @@
 {
-    "Admin": true,
     "SuperAdmin": true,
     "PublicPages": true,
-    "AppUser": true
+    "FzStaff": true
 }

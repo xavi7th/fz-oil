@@ -31,7 +31,7 @@ return [
   'walk_in_bonus_percentage' => env('WALK_IN_REP_BONUS_PERCENTAGE', 30),
   'lower_bonus_amount' => env('APP_LOWER_BONUS_AMOUNT', 500),
   'upper_bonus_amount' => env('APP_UPPER_BONUS_AMOUNT', 1000),
-  'app_user_default_password' => env('APP_USER_DEFAULT_PASSWORD', 'theelects'),
+  'fz_staff_default_password' => env('FZ_STAFF_DEFAULT_PASSWORD', 'fz-staff'),
 
 
   /*

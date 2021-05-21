@@ -5,9 +5,8 @@ namespace App\Modules\SuperAdmin\Tests\Unit;
 use Tests\TestCase;
 use Illuminate\Support\Facades\Schema;
 use App\Modules\SuperAdmin\Models\SwapDeal;
-use Illuminate\Foundation\Testing\WithFaker;
 use App\Modules\SuperAdmin\Models\SuperAdmin;
-use App\Modules\AppUser\Models\ProductReceipt;
+use App\Modules\FzStaff\Models\ProductReceipt;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use App\Modules\SuperAdmin\Models\ProductSaleRecord;
 

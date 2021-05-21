@@ -15,7 +15,7 @@ class CreateProductPricesTable extends Migration
 	{
 		Schema::create('product_prices', function (Blueprint $table) {
 			$table->bigIncrements('id');
-      $table->foreignId('product_batch_id')->constrained()->onDelete('cascade');
+      $table->foreignId('product_batch_id')->constrained();
       $table->unsignedBigInteger('product_brand_id');
       $table->unsignedBigInteger('product_model_id');
       $table->unsignedBigInteger('product_color_id');

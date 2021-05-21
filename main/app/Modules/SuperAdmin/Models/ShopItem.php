@@ -4,7 +4,7 @@ namespace App\Modules\SuperAdmin\Models;
 
 use App\BaseModel;
 use Ankurk91\Eloquent\MorphToOne;
-use App\Modules\AppUser\Models\ProductReceipt;
+use App\Modules\FzStaff\Models\ProductReceipt;
 use App\Exceptions\MultipleRecordsFoundException;
 use App\Modules\SuperAdmin\Models\ProductSaleRecord;
 use Illuminate\Database\Eloquent\Relations\Relation;
