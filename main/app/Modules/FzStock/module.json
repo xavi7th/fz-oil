@@ -1,0 +1,13 @@
+{
+    "name": "FzStock",
+    "alias": "fzstock",
+    "description": "",
+    "keywords": [],
+    "priority": 0,
+    "providers": [
+        "App\\Modules\\FzStock\\Providers\\FzStockServiceProvider"
+    ],
+    "aliases": {},
+    "files": [],
+    "requires": []
+}

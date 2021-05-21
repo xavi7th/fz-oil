@@ -4,5 +4,6 @@
     "FzStaff": true,
     "Supervisor": true,
     "FzSupervisor": true,
-    "CompanyBankAccount": true
+    "CompanyBankAccount": true,
+    "FzStock": true
 }
