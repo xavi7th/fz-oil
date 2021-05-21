@@ -13,8 +13,6 @@ use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
 use App\Providers\RouteServiceProvider;
-use App\Modules\SuperAdmin\Models\ErrLog;
-use App\Modules\SuperAdmin\Models\SuperAdmin;
 use Illuminate\Validation\ValidationException;
 use App\Modules\SuperAdmin\Events\UserLoggedIn;
 use Illuminate\Foundation\Auth\AuthenticatesUsers;
@@ -139,6 +137,22 @@ class LoginController extends Controller
     return redirect()->route('auth.login.show');
   }
 
+  /**
+   * Validate the user login request.
+   *
+   * @param  \Illuminate\Http\Request  $request
+   * @return void
+   *
+   * @throws \Illuminate\Validation\ValidationException
+   */
+  protected function validateLogin(Request $request)
+  {
+      $request->validate([
+          $this->username() => 'required|string',
+          'password' => 'required|string',
+      ]);
+  }
+
 
   /**
    * Attempt to log the user into the application.
@@ -154,7 +168,6 @@ class LoginController extends Controller
           $this->authSuccess = true;
         }
       } catch (\Throwable $th) {
-        ErrLog::notifyAdminAndFail(SuperAdmin::find(1), $th, 'Login Error');
         abort(500, 'Sorry there was an error logging you in.');
       }
     });
@@ -253,19 +266,4 @@ class LoginController extends Controller
     return $this->authGuard;
   }
 
-  /**
-   * Get the token array structure.
-   *
-   * @param  string $token
-   *
-   * @return array api jwt token details
-   */
-  protected function respondWithToken()
-  {
-    return [
-      'access_token' => $this->apiToken,
-      'token_type' => 'bearer',
-      'expires_in' => $this->apiGuard()->factory()->getTTL() * 60
-    ];
-  }
 }

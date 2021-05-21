@@ -33,7 +33,6 @@ use App\Modules\SuperAdmin\Interfaces\ShopItem as ShopItemInterface;
  * @method static \Illuminate\Database\Eloquent\Builder|SwapDeal newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|SwapDeal newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|SwapDeal query()
- * @method static \Illuminate\Database\Eloquent\Builder|SwapDeal whereAppUserId($value)
  * @method static \Illuminate\Database\Eloquent\Builder|SwapDeal whereCreatedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder|SwapDeal whereDeletedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder|SwapDeal whereDescription($value)

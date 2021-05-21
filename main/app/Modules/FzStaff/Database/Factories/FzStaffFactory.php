@@ -1,38 +1,71 @@
 <?php
 
-/** @var \Illuminate\Database\Eloquent\Factory $factory */
+namespace App\Modules\FzStaff\Database\Factories;
 
-use Faker\Factory;
 use Illuminate\Support\Str;
-use Faker\Generator as Faker;
+use Faker\Factory as FakerFactory;
 use App\Modules\FzStaff\Models\FzStaff;
-use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Factories\Factory;
 
-/*
-|--------------------------------------------------------------------------
-| Model Factories
-|--------------------------------------------------------------------------
-|
-| This directory should contain each of the model factory definitions for
-| your application. Factories provide a convenient way to generate new
-| model instances for testing / seeding your application's database.
-| factory('App\User', 5)->create();
-|
-*/
+class FzStaffFactory extends Factory
+{
+  /**
+   * The name of the factory's corresponding model.
+   *
+   * @var string
+   */
+  protected $model = FzStaff::class;
+  private $fakerNG;
 
-$fakerNG = Factory::create('en_NG');
+  public function __construct()
+  {
+    parent::__construct();
 
-$factory->define(FzStaff::class, function (Faker $faker) use ($fakerNG) {
-  return [
-    'first_name' => $name = $fakerNG->unique()->firstName,
-    'last_name' => $faker->firstName,
-    'email' => $name . '@' . strtolower(str_replace(" ", "", config('app.name'))) . '.com',
-    'address' => $faker->address,
-    'city' => $faker->city,
-    'ig_handle' => '@' . $faker->unique()->userName,
-    'password' => 'pass',
-    'phone' => $faker->unique()->phoneNumber,
-    'remember_token' => Str::random(10),
-    'is_active' =>true,
-  ];
-});
+    $this->fakerNG = FakerFactory::create('en_NG');
+  }
+
+  public function definition()
+  {
+    return [
+      'first_name' => $name = $this->fakerNG->unique()->firstName,
+      'last_name' => $this->faker->firstName,
+      'email' => strtolower($name) . '@' . strtolower(str_replace(" ", "", config('app.name'))) . '.com',
+      'address' => $this->faker->address,
+      'city' => $this->faker->city,
+      'ig_handle' => '@' . $this->faker->unique()->userName,
+      'password' => 'pass',
+      'phone' => $this->faker->unique()->phoneNumber,
+      'remember_token' => Str::random(10),
+      'is_active' => true,
+    ];
+  }
+
+
+  /**
+   * Indicate that the user is suspended.
+   *
+   * @return \Illuminate\Database\Eloquent\Factories\Factory
+   */
+  public function suspended()
+  {
+    return $this->state(function (array $attributes) {
+      return [
+        'is_active' => false,
+      ];
+    });
+  }
+
+  /**
+   * Configure the model factory.
+   *
+   * @return $this
+   */
+  public function configure()
+  {
+    return $this->afterMaking(function (FzStaff $user) {
+      //
+    })->afterCreating(function (FzStaff $user) {
+      //
+    });
+  }
+}

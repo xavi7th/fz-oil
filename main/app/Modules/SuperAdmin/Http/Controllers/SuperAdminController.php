@@ -8,7 +8,6 @@ use RachidLaasri\Travel\Travel;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Route;
 use App\Modules\SuperAdmin\Models\SuperAdmin;
-use App\Modules\SuperAdmin\Models\ProductSaleRecord;
 
 class SuperAdminController extends Controller
 {

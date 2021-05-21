@@ -2,25 +2,14 @@
 
 namespace App\Modules\FzStaff\Models;
 
-use App\Modules\SuperAdmin\Traits\IsAStaff;
 use App\User;
+use App\Modules\SuperAdmin\Traits\IsAStaff;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
+use App\Modules\FzStaff\Database\Factories\FzStaffFactory;
 
-/**
- * App\Modules\FzStaff\Models\FzStaff
- *
- * @property-read mixed $full_name
- * @property-read \Illuminate\Notifications\DatabaseNotificationCollection|\Illuminate\Notifications\DatabaseNotification[] $notifications
- * @property-read int|null $notifications_count
- * @property-write mixed $password
- * @method static \Illuminate\Database\Eloquent\Builder|FzStaff active()
- * @method static \Illuminate\Database\Eloquent\Builder|FzStaff newModelQuery()
- * @method static \Illuminate\Database\Eloquent\Builder|FzStaff newQuery()
- * @method static \Illuminate\Database\Eloquent\Builder|FzStaff query()
- * @mixin \Eloquent
- */
 class FzStaff extends User
 {
-  use IsAStaff;
+  use IsAStaff, HasFactory;
 
   protected $fillable = [
 
@@ -38,5 +27,10 @@ class FzStaff extends User
   public function getFullNameAttribute()
   {
     return $this->first_name . ' ' . $this->last_name;
+  }
+
+  protected static function newFactory()
+  {
+      return FzStaffFactory::new();
   }
 }

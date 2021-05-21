@@ -15,9 +15,7 @@ class FzStaffDatabaseSeeder extends Seeder
    */
   public function run()
   {
-    Model::unguard();
-
-    app()->environment('local') && factory(FzStaff::class, 3)->create()->each(function ($user) {
+    app()->environment('local') && FzStaff::factory()->count(3)->create()->each(function ($user) {
       // $user->transactions()->saveMany(factory(Transaction::class, 31)->make());
       // $user->transactions()->save(factory(Transaction::class)->make());
     });

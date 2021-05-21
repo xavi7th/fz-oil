@@ -13,7 +13,7 @@ class CreateSuperAdminsTable extends Migration
    */
   public function up()
   {
-    Schema::create('trusted_romzy', function (Blueprint $table) {
+    Schema::create('fz_admins', function (Blueprint $table) {
       $table->id();
       $table->string('full_name');
       $table->string('email')->unique();
@@ -37,6 +37,6 @@ class CreateSuperAdminsTable extends Migration
    */
   public function down()
   {
-    Schema::dropIfExists('trusted_romzy');
+    Schema::dropIfExists('fz_admins');
   }
 }

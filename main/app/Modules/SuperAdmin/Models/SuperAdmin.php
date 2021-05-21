@@ -25,8 +25,8 @@ class SuperAdmin extends Model
     const ROUTE_NAME_PREFIX = 'superadmin.';
 
 
-    protected static function newFactory()
-    {
-        return SuperAdminFactory::new();
-    }
+  protected static function newFactory()
+  {
+      return SuperAdminFactory::new();
+  }
 }
