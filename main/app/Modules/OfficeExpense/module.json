@@ -1,0 +1,13 @@
+{
+    "name": "OfficeExpense",
+    "alias": "officeexpense",
+    "description": "",
+    "keywords": [],
+    "priority": 0,
+    "providers": [
+        "App\\Modules\\OfficeExpense\\Providers\\OfficeExpenseServiceProvider"
+    ],
+    "aliases": {},
+    "files": [],
+    "requires": []
+}
