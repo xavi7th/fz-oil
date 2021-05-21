@@ -1,5 +1,7 @@
 {
     "SuperAdmin": true,
     "PublicPages": true,
-    "FzStaff": true
+    "FzStaff": true,
+    "Supervisor": true,
+    "FzSupervisor": true
 }

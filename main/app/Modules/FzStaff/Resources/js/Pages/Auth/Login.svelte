@@ -1,8 +1,6 @@
 <script>
 import { Inertia } from '@inertiajs/inertia';
-import Layout from "@usershared/UserLayout.svelte";
-
-export let errors;
+import Layout from "@fzstaff-shared/UserLayout.svelte";
 
 let details = {
     remember: true
@@ -83,46 +81,29 @@ let handleLogin = e => {
 </script>
 
 <Layout title="Login Page">
-  <form
-    class="form rui-sign-form rui-sign-form-cloud"
-    on:submit|preventDefault={handleLogin}
-    novalidate>
-    <div class="row vertical-gap sm-gap justify-content-center">
-      <div class="col-12">
-        <h1 class="display-4 mb-10 text-center">Sign In</h1>
-      </div>
-
-      <div class="col-12">
-        <input type="email" required class="form-control" class:is-invalid={errors.email} class:is-valid={formSubmitted && !errors.email} id="email" bind:value={details.email} placeholder="Email" />
-
-      </div>
-      <div class="col-12">
-        <input type="password" required class="form-control" class:is-invalid={errors.password} id="password" bind:value={details.password} on:keypress={detectCaps} placeholder="Password" />
+  <div class="all-wrapper menu-side with-pattern">
+		<div class="auth-box-w">
+			<div class="logo-w"><a href="index.html"><img alt="" src="img/logo-big.png"></a>
+			</div>
+			<h4 class="auth-header">Login Access</h4>
+			<form on:submit|preventDefault={handleLogin}>
+				<div class="form-group">
+          <label for="">Username</label>
+          <input class="form-control" placeholder="Enter your username" type="text" bind:value={details.email}>
+					<div class="pre-icon os-icon os-icon-user-male-circle"></div>
+				</div>
+				<div class="form-group">
+          <label for="">Password</label>
+          <input class="form-control"placeholder="Enter your password" type="password" bind:value={details.password} on:keypress={detectCaps}>
+					<div class="pre-icon os-icon os-icon-fingerprint"></div>
+				</div>
         {#if capsOn}
           <span class="text-warning mt-10 d-block text-center">NOTE: Capslock is on</span>
         {/if}
-      </div>
-      <div class="col-sm-6">
-        <div
-          class="custom-control custom-checkbox d-flex justify-content-start">
-          <input
-            type="checkbox"
-            class="custom-control-input"
-            id="rememberMe"
-            bind:value={details.remember} />
-          <label class="custom-control-label fs-13" for="rememberMe">
-            Remember me
-          </label>
-        </div>
-      </div>
-      <div class="col-sm-6">
-        <div class="d-flex justify-content-end">
-          <a href class="fs-13">Forgot password?</a>
-        </div>
-      </div>
-      <div class="col-12">
-        <button class="btn btn-brand btn-block text-center">Sign in</button>
-      </div>
-    </div>
-  </form>
+				<div class="buttons-w">
+          <button type="submit" class="btn btn-primary">Log me in</button>
+				</div>
+			</form>
+		</div>
+	</div>
 </Layout>

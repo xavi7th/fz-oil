@@ -4,9 +4,9 @@ mix.webpackConfig({
 	resolve: {
 		extensions: ['.js', '.svelte', '.json'],
 		alias: {
-			'@userpages': __dirname + '/Resources/js/Pages',
-			'@usershared': __dirname + '/Resources/js/Shared',
-			'@userassets': __dirname + '/Resources'
+			'@fzstaff-pages': __dirname + '/Resources/js/Pages',
+			'@fzstaff-shared': __dirname + '/Resources/js/Shared',
+			'@fzstaff-assets': __dirname + '/Resources'
 		},
 	},
 })
@@ -14,31 +14,45 @@ mix.webpackConfig({
 mix.copyDirectory(__dirname + '/Resources/img', 'public_html/img');
 
 mix.scripts([
-        __dirname + '/Resources/js/vendor/jquery.min.js',
-        __dirname + '/Resources/js/vendor/popper.min.js',
-        __dirname + '/Resources/js/vendor/bootstrap.min.js',
-        __dirname + '/Resources/js/vendor/feather.min.js',
-        // __dirname + '/Resources/js/vendor/jquery.overlayScrollbars.min.js',
-        __dirname + '/Resources/js/vendor/yaybar.js',
-        // __dirname + '/Resources/js/vendor/ofi.min.js',
-        __dirname + '/Resources/js/vendor/jquery.fancybox.min.js',
-        __dirname + '/Resources/js/vendor/swiper.min.js',
-        __dirname + '/Resources/js/vendor/Chart.min.js',
-        	__dirname + '/Resources/js/vendor/chartist.min.js',
-        __dirname + '/Resources/js/vendor/datatables/datatables.js',
-        // __dirname + '/Resources/js/vendor/jquery.dataTables.min.js',
-        __dirname + '/Resources/js/vendor/all.js',
-        __dirname + '/Resources/js/vendor/v4-shims.js',
-    ], 'public_html/js/dashboard-app-vendor.js');
+  __dirname + '/Resources/sass/vendor/bower_components/jquery/dist/jquery.min.js',
+  __dirname + '/Resources/sass/vendor/bower_components/popper.js/dist/umd/popper.min.js',
+  __dirname + '/Resources/sass/vendor/bower_components/moment/moment.js',
+  __dirname + '/Resources/sass/vendor/bower_components/chart.js/dist/Chart.min.js',
+  __dirname + '/Resources/sass/vendor/bower_components/select2/dist/js/select2.full.min.js',
+  __dirname + '/Resources/sass/vendor/bower_components/jquery-bar-rating/dist/jquery.barrating.min.js',
+  __dirname + '/Resources/sass/vendor/bower_components/ckeditor/ckeditor.js',
+  __dirname + '/Resources/sass/vendor/bower_components/bootstrap-validator/dist/validator.min.js',
+  __dirname + '/Resources/sass/vendor/bower_components/bootstrap-daterangepicker/daterangepicker.js',
+  __dirname + '/Resources/sass/vendor/bower_components/ion.rangeSlider/js/ion.rangeSlider.min.js',
+  __dirname + '/Resources/sass/vendor/bower_components/dropzone/dist/dropzone.js',
+  __dirname + '/Resources/sass/vendor/bower_components/editable-table/mindmup-editabletable.js',
+  __dirname + '/Resources/sass/vendor/bower_components/datatables.net/js/jquery.dataTables.min.js',
+  __dirname + '/Resources/sass/vendor/bower_components/datatables.net-bs/js/dataTables.bootstrap.min.js',
+  __dirname + '/Resources/sass/vendor/bower_components/fullcalendar/dist/fullcalendar.min.js',
+  __dirname + '/Resources/sass/vendor/bower_components/perfect-scrollbar/js/perfect-scrollbar.jquery.min.js',
+  __dirname + '/Resources/sass/vendor/bower_components/tether/dist/js/tether.min.js',
+  __dirname + '/Resources/sass/vendor/bower_components/slick-carousel/slick/slick.min.js',
+  __dirname + '/Resources/sass/vendor/bower_components/bootstrap/js/dist/util.js',
+  __dirname + '/Resources/sass/vendor/bower_components/bootstrap/js/dist/alert.js',
+  __dirname + '/Resources/sass/vendor/bower_components/bootstrap/js/dist/button.js',
+  __dirname + '/Resources/sass/vendor/bower_components/bootstrap/js/dist/carousel.js',
+  __dirname + '/Resources/sass/vendor/bower_components/bootstrap/js/dist/collapse.js',
+  __dirname + '/Resources/sass/vendor/bower_components/bootstrap/js/dist/dropdown.js',
+  __dirname + '/Resources/sass/vendor/bower_components/bootstrap/js/dist/modal.js',
+  __dirname + '/Resources/sass/vendor/bower_components/bootstrap/js/dist/tab.js',
+  __dirname + '/Resources/sass/vendor/bower_components/bootstrap/js/dist/tooltip.js',
+  __dirname + '/Resources/sass/vendor/bower_components/bootstrap/js/dist/popover.js',
+  __dirname + '/Resources/js/vendor/demo_customizer.js',
+  __dirname + '/Resources/js/vendor/dataTables.bootstrap4.min.js',
+], 'public_html/js/dashboard-app-vendor.js');
 
 mix.copy([
-       __dirname + '/Resources/js/vendor/html2pdf.js',
-    ], 'public_html/js/html2pdf.js');
+  __dirname + '/Resources/js/vendor/html2pdf.js',
+], 'public_html/js/html2pdf.js');
 
 mix.scripts([
-        __dirname + '/Resources/js/vendor/rootui.js',
-        __dirname + '/Resources/js/vendor/rootui-init.js',
-    ], 'public_html/js/user-dashboard-init.js');
+  __dirname + '/Resources/js/vendor/main.js',
+], 'public_html/js/user-dashboard-init.js');
 
 mix.js(__dirname + '/Resources/js/app.js', 'js/dashboard-app.js')
 mix.sass(__dirname + '/Resources/sass/app.scss', 'css/dashboard-app.css')

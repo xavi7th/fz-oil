@@ -43,8 +43,13 @@ window.Toast = swal.mixin({
 	toast: true,
 	position: 'top-end',
 	showConfirmButton: false,
+  timerProgressBar: true,
 	timer: 2000,
-	icon: "success"
+	icon: "success",
+  didOpen: (toast) => {
+    toast.addEventListener('mouseenter', Swal.stopTimer)
+    toast.addEventListener('mouseleave', Swal.resumeTimer)
+  }
 });
 
 window.ToastLarge = swal.mixin({
@@ -53,17 +58,17 @@ window.ToastLarge = swal.mixin({
 	html: 'I will close in <b></b> milliseconds.',
 	timer: 3000,
   timerProgressBar: true,
-	onBeforeOpen: () => {
+	didOpen: () => {
 		swal.showLoading()
 	},
 	// onClose: () => {}
 })
 
 window.BlockToast = swal.mixin({
-	showConfirmButton: true,
-	onBeforeOpen: () => {
-		swal.showLoading()
+  didOpen: () => {
+    swal.showLoading()
 	},
+  showConfirmButton: false,
 	showCloseButton: false,
 	allowOutsideClick: false,
 	allowEscapeKey: false
@@ -138,24 +143,19 @@ Inertia.on('error', (e) => {
     title: "Error",
     html: getErrorString( e.detail.errors ),
     icon: "error",
-    timer:10000, //milliseconds
-    footer:
-    	`Our support email: &nbsp;&nbsp;&nbsp; <a target="_blank" href="mailto:hello@theelects.com">hello@theelects.com</a>`,
+    timer:10000,
+    footer: `If your issues persists contact support for assistance`,
   } );
 })
 
 Inertia.on('invalid', (event) => {
   console.log(`An invalid Inertia response was received.`)
-
   console.log(event);
-
   event.preventDefault()
-  jQuery('#page-loader')
-  	.fadeOut()
+
   Toast.fire({
     position: 'top',
-    title: 'Oops!',
-    text: event.detail.response.statusText,
+    title: 'Oops! ' + event.detail.response.statusText,
     icon:'error'
   })
 })
@@ -164,8 +164,6 @@ Inertia.on('exception', (event) => {
   console.log(event);
   console.log(`An unexpected error occurred during an Inertia visit.`)
   console.log(event.detail.error)
-  jQuery('#page-loader')
-  	.fadeOut()
 })
 
 Inertia.on('finish', (e) => {

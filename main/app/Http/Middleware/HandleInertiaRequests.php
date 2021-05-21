@@ -2,6 +2,8 @@
 
 namespace App\Http\Middleware;
 
+use App\Modules\FzStaff\Models\FzStaff;
+use App\Modules\SuperAdmin\Models\SuperAdmin;
 use Inertia\Middleware;
 use Illuminate\Support\Str;
 use Illuminate\Http\Request;
@@ -80,11 +82,19 @@ class HandleInertiaRequests extends Middleware
    */
   public function rootView(Request $request):string
   {
-     if ($request->user()) {
+    if ($request->user()) {
       return strtolower($request->user()->getType()) . '::app';
-    } elseif (Str::contains(\Route::currentRouteName(), 'login')) {
+    }
+    elseif (Str::contains(\Route::currentRouteName(), 'auth')) {
       return 'fzstaff::app';
-    } else {
+    }
+    elseif (Str::contains(\Route::currentRouteName(), FzStaff::ROUTE_NAME_PREFIX)) {
+      return 'fzstaff::app';
+    }
+    elseif (Str::contains(\Route::currentRouteName(), SuperAdmin::ROUTE_NAME_PREFIX)) {
+      return 'superadmin::app';
+    }
+    else {
       return $this->rootView;
     }
   }

@@ -1,0 +1,18 @@
+@import '//fast.fonts.net/cssapi/487b73f1-c2d1-43db-8526-db577e4c822b.css';
+@import './vendor/bower_components/select2/dist/css/select2.min.css';
+@import './vendor/bower_components/bootstrap-daterangepicker/daterangepicker.css';
+@import './vendor/bower_components/dropzone/dist/dropzone.css';
+@import './vendor/bower_components/datatables.net-bs/css/dataTables.bootstrap.min.css';
+@import './vendor/bower_components/fullcalendar/dist/fullcalendar.min.css';
+@import './vendor/bower_components/perfect-scrollbar/css/perfect-scrollbar.min.css';
+@import './vendor/bower_components/slick-carousel/slick/slick.css';
+@import '../fonts/feather/style.css';
+@import './vendor/main.css';
+
+.row-actions.remove-center {
+  text-align: initial;
+}
+
+.row-actions.remove-center a {
+  font-size: 1.1em;
+}
