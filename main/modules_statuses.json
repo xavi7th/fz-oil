@@ -5,7 +5,7 @@
     "Supervisor": true,
     "FzSupervisor": true,
     "CompanyBankAccount": true,
-    "FzStock": true,
+    "FzStockManagement": true,
     "FzCustomer": true,
     "OfficeExpense": true
 }
