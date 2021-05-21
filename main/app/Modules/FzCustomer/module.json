@@ -1,0 +1,13 @@
+{
+    "name": "FzCustomer",
+    "alias": "fzcustomer",
+    "description": "",
+    "keywords": [],
+    "priority": 0,
+    "providers": [
+        "App\\Modules\\FzCustomer\\Providers\\FzCustomerServiceProvider"
+    ],
+    "aliases": {},
+    "files": [],
+    "requires": []
+}
