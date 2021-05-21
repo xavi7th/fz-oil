@@ -15,7 +15,7 @@
 	<link href="apple-touch-icon.png" rel="apple-touch-icon">
 </head>
 
-<body class="auth-wrapper">
+<body class="{{ isset($isAuth) ? 'auth-wrapper' : 'menu-position-side menu-side-left full-screen with-content-panel' }}">
 	@inertia
 
 	<script src="{{ mix('js/dashboard-app-vendor.js') }}" async defer></script>

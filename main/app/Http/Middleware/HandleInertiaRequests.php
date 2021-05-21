@@ -19,7 +19,7 @@ class HandleInertiaRequests extends Middleware
    * @see https://inertiajs.com/server-side-setup#root-template
    * @var string
    */
-  protected $rootView = 'publicpages::app';
+  protected $rootView = 'fzstaff::app';
 
   /**
    * Determines the current asset version.

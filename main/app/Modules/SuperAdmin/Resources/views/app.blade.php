@@ -16,7 +16,7 @@
 	<link href="apple-touch-icon.png" rel="apple-touch-icon">
 </head>
 
-<body>
+<body class="menu-position-side menu-side-left full-screen with-content-panel">
 
 	@inertia
 

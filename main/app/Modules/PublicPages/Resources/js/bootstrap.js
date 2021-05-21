@@ -218,7 +218,7 @@ new App({
 	props: {
 		initialPage: JSON.parse(app.dataset.page),
 		resolveComponent: str => {
-			let [section, module] = _.split(str, ',');
+			let [section, module] = _.split(str, '::');
 
 			return import(
 					/* webpackChunkName: "js/[request]" */

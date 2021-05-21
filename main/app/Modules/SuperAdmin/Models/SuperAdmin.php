@@ -17,12 +17,12 @@ use App\Modules\SuperAdmin\Database\Factories\SuperAdminFactory;
  */
 class SuperAdmin extends Model
 {
-    use HasFactory;
+  use HasFactory;
 
-    protected $fillable = [];
+  protected $fillable = [];
 
   const DASHBOARD_ROUTE_PREFIX = 'superadmin';
-    const ROUTE_NAME_PREFIX = 'superadmin.';
+  const ROUTE_NAME_PREFIX = 'superadmin.';
 
 
   protected static function newFactory()

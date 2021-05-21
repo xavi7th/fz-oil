@@ -3,5 +3,6 @@
     "PublicPages": true,
     "FzStaff": true,
     "Supervisor": true,
-    "FzSupervisor": true
+    "FzSupervisor": true,
+    "CompanyBankAccount": true
 }

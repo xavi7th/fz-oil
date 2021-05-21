@@ -21,7 +21,7 @@ class SuperAdminController extends Controller
 
   public function index(Request $request)
   {
-    return Inertia::render('SuperAdmin,SuperAdminDashboard', self::getDashboardStatistics($request->records_date))->withViewData([
+    return Inertia::render('SuperAdmin::SuperAdminDashboard', self::getDashboardStatistics($request->records_date))->withViewData([
       'title' => 'Hello theEects',
       'metaDesc' => ' This page is ...'
     ]);

@@ -1,4 +1,10 @@
 <script>
+  import DashboardTopBar from './Partials/DashboardTopBar.svelte';
+
+  import DesktopMenu from './Partials/DesktopMenu.svelte';
+
+  import MobileMenu from './Partials/MobileMenu.svelte';
+
   import { onMount } from "svelte";
   import { page } from "@inertiajs/inertia-svelte";
   import { fly } from "svelte/transition";
@@ -13,11 +19,24 @@
 </script>
 
 {#if isMounted}
-  <div in:fly={{ x: -300, duration: 700, delay: 400 }} out:fly={{ y: 30, duration: 400, delay: 0 }}>
-     <slot />
-  </div>
+  <div class="all-wrapper with-side-panel solid-bg-all" >
+    <div class="layout-w">
+      <MobileMenu></MobileMenu>
+     <DesktopMenu></DesktopMenu>
+      <div class="content-w">
+        <DashboardTopBar></DashboardTopBar>
 
-  <Portal bind:this={$modalRoot}></Portal>
+
+        <div class="content-i">
+          <div class="content-box">
+            <slot/>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="display-type"></div>
+    <Portal bind:this={$modalRoot}></Portal>
+  </div>
 
 {/if}
 

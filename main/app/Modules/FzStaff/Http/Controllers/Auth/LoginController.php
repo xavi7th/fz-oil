@@ -64,8 +64,9 @@ class LoginController extends Controller
 
   public function showLoginForm(Request $request)
   {
-    if ($request->isApi())  return 'Welcome to ' . config('auth.name') . ' API';
-    return Inertia::render('FzStaff,Auth/Login');
+    return Inertia::render('FzStaff::Auth/Login')->withViewData([
+      'isAuth' => true
+    ]);
   }
 
   /**

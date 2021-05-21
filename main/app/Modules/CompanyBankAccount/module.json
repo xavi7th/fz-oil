@@ -1,0 +1,13 @@
+{
+    "name": "CompanyBankAccount",
+    "alias": "companybankaccount",
+    "description": "",
+    "keywords": [],
+    "priority": 0,
+    "providers": [
+        "App\\Modules\\CompanyBankAccount\\Providers\\CompanyBankAccountServiceProvider"
+    ],
+    "aliases": {},
+    "files": [],
+    "requires": []
+}
