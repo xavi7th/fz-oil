@@ -3,18 +3,11 @@
 namespace App\Modules\SuperAdmin\Models;
 
 use App\Modules\FzStaff\Models\FzStaff;
+use Illuminate\Database\Eloquent\Builder;
+use App\Modules\SuperAdmin\Models\StaffRole;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use App\Modules\SuperAdmin\Database\Factories\SuperAdminFactory;
 
-/**
- * App\Modules\SuperAdmin\Models\SuperAdmin
- *
- * @method static \App\Modules\SuperAdmin\Database\Factories\SuperAdminFactory factory(...$parameters)
- * @method static \Illuminate\Database\Eloquent\Builder|SuperAdmin newModelQuery()
- * @method static \Illuminate\Database\Eloquent\Builder|SuperAdmin newQuery()
- * @method static \Illuminate\Database\Eloquent\Builder|SuperAdmin query()
- * @mixin \Eloquent
- */
 class SuperAdmin extends FzStaff
 {
   use HasFactory;
@@ -28,5 +21,12 @@ class SuperAdmin extends FzStaff
   protected static function newFactory()
   {
       return SuperAdminFactory::new();
+  }
+
+  protected static function booted()
+  {
+    static::addGlobalScope('superadmin', function (Builder $builder) {
+      $builder->where('staff_role_id', StaffRole::superAdminId());
+    });
   }
 }

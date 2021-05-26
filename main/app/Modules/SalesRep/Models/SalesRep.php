@@ -3,7 +3,6 @@
 namespace App\Modules\SalesRep\Models;
 
 use App\Modules\FzStaff\Models\FzStaff;
-use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Builder;
 use App\Modules\SuperAdmin\Models\StaffRole;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -14,6 +13,9 @@ class SalesRep extends FzStaff
   use HasFactory;
 
   protected $table = parent::TABLE_NAME;
+
+  const DASHBOARD_ROUTE_PREFIX = 'sales-rep';
+  const ROUTE_NAME_PREFIX = 'salesrep.';
 
   protected static function newFactory()
   {

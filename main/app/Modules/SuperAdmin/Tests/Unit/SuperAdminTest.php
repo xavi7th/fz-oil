@@ -3,13 +3,12 @@
 namespace App\Modules\SuperAdmin\Tests\Unit;
 
 use Tests\TestCase;
-use App\Modules\SalesRep\Models\SalesRep;
-use App\Modules\SuperAdmin\Models\StaffRole;
 use Illuminate\Foundation\Testing\WithFaker;
+use App\Modules\SuperAdmin\Models\SuperAdmin;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use App\Modules\SuperAdmin\Database\Seeders\StaffRoleTableSeeder;
 
-class SalesRepTest extends TestCase
+class SuperAdminTest extends TestCase
 {
   use RefreshDatabase;
 
@@ -21,13 +20,13 @@ class SalesRepTest extends TestCase
   }
 
   /** @test  */
-  public function sales_rep_can_login()
+  public function super_admin_can_login()
   {
     $this->withoutExceptionHandling();
 
-    $sales_rep = SalesRep::factory()->create(['password' => 'pass']);
+    $super_admin = SuperAdmin::factory()->create(['password' => 'pass']);
 
-    $this->post(route('auth.login'), ['user_name' => $sales_rep->user_name, 'password' => 'pass', 'remember' => true])
-      ->assertRedirect(route('salesrep.dashboard'));
+    $this->post(route('auth.login'), ['user_name' => $super_admin->user_name, 'password' => 'pass', 'remember' => true])
+      ->assertRedirect(route('superadmin.dashboard'));
   }
 }

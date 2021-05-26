@@ -178,10 +178,8 @@ class LoginController extends Controller
 
   private function attemptGuardLogin(string $guard)
   {
+    ray($this->credentials(request()), $guard);
     if (Auth::guard($guard)->attempt($this->credentials(request()), request()->filled('remember'))) {
-      if (Arr::has(config('auth.guards'), $guard . '_api')) {
-        $this->apiToken = Auth::guard($guard . '_api')->attempt($this->credentials(request()));
-      }
       return true;
     }
   }

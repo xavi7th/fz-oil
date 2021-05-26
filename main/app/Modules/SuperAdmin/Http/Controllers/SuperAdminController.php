@@ -15,12 +15,8 @@ class SuperAdminController extends Controller
 
   static function routes()
   {
-    Route::middleware(['web'])->prefix(SuperAdmin::DASHBOARD_ROUTE_PREFIX)->name(SuperAdmin::ROUTE_NAME_PREFIX)->group(function () {
-      Route::get('', [self::class, 'index'])->name('dashnoard');
-
-      Route::middleware(['web'])->prefix(FzStaff::DASHBOARD_ROUTE_PREFIX)->name(FzStaff::ROUTE_NAME_PREFIX)->group(function () {
-        Route::get('', [self::class, 'manageFzStaff'])->name('dashnoard');
-      });
+    Route::middleware(['web', 'auth:super_admin'])->prefix(SuperAdmin::DASHBOARD_ROUTE_PREFIX)->name(SuperAdmin::ROUTE_NAME_PREFIX)->group(function () {
+      Route::get('', [self::class, 'index'])->name('dashboard');
     });
   }
 
