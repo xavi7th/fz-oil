@@ -2,7 +2,7 @@
 
 namespace App\Modules\SuperAdmin\Models;
 
-use Illuminate\Database\Eloquent\Model;
+use App\Modules\FzStaff\Models\FzStaff;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use App\Modules\SuperAdmin\Database\Factories\SuperAdminFactory;
 
@@ -15,11 +15,11 @@ use App\Modules\SuperAdmin\Database\Factories\SuperAdminFactory;
  * @method static \Illuminate\Database\Eloquent\Builder|SuperAdmin query()
  * @mixin \Eloquent
  */
-class SuperAdmin extends Model
+class SuperAdmin extends FzStaff
 {
   use HasFactory;
 
-  protected $fillable = [];
+  protected $table = parent::TABLE_NAME;
 
   const DASHBOARD_ROUTE_PREFIX = 'super-admin';
   const ROUTE_NAME_PREFIX = 'superadmin.';

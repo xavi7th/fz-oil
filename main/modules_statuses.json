@@ -7,5 +7,6 @@
     "CompanyBankAccount": true,
     "FzStockManagement": true,
     "FzCustomer": true,
-    "OfficeExpense": true
+    "OfficeExpense": true,
+    "SalesRep": true
 }

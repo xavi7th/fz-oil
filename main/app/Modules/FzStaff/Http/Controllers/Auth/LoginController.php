@@ -169,6 +169,7 @@ class LoginController extends Controller
           $this->authSuccess = true;
         }
       } catch (\Throwable $th) {
+        logger($th);
         abort(500, 'Sorry there was an error logging you in.');
       }
     });
@@ -238,7 +239,7 @@ class LoginController extends Controller
    */
   public function username(): string
   {
-    return 'email';
+    return 'user_name';
   }
 
   /**

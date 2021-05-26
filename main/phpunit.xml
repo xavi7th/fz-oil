@@ -12,13 +12,13 @@
          processIsolation="false"
          stopOnFailure="false">
     <testsuites>
-        <testsuite name="Unit">
+        <!-- <testsuite name="Unit">
             <directory suffix="Test.php">./tests/Unit</directory>
         </testsuite>
 
         <testsuite name="Feature">
             <directory suffix="Test.php">./tests/Feature</directory>
-        </testsuite>
+        </testsuite> -->
 
         <testsuite name="SuperAdminUnitTests">
             <directory suffix="Test.php">./app/Modules/SuperAdmin/Tests/Unit</directory>
@@ -27,6 +27,8 @@
         <testsuite name="SuperAdminFeatureTests">
             <directory suffix="Test.php">./app/Modules/SuperAdmin/Tests/Feature</directory>
         </testsuite>
+
+
     </testsuites>
     <filter>
         <whitelist processUncoveredFilesFromWhitelist="true">
@@ -35,7 +37,7 @@
     </filter>
     <php>
         <server name="BCRYPT_ROUNDS" value="4"/>
-        <server name="APP_ENV" value="local"/>
+        <server name="APP_ENV" value="testing"/>
         <!-- <server name="CACHE_DRIVER" value="array"/> -->
         <!-- <server name="MAIL_DRIVER" value="array"/> -->
         <!-- <server name="QUEUE_CONNECTION" value="sync"/> -->

@@ -16,19 +16,18 @@ class CreateFzStaffTable extends Migration
     Schema::create('fz_staff', function (Blueprint $table) {
       $table->id();
       $table->string('email')->unique();
+      $table->string('user_name')->unique();
       $table->string('password');
-      $table->timestamp('email_verified_at')->nullable();
-      $table->string('first_name');
-      $table->string('last_name')->nullable();
+      $table->string('full_name');
+      $table->string('gender');
       $table->string('phone')->unique();
-      $table->timestamp('otp_verified_at')->nullable();
       $table->string('address');
-      $table->string('city');
-      $table->string('ig_handle')->unique()->nullable();
-      $table->string('avatar')->nullable();
-      $table->boolean('is_active')->default(true);
+      $table->string('id_url')->nullable();
+      $table->boolean('is_active')->default(false);
+      $table->foreignId('staff_role_id')->constrained();
 
       $table->rememberToken();
+      $table->timestamp('last_login_at')->nullable();
       $table->timestamps();
       $table->softDeletes();
     });

@@ -11,6 +11,8 @@ class FzStaff extends User
 {
   use IsAStaff, HasFactory;
 
+  const TABLE_NAME = 'fz_staff';
+
   protected $fillable = [
 
   ];
@@ -21,7 +23,7 @@ class FzStaff extends User
   ];
 
   const DASHBOARD_ROUTE_PREFIX = 'sales-reps';
-  const ROUTE_NAME_PREFIX = 'salesreps.';
+  const ROUTE_NAME_PREFIX = 'salesrep.';
 
 
   public function getFullNameAttribute()

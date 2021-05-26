@@ -26,7 +26,7 @@ class UserEventSubscriber implements ShouldQueue
   static function onLoggedIn(UserLoggedIn $event)
   {
     $message = $event->user->email  . ' logged into the ' . $event->user->getType() . ' dashboard';
-    ActivityLog::notifySuperAdmins($message);
+    // ActivityLog::notifySuperAdmins($message);
     // $event->loan_request->card_user->notify(new LoanOverdue($event->loan_request));
   }
 

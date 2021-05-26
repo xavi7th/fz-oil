@@ -2,6 +2,7 @@
 
 use App\Modules\Admin\Models\Admin;
 use App\Modules\FzStaff\Models\FzStaff;
+use App\Modules\SalesRep\Models\SalesRep;
 use App\Modules\SuperAdmin\Models\SuperAdmin;
 
 return [
@@ -18,8 +19,8 @@ return [
     */
 
   'defaults' => [
-    'guard' => 'fz_staff',
-    'passwords' => 'fz_staff',
+    'guard' => 'sales_rep',
+    'passwords' => 'sales_rep',
   ],
 
   /*
@@ -40,13 +41,9 @@ return [
     */
 
   'guards' => [
-    'fz_staff' => [
+    'sales_rep' => [
       'driver' => 'session',
-      'provider' => 'fz_staff',
-    ],
-    'admin' => [
-      'driver' => 'session',
-      'provider' => 'admins',
+      'provider' => 'sales_reps',
     ],
     'super_admin' => [
       'driver' => 'session',
@@ -72,13 +69,9 @@ return [
     */
 
   'providers' => [
-    'fz_staff' => [
+    'sales_reps' => [
       'driver' => 'eloquent',
-      'model' => FzStaff::class,
-    ],
-    'admins' => [
-      'driver' => 'eloquent',
-      'model' => Admin::class,
+      'model' => SalesRep::class,
     ],
     'super_admins' => [
       'driver' => 'eloquent',
@@ -102,8 +95,8 @@ return [
     */
 
   'passwords' => [
-    'fz_staff' => [
-      'provider' => 'fz_staff',
+    'sales_rep' => [
+      'provider' => 'sales_rep',
       'table' => 'password_resets',
       'expire' => 60,
       'throttle' => 60,
