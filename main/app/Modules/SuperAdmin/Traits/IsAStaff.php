@@ -18,7 +18,6 @@ use App\Modules\SuperAdmin\Http\Requests\CreateStaffRequest;
  */
 trait IsAStaff
 {
-
   use AuthorizesRequests;
 
   static function findByEmail(string $email)
@@ -41,11 +40,11 @@ trait IsAStaff
     Route::middleware('auth:super_admin')->group(function () {
       Route::get('list', [self::class, 'getAllStaff'])->name('list')->defaults('ex', __e('ss', 'aperture'));
       Route::post('create', [self::class, 'createStaff'])->name('create');
-      Route::put('{staff}/edit', [self::class, 'editStaff'])->name('edit');
+      Route::put('{staff}/edit', [self::class, 'editStaff'])->name('update');
       Route::put('{staff}/suspend', [self::class, 'suspendStaff'])->name('suspend');
-      Route::put('{staff}/activate', [self::class, 'restoreStaff'])->name('activate');
+      Route::put('{staff}/activate', [self::class, 'activateStaff'])->name('activate');
       Route::delete('{staff}/delete', [self::class, 'deleteStaff'])->name('delete');
-      Route::put('{staff}/restore', [self::class, 'restoreStaff'])->name('restore');
+      // Route::put('{staff}/restore', [self::class, 'restoreStaff'])->name('restore');
     });
   }
 
@@ -73,59 +72,42 @@ trait IsAStaff
     return redirect()->route($userType->singular()->slug('') .'.list')->withFlash(['success' => $userType->singular()->replaceFirst('_',' ')->title() . ' account created. Activate the account so the user can login']);
   }
 
-  public function editStaff(Request $request, self $staff)
+  public function editStaff(CreateStaffRequest $request, self $staff)
   {
     $this->authorize('update', $staff);
 
-    $userType = Str::of(class_basename(self::class))->snake()->plural();
-
-    $validated = $request->validate([
-      'full_name' => 'required|string|max:20',
-      'email' => 'required|email|max:50|unique:' . $userType . ',email,' . $staff->id,
-      'avatar' => 'nullable|image|mimes:jpeg,png,jpg,gif,svg',
-    ]);
-
-    if ($request->hasFile('avatar')) {
-      $validated['avatar'] = compress_image_upload('avatar', 'user-avatars/', 'user-avatars/thumbs/', 1400, true, 50)['img_url'];
-    }
+    $userType =  Str::of(class_basename(self::class))->snake()->plural();
 
     try {
-
-      $staff->update($validated);
-
-      ActivityLog::notifySuperAdmins($request->user()->full_name . ' updated the ' . $userType->slug(' ') . ' account for ' . $staff->full_name);
-
-      return back()->withFlash(['success' => $userType->slug(' ') . ' account updated']);
-    } catch (Throwable $e) {
-      if (app()->environment() == 'local') {
-        return back()->withFlash(['error' => $e->getMessage()]);
-      }
-      return back()->withFlash(['error' => 'Error occurred']);
+      $request->updateStaff($staff);
+    } catch (\Throwable $th) {
+      return back()->withFlash(['error' => $th->getMessage()]);
     }
+
+    return redirect()->route($userType->singular()->slug('') .'.list')->withFlash(['success' => $userType->singular()->replaceFirst('_',' ')->title() . ' account updated.']);
   }
 
   public function suspendStaff(self $staff)
   {
-    $this->authorize('suspend', $staff);
+    $userType = Str::of(class_basename(self::class))->snake()->plural();
 
-    ActivityLog::logUserActivity(auth()->user()->email . ' suspended the account of ' . $staff->email);
+    $this->authorize('suspend', $staff);
 
     $staff->is_active = false;
     $staff->save();
 
-    return back()->withFlash(['success' => 'User account suspended']);
+    return redirect()->route($userType->singular()->slug('') .'.list')->withFlash(['success' => $userType->singular()->replaceFirst('_',' ')->title() . ' account suspended. They will no longer be able to login']);
   }
 
   public function activateStaff(self $staff)
   {
     $this->authorize('activate', $staff);
+    $userType = Str::of(class_basename(self::class))->snake()->plural();
 
-    ActivityLog::logUserActivity(auth()->user()->email . ' suspended the account of ' . $staff->email);
-
-    $staff->is_active = false;
+    $staff->is_active = true;
     $staff->save();
 
-    return back()->withFlash(['success' => 'User account suspended']);
+    return redirect()->route($userType->singular()->slug('') .'.list')->withFlash(['success' => $userType->singular()->replaceFirst('_',' ')->title() . ' account activated.']);
   }
 
   public function restoreStaff(self $staff)
@@ -143,12 +125,11 @@ trait IsAStaff
   public function deleteStaff(self $staff)
   {
     $this->authorize('delete', $staff);
+    $userType = Str::of(class_basename(self::class))->snake()->plural();
 
-    ActivityLog::logUserActivity(auth()->user()->email . ' permanently deleted the account of ' . $staff->email);
+    $staff->delete();
 
-    $staff->forceDelete();
-
-    return back()->withFlash(['success' => 'User account deleted']);
+    return redirect()->route($userType->singular()->slug('') .'.list')->withFlash(['success' => $userType->singular()->replaceFirst('_',' ')->title() . ' account permanently deleted.']);
   }
 
   public function scopeActive(Builder $query)

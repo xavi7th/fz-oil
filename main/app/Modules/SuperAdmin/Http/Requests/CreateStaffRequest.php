@@ -16,22 +16,41 @@ class CreateStaffRequest extends FormRequest
    */
   public function rules()
   {
-    return [
-      'email' => ['required', 'email'],
-      'user_name' => ['required', 'string'],
-      // 'password' => ['required', Password::min(8)->mixedCase()->letters()->numbers()->symbols()->uncompromised()],
-      'full_name' => ['required', 'string'],
-      'phone' => ['required', 'unique:fz_staff,phone'],
-      'gender' => ['required'],
-      'address' => ['required'],
-      'avatar' => '',
-      'staff_role_id' => ['required', 'exists:staff_roles,id'],
-    ];
+    if ($this->isMethod('PUT')) {
+      return [
+        'email' => ['required', 'email', 'unique:fz_staff,email,'.$this->staff->email.',email'],
+        'user_name' => ['required', 'string'],
+        'full_name' => ['required', 'string'],
+        'phone' => ['required', 'unique:fz_staff,phone,'.$this->staff->phone.',phone'],
+        'gender' => ['required'],
+        'address' => ['required'],
+        'avatar' => '',
+        'staff_role_id' => ['required', 'exists:staff_roles,id'],
+      ];
+    }
+    elseif ($this->isMethod('POST')) {
+      return [
+        'email' => ['required', 'email', 'unique:fz_staff,email'],
+        'user_name' => ['required', 'string'],
+        // 'password' => ['required', Password::min(8)->mixedCase()->letters()->numbers()->symbols()->uncompromised()],
+        'full_name' => ['required', 'string'],
+        'phone' => ['required', 'unique:fz_staff,phone'],
+        'gender' => ['required'],
+        'address' => ['required'],
+        'avatar' => '',
+        'staff_role_id' => ['required', 'exists:staff_roles,id'],
+      ];
+    }
   }
 
   public function createStaff($userClass): User
   {
     return $userClass::create($this->validated());
+  }
+
+  public function updateStaff(User $staff): int
+  {
+    return $staff->update($this->validated());
   }
 
   /**
