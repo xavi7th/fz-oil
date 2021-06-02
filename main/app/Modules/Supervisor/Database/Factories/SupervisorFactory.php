@@ -44,6 +44,15 @@ class SupervisorFactory extends Factory
     });
   }
 
+  public function verified()
+  {
+    return $this->state(function (array $attributes) {
+      return [
+        'verified_at' => now(),
+      ];
+    });
+  }
+
   public function configure()
   {
     return $this->afterMaking(function (Supervisor $user) {

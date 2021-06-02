@@ -45,6 +45,15 @@ class SalesRepFactory extends Factory
     });
   }
 
+  public function verified()
+  {
+    return $this->state(function (array $attributes) {
+      return [
+        'verified_at' => now(),
+      ];
+    });
+  }
+
   public function configure()
   {
     return $this->afterMaking(function (SalesRep $user) {

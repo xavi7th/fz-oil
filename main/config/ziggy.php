@@ -19,6 +19,9 @@ return [
     'fzstaff' => [
       'fzstaff.*'
     ],
+    'salesrep' => [
+      'fzstaff.*'
+    ],
     'public' => [
       'app.*',
     ],

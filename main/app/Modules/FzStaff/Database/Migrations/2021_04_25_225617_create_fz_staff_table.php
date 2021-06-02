@@ -28,6 +28,7 @@ class CreateFzStaffTable extends Migration
 
       $table->rememberToken();
       $table->timestamp('last_login_at')->nullable();
+      $table->timestamp('verified_at')->nullable();
       $table->timestamps();
       $table->softDeletes();
     });

@@ -4,7 +4,6 @@ namespace App\Modules\FzStaff\Http\Controllers\Auth;
 
 use App\User;
 use Inertia\Inertia;
-use Illuminate\Support\Arr;
 use Tymon\JWTAuth\JWTGuard;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
@@ -19,34 +18,14 @@ use Illuminate\Foundation\Auth\AuthenticatesUsers;
 
 class LoginController extends Controller
 {
-  /*
-    |--------------------------------------------------------------------------
-    | Login Controller
-    |--------------------------------------------------------------------------
-    |
-    | This controller handles authenticating users for the application and
-    | redirecting them to your home screen. The controller uses a trait
-    | to conveniently provide its functionality to your applications.
-    |
-    */
-
   use AuthenticatesUsers;
 
-  /**
-   * Where to redirect users after login.
-   *
-   * @var string
-   */
   protected $redirectTo = RouteServiceProvider::HOME;
   private $apiToken;
   private $authSuccess = false;
   private $authGuard;
 
-  /**
-   * Create a new controller instance.
-   *
-   * @return void
-   */
+
   public function __construct()
   {
     $this->middleware('guest:' . collect(config('auth.guards'))->keys()->implode(','))->except('auth.logout');
@@ -54,11 +33,11 @@ class LoginController extends Controller
 
   static function routes()
   {
-    Route::group(['middleware' => 'web', 'namespace' => '\App\Modules\FzStaff\Http\Controllers\Auth'], function () {
-      Route::get('/login', [LoginController::class, 'showLoginForm'])->name('auth.login');
+    Route::name('auth.')->group(function () {
+      Route::get('/login', [LoginController::class, 'showLoginForm'])->name('login');
       Route::post('login', [LoginController::class, 'login']);
-      Route::post('initialize-login-account', [LoginController::class, 'adminSetNewPassword'])->name('auth.password.new');
-      Route::post('logout', [LoginController::class, 'logout'])->name('auth.logout');
+      Route::post('initialize-login-account', [LoginController::class, 'adminSetNewPassword'])->name('password');
+      Route::post('logout', [LoginController::class, 'logout'])->name('logout');
     });
   }
 
@@ -69,14 +48,6 @@ class LoginController extends Controller
     ]);
   }
 
-  /**
-   * Handle a login request to the application.
-   *
-   * @param  \Illuminate\Http\Request  $request
-   * @return \Illuminate\Http\RedirectResponse|\Illuminate\Http\Response|\Illuminate\Http\JsonResponse
-   *
-   * @throws \Illuminate\Validation\ValidationException
-   */
   public function login(Request $request)
   {
     $this->validateLogin($request);
@@ -101,7 +72,7 @@ class LoginController extends Controller
 
   public function adminSetNewPassword()
   {
-    if (!request('pw')) throw ValidationException::withMessages(['err' => "A password is required for your account."])->status(Response::HTTP_UNPROCESSABLE_ENTITY);
+    if (!request('password')) throw ValidationException::withMessages(['err' => "A new password is required for your account."])->status(Response::HTTP_UNPROCESSABLE_ENTITY);
 
     $user = User::findUserByEmail(request('email')) ?? back()->withFlash(['error'=>'Not Found']);
 
@@ -111,17 +82,11 @@ class LoginController extends Controller
       $user->verified_at = now();
       $user->save();
 
-      return back()->withFlash(['success' => "Password set successfully! Login using your new credentials"]);
+      return back()->withFlash(['success' => "Password set successfully! Login using your new credentials."]);
     }
     return back()->withFlash(['error'=>'Unauthorised']);
   }
 
-  /**
-   * Log the user out of the application.
-   *
-   * @param  \Illuminate\Http\Request  $request
-   * @return \Illuminate\Http\Response
-   */
   public function logout(Request $request)
   {
     $this->authenticatedGuard()->logout();
@@ -137,14 +102,6 @@ class LoginController extends Controller
     return redirect()->route('auth.login');
   }
 
-  /**
-   * Validate the user login request.
-   *
-   * @param  \Illuminate\Http\Request  $request
-   * @return void
-   *
-   * @throws \Illuminate\Validation\ValidationException
-   */
   protected function validateLogin(Request $request)
   {
       $request->validate([
@@ -153,13 +110,6 @@ class LoginController extends Controller
       ]);
   }
 
-
-  /**
-   * Attempt to log the user into the application.
-   *
-   * @param  \Illuminate\Http\Request  $request
-   * @return bool
-   */
   protected function attemptLogin()
   {
     collect(config('auth.guards'))->each(function ($details, $guard) {
@@ -183,12 +133,6 @@ class LoginController extends Controller
     }
   }
 
-  /**
-   * Send the response after the user was authenticated.
-   *
-   * @param  \Illuminate\Http\Request  $request
-   * @return \Illuminate\Http\Response
-   */
   protected function sendLoginResponse(Request $request)
   {
     $request->session()->regenerate();
@@ -201,13 +145,6 @@ class LoginController extends Controller
     return redirect()->intended(route($this->authenticatedGuard()->user()->getDashboardRoute()));
   }
 
-  /**
-   * The user has been authenticated.
-   *
-   * @param  \Illuminate\Http\Request  $request
-   * @param  \App|User  $user
-   * @return mixed
-   */
   protected function authenticated(Request $request, User $user)
   {
     event(new UserLoggedIn($user));
@@ -217,27 +154,17 @@ class LoginController extends Controller
     } else {
       $this->logout($request);
 
-      return back()->withFlash(['action_required'=>true]);
+      return redirect()->route('auth.login')->withFlash(['action_required'=>true]);
     }
 
 
   }
 
-  /**
-   * Get the login username to be used by the controller.
-   *
-   * @return string
-   */
   public function username(): string
   {
     return 'user_name';
   }
 
-  /**
-   * Get the guard to be used during authentication.
-   *
-   * @return \Illuminate\Contracts\Auth\StatefulGuard
-   */
   protected function guard()
   {
     return Auth::guard('fz_staff');

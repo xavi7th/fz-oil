@@ -5,6 +5,7 @@ namespace App;
 use Illuminate\Notifications\Notifiable;
 use App\Modules\SalesRep\Models\SalesRep;
 use App\Modules\SuperAdmin\Models\SuperAdmin;
+use App\Modules\Supervisor\Models\Supervisor;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 
@@ -29,15 +30,7 @@ class User extends Authenticatable
 
   const TABLE_NAME = 'fz_staff';
 
-
-  /**
-   * The attributes that are mass assignable.
-   *
-   * @var array
-   */
-  protected $fillable = [
-    'name', 'email', 'password',
-  ];
+  protected $fillable = ['email', 'user_name', 'password', 'full_name', 'phone', 'gender', 'address', 'id_url', 'staff_role_id', 'verified_at'];
 
   /**
    * The attributes that should be hidden for arrays.
@@ -54,7 +47,8 @@ class User extends Authenticatable
    * @var array
    */
   protected $casts = [
-    'email_verified_at' => 'datetime',
+    'verified_at' => 'datetime',
+    'last_login_at' => 'datetime',
     'is_active' =>'bool'
   ];
 
@@ -108,6 +102,11 @@ class User extends Authenticatable
     } elseif ($this->isSuperAdmin()) {
       return ['isSuperAdmin' => true, 'user_type' => strtolower($this->getType())];
     }
+  }
+
+  static function findUserByEmail(string $email): self
+  {
+    return SalesRep::findByEmail($email) ?? Supervisor::findByEmail($email);
   }
 
   public function toFlare(): array

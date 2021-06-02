@@ -10,6 +10,11 @@ class SalesRepPolicy
 {
   use HandlesAuthorization;
 
+  public function accessDashboard(User $user)
+  {
+    return $user->isSalesRep() ? $this->allow() : $this->deny('You cannot view registered supervisors accounts.');
+  }
+
   /**
    * Determine if the given sales_rep can be created by the user.
    *

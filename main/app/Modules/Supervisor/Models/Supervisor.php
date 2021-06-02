@@ -14,7 +14,6 @@ class Supervisor extends User
   use HasFactory, IsAStaff;
 
   protected $table = parent::TABLE_NAME;
-  protected $fillable = ['email', 'user_name', 'password', 'full_name', 'phone', 'gender', 'address', 'id_url', 'staff_role_id',];
 
   const DASHBOARD_ROUTE_PREFIX = 'supervisors';
   const ROUTE_NAME_PREFIX = 'supervisor.';
