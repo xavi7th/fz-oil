@@ -1,0 +1,13 @@
+{
+    "name": "Supervisor",
+    "alias": "supervisor",
+    "description": "",
+    "keywords": [],
+    "priority": 0,
+    "providers": [
+        "App\\Modules\\Supervisor\\Providers\\SupervisorServiceProvider"
+    ],
+    "aliases": {},
+    "files": [],
+    "requires": []
+}

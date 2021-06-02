@@ -3,6 +3,7 @@
 namespace App\Http\Middleware;
 
 use App\Modules\FzStaff\Models\FzStaff;
+use App\Modules\SalesRep\Models\SalesRep;
 use App\Modules\SuperAdmin\Models\SuperAdmin;
 use Inertia\Middleware;
 use Illuminate\Support\Str;
@@ -87,9 +88,8 @@ class HandleInertiaRequests extends Middleware
     }
     elseif (Str::contains(\Route::currentRouteName(), 'auth')) {
       return 'fzstaff::app';
-    }
-    elseif (Str::contains(\Route::currentRouteName(), FzStaff::ROUTE_NAME_PREFIX)) {
-      return 'fzstaff::app';
+    } elseif (Str::contains(\Route::currentRouteName(), SalesRep::ROUTE_NAME_PREFIX)) {
+      return 'salesrep::app';
     }
     elseif (Str::contains(\Route::currentRouteName(), SuperAdmin::ROUTE_NAME_PREFIX)) {
       return 'superadmin::app';

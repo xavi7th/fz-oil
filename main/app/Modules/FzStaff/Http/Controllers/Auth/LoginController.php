@@ -133,9 +133,8 @@ class LoginController extends Controller
     });
     $request->session()->invalidate();
 
-    if ($request->isApi()) return response()->json(['LOGGED_OUT' => true], 200);
-    return Inertia::location(route('auth.login.show'));
-    return redirect()->route('auth.login.show');
+    return Inertia::location(route('auth.login'));
+    return redirect()->route('auth.login');
   }
 
   /**
@@ -199,7 +198,7 @@ class LoginController extends Controller
       return $response;
     }
 
-    return $request->isApi() ? new Response('', 204) : redirect()->intended(route($this->authenticatedGuard()->user()->getDashboardRoute()));
+    return redirect()->intended(route($this->authenticatedGuard()->user()->getDashboardRoute()));
   }
 
   /**
@@ -213,21 +212,15 @@ class LoginController extends Controller
   {
     event(new UserLoggedIn($user));
 
-    if ($user->isFzStaff()) {
-      redirect()->intended(route($user->getDashboardRoute()));
+    if ($user->is_verified()) {
+      return Inertia::location(route($user->getDashboardRoute()));
     } else {
-      if ($user->is_verified()) {
-        if ($request->isApi()) return response()->json($this->respondWithToken(), 202);
-        return Inertia::location(route($user->getDashboardRoute()));
-        return redirect()->route($user->getDashboardRoute())->withFlash(['success' => 202]);
-        // return redirect()->intended(route($user->getDashboardRoute()))->withFlash(['success' => 202]);
-      } else {
-        $this->logout($request);
+      $this->logout($request);
 
-        if ($request->isApi()) return response()->json(['unverified' => 'Unverified user'], 401);
-        return back()->withFlash(['action_required'=>true]);
-      }
+      return back()->withFlash(['action_required'=>true]);
     }
+
+
   }
 
   /**

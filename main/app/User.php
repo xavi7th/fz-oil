@@ -2,8 +2,9 @@
 
 namespace App;
 
-use App\Modules\FzStaff\Models\FzStaff;
 use Illuminate\Notifications\Notifiable;
+use App\Modules\SalesRep\Models\SalesRep;
+use App\Modules\SuperAdmin\Models\SuperAdmin;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 
@@ -20,10 +21,14 @@ use Illuminate\Foundation\Auth\User as Authenticatable;
  * @method static \Illuminate\Database\Query\Builder|User withTrashed()
  * @method static \Illuminate\Database\Query\Builder|User withoutTrashed()
  * @mixin \Eloquent
+ * @method static \Illuminate\Database\Eloquent\Builder|User active()
  */
 class User extends Authenticatable
 {
   use Notifiable, SoftDeletes;
+
+  const TABLE_NAME = 'fz_staff';
+
 
   /**
    * The attributes that are mass assignable.
@@ -58,9 +63,25 @@ class User extends Authenticatable
     $this->attributes['password'] = bcrypt($value);
   }
 
-  public function isFzStaff(): bool
+  public function isSuperAdmin(): bool
   {
-    return $this instanceof FzStaff;
+    return $this instanceof SuperAdmin;
+  }
+
+  public function isSalesRep(): bool
+  {
+    return $this instanceof SalesRep;
+  }
+
+  public function isFzAdmin(): bool
+  {
+    return false;
+    return $this instanceof SalesRep;
+  }
+
+  public function is_verified():bool
+  {
+    return $this->isSuperAdmin() || $this->verified_at !== null;
   }
 
   public function get_navigation_routes(): array
@@ -76,6 +97,17 @@ class User extends Authenticatable
   public function getType(): string
   {
     return class_basename(get_class($this));
+  }
+
+  public function getUserType(): array
+  {
+    if ($this->isSalesRep()) {
+      return ['isSalesRep' => true, 'user_type' => strtolower($this->getType())];
+    } elseif ($this->isFzAdmin()) {
+      return ['isFzAdmin' => true,'user_type' => strtolower($this->getType())];
+    } elseif ($this->isSuperAdmin()) {
+      return ['isSuperAdmin' => true, 'user_type' => strtolower($this->getType())];
+    }
   }
 
   public function toFlare(): array

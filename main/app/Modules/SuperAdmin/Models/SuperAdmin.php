@@ -2,13 +2,26 @@
 
 namespace App\Modules\SuperAdmin\Models;
 
-use App\Modules\FzStaff\Models\FzStaff;
+use App\User;
 use Illuminate\Database\Eloquent\Builder;
 use App\Modules\SuperAdmin\Models\StaffRole;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use App\Modules\SuperAdmin\Database\Factories\SuperAdminFactory;
 
-class SuperAdmin extends FzStaff
+/**
+ * App\Modules\SuperAdmin\Models\SuperAdmin
+ *
+ * @property-read \Illuminate\Notifications\DatabaseNotificationCollection|\Illuminate\Notifications\DatabaseNotification[] $notifications
+ * @property-read int|null $notifications_count
+ * @property-write mixed $password
+ * @method static \Illuminate\Database\Eloquent\Builder|User active()
+ * @method static \App\Modules\SuperAdmin\Database\Factories\SuperAdminFactory factory(...$parameters)
+ * @method static Builder|SuperAdmin newModelQuery()
+ * @method static Builder|SuperAdmin newQuery()
+ * @method static Builder|SuperAdmin query()
+ * @mixin \Eloquent
+ */
+class SuperAdmin extends User
 {
   use HasFactory;
 

@@ -19,15 +19,4 @@ class SalesRepTest extends TestCase
 
     $this->seed(StaffRoleTableSeeder::class);
   }
-
-  /** @test  */
-  public function sales_rep_can_login()
-  {
-    $this->withoutExceptionHandling();
-
-    $sales_rep = SalesRep::factory()->create(['password' => 'pass']);
-
-    $this->post(route('auth.login'), ['user_name' => $sales_rep->user_name, 'password' => 'pass', 'remember' => true])
-      ->assertRedirect(route('salesrep.dashboard'));
-  }
 }

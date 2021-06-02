@@ -1,9 +1,8 @@
 <?php
 
-use App\Modules\Admin\Models\Admin;
-use App\Modules\FzStaff\Models\FzStaff;
 use App\Modules\SalesRep\Models\SalesRep;
 use App\Modules\SuperAdmin\Models\SuperAdmin;
+use App\Modules\Supervisor\Models\Supervisor;
 
 return [
 
@@ -49,6 +48,10 @@ return [
       'driver' => 'session',
       'provider' => 'super_admins',
     ],
+    'supervisor' => [
+      'driver' => 'session',
+      'provider' => 'supervisors',
+    ],
   ],
 
   /*
@@ -76,6 +79,10 @@ return [
     'super_admins' => [
       'driver' => 'eloquent',
       'model' => SuperAdmin::class,
+    ],
+    'supervisors' => [
+      'driver' => 'eloquent',
+      'model' => Supervisor::class,
     ],
   ],
 

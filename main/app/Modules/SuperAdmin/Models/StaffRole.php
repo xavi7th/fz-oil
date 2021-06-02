@@ -7,6 +7,15 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use App\Modules\SuperAdmin\Database\Factories\StaffRoleFactory;
 
+/**
+ * App\Modules\SuperAdmin\Models\StaffRole
+ *
+ * @method static \App\Modules\SuperAdmin\Database\Factories\StaffRoleFactory factory(...$parameters)
+ * @method static \Illuminate\Database\Eloquent\Builder|StaffRole newModelQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|StaffRole newQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|StaffRole query()
+ * @mixin \Eloquent
+ */
 class StaffRole extends Model
 {
   use HasFactory;

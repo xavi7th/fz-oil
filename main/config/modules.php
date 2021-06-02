@@ -109,7 +109,7 @@ return [
 			'routes' => ['path' => 'Routes', 'generate' => true],
 			'controller' => ['path' => 'Http/Controllers', 'generate' => true],
 			'filter' => ['path' => 'Http/Middleware', 'generate' => true],
-			'request' => ['path' => 'Http/Validations', 'generate' => true],
+			'request' => ['path' => 'Http/Requests', 'generate' => true],
 			'provider' => ['path' => 'Providers', 'generate' => true],
 			'assets' => ['path' => 'Resources', 'generate' => true],
 			'views' => ['path' => 'Resources/views', 'generate' => true],

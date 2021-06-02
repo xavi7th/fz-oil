@@ -22,7 +22,6 @@ class CreateSuperAdminsTable extends Migration
       $table->string('avatar')->nullable();
       $table->string('gender')->enum(['male', 'female'])->nullable();
       $table->string('address')->nullable();
-      $table->timestamp('verified_at')->nullable();
 
       $table->rememberToken();
       $table->timestamps();
