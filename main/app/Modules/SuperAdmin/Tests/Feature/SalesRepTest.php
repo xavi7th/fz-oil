@@ -3,17 +3,20 @@
 namespace App\Modules\SuperAdmin\Tests\Feature;
 
 use Tests\TestCase;
+use Illuminate\Http\UploadedFile;
 use App\Modules\SalesRep\Models\SalesRep;
 use Illuminate\Foundation\Testing\WithFaker;
 use App\Modules\FzCustomer\Models\FzCustomer;
 use App\Modules\Supervisor\Models\Supervisor;
 use App\Modules\FzStockManagement\Models\FzStock;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use App\Modules\PurchaseOrder\Models\CashLodgement;
 use App\Modules\PurchaseOrder\Models\PurchaseOrder;
 use App\Modules\FzStockManagement\Models\FzPriceBatch;
 use App\Modules\FzStockManagement\Models\FzProductType;
 use App\Modules\CompanyBankAccount\Models\CompanyBankAccount;
 use App\Modules\SuperAdmin\Database\Seeders\StaffRoleTableSeeder;
+use Str;
 
 class SalesRepTest extends TestCase
 {
@@ -115,6 +118,7 @@ class SalesRepTest extends TestCase
 
     $page = $this->getResponseData($rsp);
 
+    $this->assertEquals('PurchaseOrder::CashLodgements', $page->component);
     $this->assertArrayHasKey('fz_customers', (array)$page->props);
     $this->assertArrayHasKey('fz_customer_count', (array)$page->props);
     $this->assertArrayHasKey('fz_active_customer_count', (array)$page->props);
@@ -163,6 +167,7 @@ class SalesRepTest extends TestCase
     $rsp = $this->actingAs($this->sales_rep, 'sales_rep')->get(route('purchaseorders.create', $customer))->assertOk();
     $page = $this->getResponseData($rsp);
 
+    $this->assertEquals('PurchaseOrder::CashLodgements', $page->component);
     $this->assertArrayHasKey('company_bank_accounts', (array)$page->props);
     $this->assertArrayHasKey('stock_types', (array)$page->props);
     $this->assertArrayHasKey('price_batches', (array)$page->props);
@@ -282,6 +287,20 @@ class SalesRepTest extends TestCase
   }
 
   /** @test */
+  public function sales_rep_can_not_create_customner_purchase_order_for_suspended_bank_accounts()
+  {
+    $this->assertDatabaseCount('fz_customers', 0);
+    $customer = FzCustomer::factory()->create();
+    $company_bank_account = CompanyBankAccount::factory()->suspended()->create();
+
+    $this->actingAs($this->sales_rep, 'sales_rep')->post(route('purchaseorders.create', $customer), array_merge($this->data_to_create_customer_purchase_order(), ['company_bank_account_id' => $company_bank_account->id]))
+      // ->dumpSession()
+      ->assertSessionHasErrors(['company_bank_account_id' => 'This bank account has been suspended from use']);
+
+    $this->assertDatabaseCount('fz_customers', 1);
+  }
+
+  /** @test */
   public function sales_rep_cannot_create_purchase_order_above_stock_quantity()
   {
     $customer = FzCustomer::factory()->create();
@@ -296,4 +315,70 @@ class SalesRepTest extends TestCase
     $this->assertDatabaseCount('purchase_orders', 0);
   }
 
+  /** @test */
+  public function sales_rep_can_create_cash_lodgement()
+  {
+    $this->withoutExceptionHandling();
+    $company_bank_account = CompanyBankAccount::factory()->create();
+
+    $this->actingAs($this->sales_rep, 'sales_rep')->post(route('purchaseorders.cashlodgement.create'), ['amount' => 300000, 'company_bank_account_id' => $company_bank_account->id, 'lodgement_date' => now(), 'teller' => UploadedFile::fake()->image('teller.jpg')])
+      // ->dumpSession()
+      ->assertRedirect(route('purchaseorders.cashlodgement.create'))
+      ->assertSessionHasNoErrors()
+      ->assertSessionMissing('flash.error')
+      ->assertSessionHas('flash.success', 'Cash lodgement record created.');
+
+    $this->assertCount(1, $company_bank_account->cash_lodgements);
+    $this->assertTrue(CashLodgement::first()->bank()->is($company_bank_account));
+    $this->assertTrue(Str::contains(CashLodgement::first()->teller_url, '/storage/cash-lodgement-tellers/'));
+    $this->assertEquals(300000, $company_bank_account->cash_lodgements()->first()->amount);
+    $this->assertTrue(CompanyBankAccount::first()->cash_lodgements()->first()->is(CashLodgement::first()));
+  }
+
+  /** @test */
+  public function sales_rep_cannot_create_cash_lodgement_to_a_suspended_bank()
+  {
+    $company_bank_account = CompanyBankAccount::factory()->suspended()->create();
+
+    $this->actingAs($this->sales_rep, 'sales_rep')->post(route('purchaseorders.cashlodgement.create'), ['amount' => 300000, 'company_bank_account_id' => $company_bank_account->id, 'lodgement_date' => now()])
+      // ->dumpSession()
+      ->assertSessionHasErrors(['company_bank_account_id' => 'This bank account has been suspended from use']);;
+
+    $this->assertCount(0, $company_bank_account->cash_lodgements);
+  }
+
+  /** @test */
+  public function sales_rep_can_view_cash_lodgement_list()
+  {
+    CompanyBankAccount::factory()->create();
+    CashLodgement::factory()->count(20)->create();
+
+    $rsp = $this->actingAs($this->sales_rep, 'sales_rep')->get(route('purchaseorders.cashlodgement.create'))->assertOk();
+    $page = $this->getResponseData($rsp);
+
+    $this->assertEquals('PurchaseOrder::CashLodgements', $page->component);
+    $this->assertArrayHasKey('errors', (array)$page->props);
+    $this->assertArrayHasKey('cash_lodgements', (array)$page->props);
+    $this->assertArrayHasKey('cash_lodgements_count', (array)$page->props);
+    $this->assertCount(20, (array)$page->props->cash_lodgements);
+    $this->assertEquals(20, $page->props->cash_lodgements_count);
+  }
+
+  /** @test */
+  public function unverified_sales_rep_can_not_view_cash_lodgement_list()
+  {
+    $this->sales_rep->verified_at = null;
+    $this->sales_rep->save();
+
+    $this->actingAs($this->sales_rep, 'sales_rep')->get(route('purchaseorders.cashlodgement.create'))->assertStatus(403);
+  }
+
+  /** @test */
+  public function suspended_sales_rep_can_not_view_cash_lodgement_list()
+  {
+    $this->sales_rep->is_active = false;
+    $this->sales_rep->save();
+
+    $this->actingAs($this->sales_rep, 'sales_rep')->get(route('purchaseorders.cashlodgement.create'))->assertStatus(403);
+  }
 }

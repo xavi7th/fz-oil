@@ -5,6 +5,7 @@ namespace App\Modules\CompanyBankAccount\Models;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use App\Modules\CompanyBankAccount\Database\Factories\CompanyBankAccountFactory;
+use App\Modules\PurchaseOrder\Models\CashLodgement;
 
 /**
  * App\Modules\CompanyBankAccount\Models\CompanyBankAccount
@@ -43,6 +44,11 @@ class CompanyBankAccount extends Model
 
   const DASHBOARD_ROUTE_PREFIX = 'company-bank-accounts';
   const ROUTE_NAME_PREFIX = 'companybankaccount.';
+
+  public function cash_lodgements()
+  {
+    return $this->hasMany(CashLodgement::class);
+  }
 
 
   protected static function newFactory()

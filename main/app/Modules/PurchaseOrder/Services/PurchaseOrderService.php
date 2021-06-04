@@ -3,11 +3,13 @@
 namespace App\Modules\PurchaseOrder\Services;
 
 use Exception;
-use App\Modules\FzStockManagement\Models\FzStock;
-use App\Modules\PurchaseOrder\Models\PurchaseOrder;
-use App\Modules\CompanyBankAccount\Models\CompanyBankAccount;
+use Illuminate\Http\UploadedFile;
 use App\Modules\FzCustomer\Models\FzCustomer;
+use App\Modules\FzStockManagement\Models\FzStock;
+use App\Modules\PurchaseOrder\Models\CashLodgement;
+use App\Modules\PurchaseOrder\Models\PurchaseOrder;
 use App\Modules\FzStockManagement\Models\FzProductType;
+use App\Modules\CompanyBankAccount\Models\CompanyBankAccount;
 
 class PurchaseOrderService
 {
@@ -25,6 +27,7 @@ class PurchaseOrderService
   private $total_amount_paid;
   private $fz_stock;
   private $swapped_in_fz_stock;
+  private $img_url;
 
   public function setProductType($fz_product_type_id)
   {
@@ -66,6 +69,12 @@ class PurchaseOrderService
   public function setSalesRep($sales_rep_id)
   {
     $this->sales_rep_id = $sales_rep_id;
+    return $this;
+  }
+
+  public function setImage($img_index, $save_location)
+  {
+    $this->img_url = compress_image_upload($img_index, $save_location . '/', $save_location . '/thumb/', 1024, true, 100)['img_url'];
     return $this;
   }
 
@@ -111,6 +120,20 @@ class PurchaseOrderService
     }
   }
 
+  public function lodgeCashToBank($amount, $bank_id, $lodgement_date): CashLodgement
+  {
+    if (is_null($this->img_url)) throw new Exception('Teller not uploaded');
+
+    $bank = CompanyBankAccount::findOrFail($bank_id);
+
+    return CashLodgement::create([
+      'company_bank_account_id' => $bank_id,
+      'amount' => $amount,
+      'lodgement_date' => $lodgement_date,
+      'teller_url' => $this->img_url,
+    ]);
+  }
+
   private function processSwap(): PurchaseOrder
   {
     $this->swapped_in_fz_stock = FzStock::getStock($this->swap_product_type_id);
@@ -149,4 +172,6 @@ class PurchaseOrderService
       'total_amount_paid' => $this->total_amount_paid,
     ]);
   }
+
+
 }

@@ -2,11 +2,11 @@
 
 namespace App\Modules\PurchaseOrder\Policies;
 
+use App\Modules\PurchaseOrder\Models\CashLodgement;
 use App\User;
 use Illuminate\Auth\Access\HandlesAuthorization;
-use App\Modules\PurchaseOrder\Models\PurchaseOrder;
 
-class PurchaseOrderPolicy
+class CashLodgementPolicy
 {
   use HandlesAuthorization;
 
@@ -15,7 +15,7 @@ class PurchaseOrderPolicy
     return $user->is_operative() ? $this->allow() : $this->deny('You cannot view registered sales reps accounts.');
   }
 
-  public function view(User $user, PurchaseOrder $purchase_order)
+  public function view(User $user, CashLodgement $cash_lodgement)
   {
     return $user->is_operative() ? $this->allow() : $this->deny('You cannot create this sales rep\'s details.');
   }
@@ -24,10 +24,4 @@ class PurchaseOrderPolicy
   {
     return $user->is_operative() && $user->isSalesRep() ? $this->allow() : $this->deny('You cannot create sales reps.');
   }
-
-  public function createPurchaseOrder(User $user)
-  {
-    return $user->is_operative() && $user->isSalesRep() ? $this->allow() : $this->deny('You cannot create sales reps.');
-  }
-
 }

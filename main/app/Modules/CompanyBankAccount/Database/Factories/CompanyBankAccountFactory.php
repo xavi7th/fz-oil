@@ -25,6 +25,16 @@ class CompanyBankAccountFactory extends Factory
       'account_name' => $this->faker->name,
       'acount_number' => $this->faker->bankAccountNumber,
       'bank_name' => $this->faker->company,
+      'is_active' => true
     ];
+  }
+
+  public function suspended()
+  {
+    return $this->state(function (array $attributes) {
+      return [
+        'is_active' => false,
+      ];
+    });
   }
 }

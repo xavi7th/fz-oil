@@ -2,9 +2,7 @@
 
 namespace App\Modules\PurchaseOrder\Http\Requests;
 
-use App\Modules\FzStockManagement\Models\FzPriceBatch;
 use App\Modules\FzStockManagement\Models\FzProductType;
-use App\Modules\FzStockManagement\Models\FzStock;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Foundation\Http\FormRequest;
 
@@ -36,7 +34,9 @@ class CreatePurchaseOrderRequest extends FormRequest
       'payment_type' => ['required', 'in:cash,bank,credit'],
       'total_selling_price' => ['required', 'numeric'],
       'total_amount_paid' => ['required', 'numeric'],
-      'company_bank_account_id' => ['required', 'exists:company_bank_accounts,id'],
+      'company_bank_account_id' => ['required', 'exists:company_bank_accounts,id', function ($attribute, $value, $fail) {
+        DB::table('company_bank_accounts')->where('id', $value)->first()->is_active ? null : $fail('This bank account has been suspended from use');
+      }],
     ];
   }
 
