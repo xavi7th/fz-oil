@@ -26,7 +26,8 @@ class FzCustomerFactory extends Factory
       'phone' => $this->faker->unique()->phoneNumber,
       'gender' => $this->faker->randomElement(['male', 'female']),
       'address' => $this->faker->unique()->address,
-      'credit_limit' => $this->faker->unique()->email,
+      'credit_limit' => $cl = $this->faker->randomFloat(),
+      'credit_balance' => $cl,
       'is_flagged' => false,
       'is_active' => true,
     ];

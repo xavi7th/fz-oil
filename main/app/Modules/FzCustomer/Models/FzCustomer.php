@@ -7,6 +7,7 @@ use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use App\Modules\FzCustomer\Database\Factories\FzCustomerFactory;
 use App\Modules\PurchaseOrder\Models\PurchaseOrder;
+use Carbon\Carbon;
 
 /**
  * App\Modules\FzCustomer\Models\FzCustomer
@@ -21,9 +22,9 @@ class FzCustomer extends Model
 {
   use HasFactory;
 
-  protected $fillable = ['full_name', 'email', 'phone', 'gender', 'address', 'credit_limit'];
+  protected $fillable = ['full_name', 'email', 'phone', 'gender', 'address', 'credit_limit', 'credit_balance'];
 
-  protected $casts = ['credit_limit' => 'float', 'is_flagged' => 'bool', 'is_active' => 'bool',];
+  protected $casts = ['credit_limit' => 'float', 'credit_balance' => 'float', 'is_flagged' => 'bool', 'is_active' => 'bool',];
 
   const DASHBOARD_ROUTE_PREFIX = 'customers';
   const ROUTE_NAME_PREFIX = 'fzcustomer.';
@@ -33,14 +34,45 @@ class FzCustomer extends Model
     return $this->hasMany(PurchaseOrder::class);
   }
 
+  public function credit_transactions()
+  {
+    return $this->hasMany(CreditTransaction::class);
+  }
+
+  public function createCreditPurchaseTransaction(float $amount, int $recorder_id, string $payment_type, int $bank_id = null): CreditTransaction
+  {
+    return $this->credit_transactions()->create([
+      'recorded_by' => $recorder_id,
+      'trans_type' => 'purchase',
+      'amount' => $amount,
+      'trans_date' => now(),
+      'payment_type' => $payment_type,
+      'company_bank_account_id' => $bank_id,
+      'is_lodged' => $payment_type != 'cash'
+    ]);
+  }
+
+  public function createCreditRepaymentTransaction(float $amount, int $recorder_id, $date, string $payment_type, int $bank_id = null): CreditTransaction
+  {
+    return $this->credit_transactions()->create([
+      'recorded_by' => $recorder_id,
+      'trans_type' => 'repayment',
+      'amount' => $amount,
+      'trans_date' => $date,
+      'payment_type' => $payment_type,
+      'company_bank_account_id' => $bank_id,
+      'is_lodged' => $payment_type != 'cash'
+    ]);
+  }
+
   public function deductCreditBalance(float $amount): int
   {
-    return $this->decrement('credit_limit', $amount);
+    return $this->decrement('credit_balance', $amount);
   }
 
   public function addToCreditBalance(float $amount): int
   {
-    return $this->increment('credit_limit', $amount);
+    return $this->increment('credit_balance', $amount);
   }
 
   public function scopeActive(Builder $query)

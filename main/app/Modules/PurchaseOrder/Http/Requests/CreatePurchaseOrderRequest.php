@@ -13,7 +13,7 @@ class CreatePurchaseOrderRequest extends FormRequest
   {
     return [
       'fz_customer_id' => ['required', 'exists:fz_customers,id', function ($attribute, $value, $fail) {
-        ($customer = DB::table('fz_customers')->where('id', $value)->first())->is_flagged ? $fail('This customer\'s account is currently flagged because ' . $customer->flag_message . '. Contact your supervisor') : null;
+        $this->customer->is_flagged ? $fail('This customer\'s account is currently flagged because ' . $this->customer->flag_message . '. Contact your supervisor') : null;
       }, function ($attribute, $value, $fail) {
         DB::table('fz_customers')->where('id', $value)->first()->is_active ? null : $fail('This customer\'s account is currently suspended and cannot make purchases. Contact your supervisor');
       }],
@@ -33,7 +33,9 @@ class CreatePurchaseOrderRequest extends FormRequest
       'swap_quantity' => ['exclude_unless:is_swap_purchase,true', 'required', 'numeric'],
       'payment_type' => ['required', 'in:cash,bank,credit'],
       'total_selling_price' => ['required', 'numeric'],
-      'total_amount_paid' => ['required', 'numeric'],
+      'total_amount_paid' => ['required', 'numeric', function ($attribute, $value, $fail) {
+        $value > ($this->customer->credit_balance) ? $fail('This customer\'s credit balance is not up to ' . $value) : null;
+      }],
       'company_bank_account_id' => ['required', 'exists:company_bank_accounts,id', function ($attribute, $value, $fail) {
         DB::table('company_bank_accounts')->where('id', $value)->first()->is_active ? null : $fail('This bank account has been suspended from use');
       }],

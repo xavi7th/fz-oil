@@ -13,7 +13,7 @@ class PurchaseOrder extends Model
 {
   use HasFactory;
 
-  protected $fillable = ['fz_customer_id', 'fz_product_type_id', 'fz_price_batch_id', 'sales_rep_id', 'is_swap_transaction', 'purchased_quantity', 'swap_product_type_id', 'swap_quantity', 'swap_value', 'total_selling_price', 'total_amount_paid', 'payment_type'];
+  protected $fillable = ['fz_customer_id', 'fz_product_type_id', 'fz_price_batch_id', 'sales_rep_id', 'is_swap_transaction', 'purchased_quantity', 'swap_product_type_id', 'swap_quantity', 'swap_value', 'total_selling_price', 'total_amount_paid', 'payment_type', 'is_lodged'];
 
   const DASHBOARD_ROUTE_PREFIX = 'purchase-orders';
   const ROUTE_NAME_PREFIX = 'purchaseorders.';
@@ -30,12 +30,17 @@ class PurchaseOrder extends Model
 
   static function cashInOffice(): float
   {
-    return self::cash()->sum('total_amount_paid');
+    return self::cash()->notLodged()->sum('total_amount_paid');
   }
 
   public function getTotalCostPriceAttribute()
   {
     return $this->quantity * $this->product_type->cost_price;
+  }
+
+  public function scopeNotLodged(Builder $query)
+  {
+    return $query->where('is_lodged', false);
   }
 
   public function scopeCash(Builder $query)

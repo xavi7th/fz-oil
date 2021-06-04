@@ -26,6 +26,7 @@ class PurchaseOrderController extends Controller
       Route::get('', [self::class, 'index'])->name('list');
       Route::get('cash-lodgement/create', [self::class, 'viewCashLodgements'])->name('cashlodgement.create');
       Route::post('cash-lodgement/create', [self::class, 'createCashLodgements']);
+
       Route::get('{customer}/create', [self::class, 'create'])->name('create');
       Route::post('{customer}/create', [self::class, 'store']);
 
@@ -53,7 +54,7 @@ class PurchaseOrderController extends Controller
     ]);
   }
 
-  public function store(CreatePurchaseOrderRequest $request)
+  public function store(CreatePurchaseOrderRequest $request, FzCustomer $customer)
   {
     $this->authorize('create', PurchaseOrder::class);
 
@@ -62,7 +63,7 @@ class PurchaseOrderController extends Controller
         ->setPriceBatch($request->fz_price_batch_id)
         ->setPurchasedQuantity($request->purchased_quantity)
         ->setSwapStatus($request->is_swap_purchase, $request->swap_quantity, $request->swap_product_type_id)
-        ->setCustomer($request->fz_customer_id)
+        ->setCustomer($customer->id)
         ->setPaymentType($request->payment_type, $request->company_bank_account_id)
         ->setAmount($request->total_selling_price, $request->total_amount_paid)
         ->setSalesRep($request->user()->id)
@@ -92,7 +93,9 @@ class PurchaseOrderController extends Controller
       'company_bank_account_id' => ['required', 'exists:company_bank_accounts,id', function ($attribute, $value, $fail) {
         DB::table('company_bank_accounts')->where('id', $value)->first()->is_active ? null : $fail('This bank account has been suspended from use');
       }],
-      'amount' => ['required', 'numeric'],
+      'amount' => ['required', 'numeric', function ($attribute, $value, $fail) {
+        DB::table('purchase_orders')->where('payment_type', 'cash')->sum('total_amount_paid') > $value ? null : $fail('There is not enough cash in the office to make this cash lodgement.');
+      }],
       'lodgement_date' => ['required', 'date'],
       'teller' => ['required', 'image']
     ]);

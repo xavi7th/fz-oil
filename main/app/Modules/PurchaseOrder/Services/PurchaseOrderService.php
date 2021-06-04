@@ -102,14 +102,7 @@ class PurchaseOrderService
     FzStock::gallon()->first()->decrementStock($this->purchased_quantity);
 
     if ($this->payment_type == 'credit') {
-      $this->fz_customer = FzCustomer::find($this->fz_customer_id);
-      if (!$this->fz_customer) throw new Exception("Invalid customer selected");
-
-      try {
-        $this->fz_customer->deductCreditBalance($this->total_amount_paid);
-      } catch (\Throwable $th) {
-        throw new Exception('Insufficient Customer credit balance');
-      }
+      $this->processCreditPurchase();
     }
 
 
@@ -134,14 +127,28 @@ class PurchaseOrderService
     ]);
   }
 
+  private function processCreditPurchase()
+  {
+    $this->fz_customer = FzCustomer::find($this->fz_customer_id);
+    if (!$this->fz_customer) throw new Exception("Invalid customer selected");
+
+    try {
+      $this->fz_customer->deductCreditBalance($this->total_amount_paid);
+      $this->fz_customer->createCreditPurchaseTransaction($this->total_amount_paid, $this->sales_rep_id, $this->payment_type, $this->bank_id);
+    } catch (\Throwable $th) {
+      throw new Exception($th->getMessage());
+    }
+  }
+
   private function processSwap(): PurchaseOrder
   {
     $this->swapped_in_fz_stock = FzStock::getStock($this->swap_product_type_id);
     $fz_product_type = FzProductType::find($this->fz_product_type_id);
 
     if (!$this->swapped_in_fz_stock) throw new Exception("Invalid swap stock selected");
-
     $this->swapped_in_fz_stock->incrementStock($this->swap_quantity);
+
+    $is_lodged = $this->payment_type != 'cash';
 
     return PurchaseOrder::create([
       'payment_type' => strtolower($this->payment_type),
@@ -156,11 +163,13 @@ class PurchaseOrderService
       'swap_quantity' => $this->swap_quantity,
       'swap_value' => $fz_product_type->swap_value,
       'total_amount_paid' => $this->total_amount_paid,
+      'is_lodged' => $is_lodged,
     ]);
   }
 
   private function createPurchaseOrder(): PurchaseOrder
   {
+    $is_lodged = $this->payment_type != 'cash';
     return  PurchaseOrder::create([
       'payment_type' => strtolower($this->payment_type),
       'fz_customer_id' => $this->fz_customer_id,
@@ -170,6 +179,7 @@ class PurchaseOrderService
       'purchased_quantity' => $this->purchased_quantity,
       'total_selling_price' => $this->total_selling_price,
       'total_amount_paid' => $this->total_amount_paid,
+      'is_lodged' => $is_lodged,
     ]);
   }
 

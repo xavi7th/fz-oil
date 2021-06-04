@@ -134,4 +134,16 @@ abstract class TestCase extends BaseTestCase
       'expense_date' => $this->faker->dateTimeThisMonth,
     ];
   }
+
+  protected function data_to_create_credit_repayment()
+  {
+    return [
+      'recorded_by' => SalesRep::factory()->create()->id,
+      'trans_type' => $this->faker->randomElement(['repayment', 'purchase', 'purchase', 'purchase']),
+      'amount' => $this->faker->randomFloat(),
+      'trans_date' => $this->faker->dateTimeThisYear,
+      'payment_type' => $this->faker->randomElement(['cash', 'bank']),
+      'company_bank_account_id' => CompanyBankAccount::factory()->create()->id,
+    ];
+  }
 }

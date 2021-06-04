@@ -2,13 +2,14 @@
 
 namespace App\Modules\SalesRep\Models;
 
-use App\Modules\OfficeExpense\Models\OfficeExpense;
 use App\User;
 use Illuminate\Database\Eloquent\Builder;
+use App\Modules\SuperAdmin\Traits\IsAStaff;
 use App\Modules\SuperAdmin\Models\StaffRole;
+use App\Modules\OfficeExpense\Models\OfficeExpense;
+use App\Modules\FzCustomer\Models\CreditTransaction;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use App\Modules\SalesRep\Database\Factories\SalesRepFactory;
-use App\Modules\SuperAdmin\Traits\IsAStaff;
 
 /**
  * App\Modules\SalesRep\Models\SalesRep
@@ -35,6 +36,11 @@ class SalesRep extends User
   public function expenses()
   {
     return $this->hasMany(OfficeExpense::class);
+  }
+
+  public function recorded_credit_transactions()
+  {
+    return $this->hasMany(CreditTransaction::class, 'recorded_by');
   }
 
   protected static function newFactory()
