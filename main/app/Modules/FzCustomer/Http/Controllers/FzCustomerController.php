@@ -74,9 +74,9 @@ class FzCustomerController extends Controller
     try {
       $request->createRepaymentTransaction();
     } catch (\Throwable $th) {
-      return redirect()->route('fzcustomer.credit_transactions.list')->withFlash(['error' => $th->getMessage()]);
+      return redirect()->route('fzcustomer.credit_transactions.list', $customer)->withFlash(['error' => $th->getMessage()]);
     }
 
-    return redirect()->route('fzcustomer.credit_transactions.list')->withFlash(['success' => 'Repayment transaction created.']);
+    return redirect()->route('fzcustomer.credit_transactions.list', $customer)->withFlash(['success' => 'Repayment transaction created.']);
   }
 }

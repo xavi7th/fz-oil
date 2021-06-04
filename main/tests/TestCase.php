@@ -105,13 +105,8 @@ abstract class TestCase extends BaseTestCase
   {
     return [
       'fz_customer_id' => optional(FzCustomer::first())->id ?? FzCustomer::factory()->create()->id,
-      'fz_product_type_id' => optional(FzProductType::first())->id ?? FzProductType::factory()->create()->id,
-      'fz_price_batch_id' => optional(FzPriceBatch::first())->id ?? FzPriceBatch::factory()->create()->id,
-      'purchased_quantity' => $this->faker->randomDigitNotNull,
       'is_swap_purchase' => false,
-      'swap_product_type_id' => optional(FzProductType::first())->id ?? FzProductType::factory()->create()->id,
       'swap_quantity' => $this->faker->randomDigit,
-      'payment_type' => $this->faker->randomElement(['cash', 'bank', 'credit']),
       'total_selling_price' => $this->faker->randomFloat,
       'total_amount_paid' => $this->faker->randomFloat,
       'company_bank_account_id' => CompanyBankAccount::factory()->create()->id,
@@ -120,8 +115,6 @@ abstract class TestCase extends BaseTestCase
       'swap_product_type_id' => optional(FzStock::gallon()->first())->fz_product_type_id ?? FzStock::factory()->gallon()->create()->fz_product_type_id,
       'purchased_quantity' => 10,
       'payment_type' => 'cash',
-      'is_swap_purchase' => true,
-      'swap_quantity' => 100,
     ];
   }
 

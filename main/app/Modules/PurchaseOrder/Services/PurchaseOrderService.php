@@ -3,7 +3,6 @@
 namespace App\Modules\PurchaseOrder\Services;
 
 use Exception;
-use Illuminate\Http\UploadedFile;
 use App\Modules\FzCustomer\Models\FzCustomer;
 use App\Modules\FzStockManagement\Models\FzStock;
 use App\Modules\PurchaseOrder\Models\CashLodgement;

@@ -12,7 +12,10 @@ class CreateOfficeExpenseRequest extends FormRequest
   {
     return [
       'amount' => ['required', 'numeric', function ($attribute, $value, $fail) {
-        $this->payment_type == 'cash' && DB::table('purchase_orders')->where('payment_type', 'cash')->sum('total_amount_paid') > $value ? null : $fail('There is not enough cash in the office to fund this expense');
+        if ($this->payment_type == 'cash') {
+          (DB::table('purchase_orders')->where('payment_type', 'cash')->where('is_lodged', false)->sum('total_amount_paid') + DB::table('credit_transactions')->where('payment_type', 'cash')->where('is_lodged', false)->sum('amount')) > $value
+            ? null : $fail('There is not enough cash in the office to fund this expense');
+        }
       }],
       'payment_type' => ['required', 'in:cash,transfer'],
       'description' => ['required', 'string'],

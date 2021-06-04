@@ -120,7 +120,7 @@ class SalesRepTest extends TestCase
 
     $page = $this->getResponseData($rsp);
 
-    $this->assertEquals('PurchaseOrder::CashLodgements', $page->component);
+    $this->assertEquals('FzCustomer::ManageCustomers', $page->component);
     $this->assertArrayHasKey('fz_customers', (array)$page->props);
     $this->assertArrayHasKey('fz_customer_count', (array)$page->props);
     $this->assertArrayHasKey('fz_active_customer_count', (array)$page->props);
@@ -158,7 +158,7 @@ class SalesRepTest extends TestCase
   {
     $this->withoutExceptionHandling();
 
-    $customer = FzCustomer::factory()->active()->create();
+    $customer = FzCustomer::factory()->create();
     CompanyBankAccount::factory()->count(3)->create();
     FzPriceBatch::factory()->count(3)->create();
 
@@ -169,7 +169,7 @@ class SalesRepTest extends TestCase
     $rsp = $this->actingAs($this->sales_rep, 'sales_rep')->get(route('purchaseorders.create', $customer))->assertOk();
     $page = $this->getResponseData($rsp);
 
-    $this->assertEquals('PurchaseOrder::CashLodgements', $page->component);
+    $this->assertEquals('PurchaseOrder::Create', $page->component);
     $this->assertArrayHasKey('company_bank_accounts', (array)$page->props);
     $this->assertArrayHasKey('stock_types', (array)$page->props);
     $this->assertArrayHasKey('price_batches', (array)$page->props);
@@ -180,9 +180,9 @@ class SalesRepTest extends TestCase
   /** @test */
   public function sales_rep_can_create_new_customner_purchase_order()
   {
-    $this->withoutExceptionHandling();
+    // $this->withoutExceptionHandling();
 
-    $customer = FzCustomer::factory()->create();
+    $customer = FzCustomer::factory()->create(['credit_limit' => 100000000000000, 'credit_balance' => 10000000000000]);
 
     FzStock::factory()->gallon()->create(['stock_quantity' => 150]);
     FzStock::factory()->count(3)->oil()->create(['stock_quantity' => 50]);
@@ -190,7 +190,7 @@ class SalesRepTest extends TestCase
     $this->assertEquals(150, FzStock::gallon()->first()->stock_quantity);
 
     $this->actingAs($this->sales_rep, 'sales_rep')->post(route('purchaseorders.create', $customer), array_merge($this->data_to_create_customer_purchase_order(), ['fz_customer_id' => $customer->id, 'fz_product_type_id' => FzStock::oil()->first()->fz_product_type_id, 'fz_price_batch_id' => FzStock::oil()->first()->fz_price_batch_id, 'purchased_quantity' => 10, 'payment_type' => 'cash']))
-      // ->dumpSession()
+    // ->dumpSession()
       ->assertRedirect(route('purchaseorders.list'))
       ->assertSessionHasNoErrors()
       ->assertSessionMissing('flash.error')
@@ -212,13 +212,11 @@ class SalesRepTest extends TestCase
   /** @test */
   public function a_credit_transaction_will_be_created_on_credit_purchase()
   {
-    $this->withoutExceptionHandling();
+    // $this->withoutExceptionHandling();
 
-    $customer = FzCustomer::factory()->create();
+    $customer = FzCustomer::factory()->create(['credit_limit' => 100000000000000, 'credit_balance' => 10000000000000]);
     $old_balance = $customer->credit_balance;
     $old_limit = $customer->credit_limit;
-
-    $this->assertEquals($customer->credit_limit, $customer->credit_balance);
 
     FzStock::factory()->gallon()->create(['stock_quantity' => 150]);
     FzStock::factory()->count(3)->oil()->create(['stock_quantity' => 50]);
@@ -246,27 +244,37 @@ class SalesRepTest extends TestCase
     $this->assertDatabaseCount('fz_customers', 1);
     $this->assertDatabaseCount('credit_transactions', 1);
     $this->assertEquals(number_format($old_balance - 30000), number_format($customer->credit_balance));
-    $this->assertEquals($old_limit, $customer->credit_limit);
+    $this->assertEquals(number_format($old_limit), number_format($customer->credit_limit));
     $this->assertTrue(FzCustomer::first()->credit_transactions()->first()->is(CreditTransaction::first()));
     $this->assertTrue(CreditTransaction::first()->customer->is(FzCustomer::first()));
   }
 
   /** @test */
-  public function sales_rep_can_create_customner_purchase_order_with_credit()
+  public function sales_rep_can_create_customer_purchase_order_with_credit()
   {
-    $this->withoutExceptionHandling();
+    // $this->withoutExceptionHandling();
 
-    $customer = FzCustomer::factory()->create(['credit_balance' => 100000]);
-    FzStock::factory()->count(3)->create(['fz_product_type_id' => 1, 'stock_quantity' => 50]);
+    $customer = FzCustomer::factory()->create(['credit_limit' => 100000000000000, 'credit_balance' => 10000000000000]);
+    FzStock::factory()->gallon()->create(['stock_quantity' => 150]);
+    FzStock::factory()->count(3)->oil()->create(['stock_quantity' => 50]);
 
     $this->assertDatabaseCount('fz_customers', 1);
-    $this->assertEquals(100000, FzCustomer::first()->credit_balance);
+    $this->assertEquals(10000000000000, FzCustomer::first()->credit_balance);
 
-    $this->actingAs($this->sales_rep, 'sales_rep')->post(route('purchaseorders.create', $customer), array_merge($this->data_to_create_customer_purchase_order(), ['fz_customer_id' => $customer->id, 'fz_product_type_id' => 1, 'payment_type' => 'credit', 'total_amount_paid' => 50000]))
+    $this->actingAs($this->sales_rep, 'sales_rep')->post(route('purchaseorders.create', $customer), array_merge(
+      $this->data_to_create_customer_purchase_order(),
+      [
+        'fz_customer_id' => $customer->id,
+        'fz_product_type_id' => FzStock::oil()->first()->fz_product_type_id,
+        'fz_price_batch_id' => FzStock::oil()->first()->fz_price_batch_id,
+        'payment_type' => 'credit', 'total_amount_paid' => 50000
+      ]
+    ))
+    // ->dumpSession()
       ->assertSessionHas('flash.success', 'Customer\'s Purchase Order created.');
 
     $this->assertDatabaseCount('fz_customers', 1);
-    $this->assertEquals(50000, FzCustomer::first()->credit_balance);
+    $this->assertEquals(10000000000000, FzCustomer::first()->credit_balance + 50000);
   }
 
   /** @test */
@@ -383,8 +391,9 @@ class SalesRepTest extends TestCase
   /** @test */
   public function sales_rep_can_create_cash_lodgement()
   {
-    $this->withoutExceptionHandling();
+    // $this->withoutExceptionHandling();
     $company_bank_account = CompanyBankAccount::factory()->create();
+    ray(CreditTransaction::factory()->cash()->repayment()->create(['amount' => 500000, 'is_lodged' => false]));
 
     $this->actingAs($this->sales_rep, 'sales_rep')->post(route('purchaseorders.cashlodgement.create'), ['amount' => 300000, 'company_bank_account_id' => $company_bank_account->id, 'lodgement_date' => now(), 'teller' => UploadedFile::fake()->image('teller.jpg')])
       // ->dumpSession()
@@ -460,7 +469,8 @@ class SalesRepTest extends TestCase
   /** @test */
   public function sales_rep_can_create_expenses()
   {
-    $this->withoutExceptionHandling();
+    // $this->withoutExceptionHandling();
+    ray(CreditTransaction::factory()->cash()->repayment()->create(['amount' => 30000, 'is_lodged' => false]));
 
     $this->assertDatabaseCount('office_expenses', 0);
 
@@ -532,27 +542,24 @@ class SalesRepTest extends TestCase
   public function sales_rep_can_create_credit_repayment()
   {
     // $this->withoutExceptionHandling();
-    $customer = FzCustomer::factory()->create();
+    $customer = FzCustomer::factory()->create(['credit_limit' => 100000000000000, 'credit_balance' => 10000000000000]);
 
     FzStock::factory()->gallon()->create(['stock_quantity' => 150]);
     FzStock::factory()->count(3)->oil()->create(['stock_quantity' => 50]);
 
     $this->assertEquals(150, FzStock::gallon()->first()->stock_quantity);
 
-    $this->actingAs($this->sales_rep, 'sales_rep')->post(route('purchaseorders.create', $customer), array_merge($this->data_to_create_customer_purchase_order(), ['fz_customer_id' => $customer->id, 'fz_product_type_id' => FzStock::oil()->first()->fz_product_type_id, 'fz_price_batch_id' => FzStock::oil()->first()->fz_price_batch_id, 'purchased_quantity' => 10, 'payment_type' => 'cash']))
-      ->dumpSession();
-
-
-    $this->assertDatabaseCount('credit_transactions', 5);
+    $this->actingAs($this->sales_rep, 'sales_rep')->post(route('purchaseorders.create', $customer), array_merge($this->data_to_create_customer_purchase_order(), ['fz_customer_id' => $customer->id, 'fz_product_type_id' => FzStock::oil()->first()->fz_product_type_id, 'fz_price_batch_id' => FzStock::oil()->first()->fz_price_batch_id, 'purchased_quantity' => 10, 'payment_type' => 'cash']));
+      // ->dumpSession();
 
     $this->actingAs($this->sales_rep, 'sales_rep')->post(route('fzcustomer.credit_transactions.repayment', $customer), array_merge($this->data_to_create_credit_repayment(), ['amount' => 20000, 'recorded_by' => $this->sales_rep->id, 'trans_date' => now()->subDays(5)]))
-      ->dumpSession()
-      ->assertRedirect(route('fzcustomer.credit_transactions.list'))
-      ->assertSessionHasNoErrors()
-      ->assertSessionMissing('flash.error')
+    // ->dumpSession()
+    ->assertRedirect(route('fzcustomer.credit_transactions.list', $customer))
+    ->assertSessionHasNoErrors()
+    ->assertSessionMissing('flash.error')
       ->assertSessionHas('flash.success', 'Repayment transaction created.');
 
-    $this->assertDatabaseCount('credit_transactions', 6);
+    $this->assertDatabaseCount('credit_transactions', 1);
     $this->assertTrue(FzCustomer::first()->credit_transactions()->first()->is(CreditTransaction::first()));
     $this->assertTrue(SalesRep::first()->recorded_credit_transactions()->first()->is(CreditTransaction::first()));
     $this->assertTrue(CreditTransaction::first()->sales_rep->is(SalesRep::first()));
@@ -561,6 +568,33 @@ class SalesRepTest extends TestCase
     $this->assertContains(CreditTransaction::first()->payment_type, ['cash', 'bank']);
     $this->assertEquals('repayment', CreditTransaction::first()->trans_type);
     $this->assertEquals(now()->subDays(5)->startOfDay(), CreditTransaction::first()->trans_date);
+  }
+
+  /** @test */
+  public function customer_credit_balance_will_increase_on_credit_repayment()
+  {
+    $this->withoutExceptionHandling();
+
+    $customer = FzCustomer::factory()->create(['credit_limit' => 100000000000000, 'credit_balance' => 10000000000000]);
+    $old_balance = $customer->credit_balance;
+    $old_limit = $customer->credit_limit;
+
+    FzStock::factory()->gallon()->create(['stock_quantity' => 150]);
+    FzStock::factory()->count(3)->oil()->create(['stock_quantity' => 50]);
+
+    $this->assertEquals(150, FzStock::gallon()->first()->stock_quantity);
+
+    $this->actingAs($this->sales_rep, 'sales_rep')->post(route('purchaseorders.create', $customer), array_merge($this->data_to_create_customer_purchase_order(), ['fz_customer_id' => $customer->id, 'fz_product_type_id' => FzStock::oil()->first()->fz_product_type_id, 'fz_price_batch_id' => FzStock::oil()->first()->fz_price_batch_id, 'purchased_quantity' => 10, 'payment_type' => 'cash']));
+    // ->dumpSession();
+
+    $this->actingAs($this->sales_rep, 'sales_rep')->post(route('fzcustomer.credit_transactions.repayment', $customer), array_merge($this->data_to_create_credit_repayment(), ['amount' => 20000, 'recorded_by' => $this->sales_rep->id, 'trans_date' => now()->subDays(5)]))
+      // ->dumpSession()
+      ->assertSessionHas('flash.success', 'Repayment transaction created.');
+    $customer->refresh();
+
+    $this->assertDatabaseCount('credit_transactions', 1);
+    $this->assertEquals($old_limit, $customer->credit_limit);
+    $this->assertEquals($old_balance + 20000, $customer->credit_balance);
   }
 
   /** @test */
