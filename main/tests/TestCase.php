@@ -7,8 +7,13 @@ use Illuminate\Database\Connection;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\SQLiteConnection;
 use App\Modules\SuperAdmin\Models\StaffRole;
+use App\Modules\FzCustomer\Models\FzCustomer;
 use Illuminate\Database\Schema\SQLiteBuilder;
+use App\Modules\FzStockManagement\Models\FzStock;
+use App\Modules\FzStockManagement\Models\FzPriceBatch;
+use App\Modules\FzStockManagement\Models\FzProductType;
 use Illuminate\Foundation\Testing\TestCase as BaseTestCase;
+use App\Modules\CompanyBankAccount\Models\CompanyBankAccount;
 
 abstract class TestCase extends BaseTestCase
 {
@@ -81,6 +86,41 @@ abstract class TestCase extends BaseTestCase
       'id_url' => $this->faker->imageUrl(),
       'is_active' => false,
       'staff_role_id' => StaffRole::salesRepId(),
+    ];
+  }
+
+  protected function data_to_create_customer(): array
+  {
+    return [
+      'email' => $this->faker->unique()->email,
+      'full_name' => $this->faker->unique()->name,
+      'phone' => $this->faker->unique()->phoneNumber,
+      'gender' => $this->faker->randomElement(['male', 'female']),
+      'address' => $this->faker->address,
+    ];
+  }
+
+  protected function data_to_create_customer_purchase_order(): array
+  {
+    return [
+      'fz_customer_id' => optional(FzCustomer::first())->id ?? FzCustomer::factory()->create()->id,
+      'fz_product_type_id' => optional(FzProductType::first())->id ?? FzProductType::factory()->create()->id,
+      'fz_price_batch_id' => optional(FzPriceBatch::first())->id ?? FzPriceBatch::factory()->create()->id,
+      'purchased_quantity' => $this->faker->randomDigitNotNull,
+      'is_swap_purchase' => false,
+      'swap_product_type_id' => optional(FzProductType::first())->id ?? FzProductType::factory()->create()->id,
+      'swap_quantity' => $this->faker->randomDigit,
+      'payment_type' => $this->faker->randomElement(['cash', 'bank', 'credit']),
+      'total_selling_price' => $this->faker->randomFloat,
+      'total_amount_paid' => $this->faker->randomFloat,
+      'company_bank_account_id' => CompanyBankAccount::factory()->create()->id,
+      'fz_product_type_id' => optional(FzStock::oil()->first())->fz_product_type_id ?? FzStock::factory()->oil()->create()->fz_product_type_id,
+      'fz_price_batch_id' => optional(FzStock::oil()->first())->fz_price_batch_id ?? FzStock::factory()->oil()->create()->fz_price_batch_id,
+      'swap_product_type_id' => optional(FzStock::gallon()->first())->fz_product_type_id ?? FzStock::factory()->gallon()->create()->fz_product_type_id,
+      'purchased_quantity' => 10,
+      'payment_type' => 'cash',
+      'is_swap_purchase' => true,
+      'swap_quantity' => 100,
     ];
   }
 }

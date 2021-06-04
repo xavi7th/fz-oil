@@ -2,7 +2,7 @@
 <html>
 
 <head>
-	@routes(['salesrep', 'fzstaff', 'public', 'auth'])
+	@routes(['salesrep', 'generic', 'public', 'auth'])
 
 	<title>Admin Dashboard HTML Template</title>
 	<meta charset="utf-8">

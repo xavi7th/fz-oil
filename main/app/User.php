@@ -78,6 +78,11 @@ class User extends Authenticatable
     return $this->isSuperAdmin() || $this->verified_at !== null;
   }
 
+  public function is_operative():bool
+  {
+    return $this->isSuperAdmin() || ($this->is_verified() && $this->is_active);
+  }
+
   public function get_navigation_routes(): array
   {
     return get_related_routes(strtolower($this->getType()), ['GET'], $isHeirarchical = true);

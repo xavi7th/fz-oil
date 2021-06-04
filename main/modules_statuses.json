@@ -8,5 +8,6 @@
     "FzStockManagement": true,
     "FzCustomer": true,
     "OfficeExpense": true,
-    "SalesRep": true
+    "SalesRep": true,
+    "PurchaseOrder": true
 }

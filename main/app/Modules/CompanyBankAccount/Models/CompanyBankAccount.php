@@ -39,7 +39,7 @@ class CompanyBankAccount extends Model
 {
   use HasFactory;
 
-  protected $fillable = [];
+  protected $fillable = ['account_name','acount_number','bank_name',];
 
   const DASHBOARD_ROUTE_PREFIX = 'company-bank-accounts';
   const ROUTE_NAME_PREFIX = 'companybankaccount.';

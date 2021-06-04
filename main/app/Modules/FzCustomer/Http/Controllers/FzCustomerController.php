@@ -4,50 +4,42 @@ namespace App\Modules\FzCustomer\Http\Controllers;
 
 use Inertia\Inertia;
 use Illuminate\Http\Request;
-use Illuminate\Routing\Controller;
+use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Route;
-use Illuminate\Contracts\Support\Renderable;
 use App\Modules\FzCustomer\Models\FzCustomer;
+use App\Modules\FzCustomer\Http\Requests\CreateCustomerRequest;
 
 class FzCustomerController extends Controller
 {
 
   static function routes()
   {
-    Route::middleware('web')->prefix(FzCustomer::DASHBOARD_ROUTE_PREFIX)->name(FzCustomer::ROUTE_NAME_PREFIX)->group(function () {
-      Route::get('', [self::class, 'index'])->name('index');
+    Route::prefix(FzCustomer::DASHBOARD_ROUTE_PREFIX)->name(FzCustomer::ROUTE_NAME_PREFIX)->group(function () {
+      Route::get('', [self::class, 'index'])->name('list');
+      Route::post('create', [self::class, 'store'])->name('create');
       Route::get('credit-repayment', [self::class, 'manageCustomerCredit'])->name('credit');
     });
   }
     public function index()
     {
-      return Inertia::render('FzCustomer::ManageCustomers')->withViewData([
-        'title' => 'Hello theEects',
-        'metaDesc' => ' This page is ...'
+      $this->authorize('viewAny', FzCustomer::class);
+
+      return Inertia::render('FzCustomer::ManageCustomers',[
+        'fz_customers' => FzCustomer::all(),
+        'fz_customer_count' => FzCustomer::count(),
+        'fz_active_customer_count' => FzCustomer::active()->count(),
+        'fz_suspended_customer_count' => FzCustomer::suspended()->count(),
+        'fz_flagged_customer_count' => FzCustomer::flagged()->count(),
       ]);
     }
 
-    public function create()
+    public function store(CreateCustomerRequest $request)
     {
-        return view('fzcustomer::create');
-    }
+      $this->authorize('create', FzCustomer::class);
 
+      $request->createFzCustomer();
 
-    public function store(Request $request)
-    {
-        //
-    }
-
-
-    public function show($id)
-    {
-        return view('fzcustomer::show');
-    }
-
-
-    public function edit($id)
-    {
-        return view('fzcustomer::edit');
+      return redirect()->route('fzcustomer.list')->withFlash(['success' => 'Customer account created. Transactions can be carried out for the user.']);
     }
 
     public function update(Request $request, $id)
