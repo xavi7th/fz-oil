@@ -15,6 +15,7 @@ use App\Modules\PurchaseOrder\Models\PurchaseOrder;
 use App\Modules\FzStockManagement\Models\FzPriceBatch;
 use App\Modules\FzStockManagement\Models\FzProductType;
 use App\Modules\CompanyBankAccount\Models\CompanyBankAccount;
+use App\Modules\OfficeExpense\Models\OfficeExpense;
 use App\Modules\SuperAdmin\Database\Seeders\StaffRoleTableSeeder;
 use Str;
 
@@ -380,5 +381,87 @@ class SalesRepTest extends TestCase
     $this->sales_rep->save();
 
     $this->actingAs($this->sales_rep, 'sales_rep')->get(route('purchaseorders.cashlodgement.create'))->assertStatus(403);
+  }
+
+  /** @test */
+  public function sales_rep_cannot_create_cash_lodgements_above_cash_in_office()
+  {
+    $this->markTestSkipped('Implement ASAP');
+  }
+
+  /** @test */
+  public function sales_rep_can_create_expenses()
+  {
+    $this->withoutExceptionHandling();
+
+    $this->assertDatabaseCount('office_expenses', 0);
+
+    $this->actingAs($this->sales_rep, 'sales_rep')->post(route('officeexpense.create'), array_merge($this->data_to_create_expense(), ['amount' => 20000]))
+      // ->dumpSession()
+      ->assertRedirect(route('officeexpense.list'))
+      ->assertSessionHasNoErrors()
+      ->assertSessionMissing('flash.error')
+      ->assertSessionHas('flash.success', 'Office Expense created.');
+
+    $this->assertDatabaseCount('office_expenses', 1);
+    $this->assertTrue(SalesRep::first()->expenses()->first()->is(OfficeExpense::first()));
+    $this->assertTrue(OfficeExpense::first()->sales_rep->is(SalesRep::first()));
+    $this->assertEquals(20000, OfficeExpense::first()->amount);
+    $this->assertEquals('transfer', OfficeExpense::first()->payment_type);
+  }
+
+  /** @test */
+  public function sales_rep_cannot_create_expenses_above_cash_in_office()
+  {
+    // $this->withoutExceptionHandling();
+    PurchaseOrder::factory()->count(5)->cash()->create(['is_swap_transaction' => $this->faker->randomElement([true, false]), 'total_amount_paid' => 3000]);
+
+    $this->assertDatabaseCount('office_expenses', 0);
+
+    $this->actingAs($this->sales_rep, 'sales_rep')->post(route('officeexpense.create'), array_merge($this->data_to_create_expense(), ['payment_type' => 'cash', 'amount' => 10000000000]))
+      // ->dumpSession()
+      ->assertSessionHasErrors(['amount' => 'There is not enough cash in the office to fund this expense']);
+
+    $this->assertDatabaseCount('office_expenses', 0);
+  }
+
+  /** @test */
+  public function sales_rep_can_view_expense_list()
+  {
+    CompanyBankAccount::factory()->create();
+    OfficeExpense::factory()->count(20)->create();
+
+    $rsp = $this->actingAs($this->sales_rep, 'sales_rep')->get(route('officeexpense.list'))->assertOk();
+    ray($page = $this->getResponseData($rsp));
+
+    $this->assertEquals('OfficeExpense::ManageOfficeExpenses', $page->component);
+    $this->assertArrayHasKey('errors', (array)$page->props);
+    $this->assertArrayHasKey('office_expenses', (array)$page->props);
+    $this->assertArrayHasKey('office_expenses_count', (array)$page->props);
+    $this->assertCount(20, (array)$page->props->office_expenses);
+    $this->assertEquals(20, $page->props->office_expenses_count);
+  }
+
+  /** @test */
+  public function unverified_sales_rep_can_not_view_expenses_list()
+  {
+    $this->sales_rep->verified_at = null;
+    $this->sales_rep->save();
+
+    $this->actingAs($this->sales_rep, 'sales_rep')->get(route('officeexpense.list'))->assertStatus(403);
+  }
+
+  /** @test */
+  public function suspended_sales_rep_can_not_view_expenses_list()
+  {
+    $this->sales_rep->is_active = false;
+    $this->sales_rep->save();
+
+    $this->actingAs($this->sales_rep, 'sales_rep')->get(route('officeexpense.list'))->assertStatus(403);
+  }
+
+  /** @test */
+  public function sales_rep_can_enter_a_customer_credit_repayment_record()
+  {
   }
 }

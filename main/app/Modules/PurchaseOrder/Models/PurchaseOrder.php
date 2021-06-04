@@ -28,6 +28,11 @@ class PurchaseOrder extends Model
     return $this->belongsTo(FzCustomer::class, 'fz_customer_id');
   }
 
+  static function cashInOffice(): float
+  {
+    return self::cash()->sum('total_amount_paid');
+  }
+
   public function getTotalCostPriceAttribute()
   {
     return $this->quantity * $this->product_type->cost_price;
@@ -38,14 +43,9 @@ class PurchaseOrder extends Model
     return $query->where('payment_type', 'cash');
   }
 
-  public function scopeTransfer(Builder $query)
+  public function scopeBank(Builder $query)
   {
-    return $query->where('payment_type', 'transfer');
-  }
-
-  public function scopeDeposit(Builder $query)
-  {
-    return $query->where('payment_type', 'deposit');
+    return $query->where('payment_type', 'bank');
   }
 
   public function scopeCredit(Builder $query)

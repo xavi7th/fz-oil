@@ -2,6 +2,7 @@
 
 namespace App\Modules\SalesRep\Models;
 
+use App\Modules\OfficeExpense\Models\OfficeExpense;
 use App\User;
 use Illuminate\Database\Eloquent\Builder;
 use App\Modules\SuperAdmin\Models\StaffRole;
@@ -30,6 +31,11 @@ class SalesRep extends User
 
   const DASHBOARD_ROUTE_PREFIX = 'sales-rep';
   const ROUTE_NAME_PREFIX = 'salesrep.';
+
+  public function expenses()
+  {
+    return $this->hasMany(OfficeExpense::class);
+  }
 
   protected static function newFactory()
   {

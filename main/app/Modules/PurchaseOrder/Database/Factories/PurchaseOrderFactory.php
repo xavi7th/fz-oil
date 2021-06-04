@@ -34,16 +34,28 @@ class PurchaseOrderFactory extends Factory
       'is_swap_transaction' => false,
       'total_selling_price' => $this->faker->randomFloat,
       'total_amount_paid' => $this->faker->randomFloat,
+      'payment_type' => $this->faker->randomElement(['cash', 'bank', 'credit'])
     ];
   }
 
-  public function swapDeal()
+  public function swap_deal()
   {
-    return [
-      'is_swap_transaction' => true,
-      'swap_product_type_id' => optional(FzProductType::first())->id ?? FzProductType::factory()->create()->id,
-      'swap_quantity' => $this->faker->randomDigitNotNull,
-      'swap_value' => $this->faker->randomFloat,
-    ];
+    return $this->state(function (array $attributes) {
+      return [
+        'is_swap_transaction' => true,
+        'swap_product_type_id' => optional(FzProductType::first())->id ?? FzProductType::factory()->create()->id,
+        'swap_quantity' => $this->faker->randomDigitNotNull,
+        'swap_value' => $this->faker->randomFloat,
+      ];
+    });
+  }
+
+  public function cash()
+  {
+    return $this->state(function (array $attributes) {
+      return [
+        'payment_type' => 'cash'
+      ];
+    });
   }
 }

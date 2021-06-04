@@ -14,6 +14,7 @@ use App\Modules\FzStockManagement\Models\FzPriceBatch;
 use App\Modules\FzStockManagement\Models\FzProductType;
 use Illuminate\Foundation\Testing\TestCase as BaseTestCase;
 use App\Modules\CompanyBankAccount\Models\CompanyBankAccount;
+use App\Modules\SalesRep\Models\SalesRep;
 
 abstract class TestCase extends BaseTestCase
 {
@@ -121,6 +122,16 @@ abstract class TestCase extends BaseTestCase
       'payment_type' => 'cash',
       'is_swap_purchase' => true,
       'swap_quantity' => 100,
+    ];
+  }
+
+  protected function data_to_create_expense()
+  {
+    return [
+      'amount' => $this->faker->randomFloat(),
+      'payment_type' => 'transfer',
+      'description' => $this->faker->sentence,
+      'expense_date' => $this->faker->dateTimeThisMonth,
     ];
   }
 }
