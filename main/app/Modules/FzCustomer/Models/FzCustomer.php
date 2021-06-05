@@ -2,12 +2,13 @@
 
 namespace App\Modules\FzCustomer\Models;
 
+use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Database\Eloquent\Factories\HasFactory;
-use App\Modules\FzCustomer\Database\Factories\FzCustomerFactory;
 use App\Modules\PurchaseOrder\Models\PurchaseOrder;
-use Carbon\Carbon;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
+use App\Modules\PurchaseOrder\Models\DirectSwapTransaction;
+use App\Modules\FzCustomer\Database\Factories\FzCustomerFactory;
 
 /**
  * App\Modules\FzCustomer\Models\FzCustomer
@@ -37,6 +38,11 @@ class FzCustomer extends Model
   public function credit_transactions()
   {
     return $this->hasMany(CreditTransaction::class);
+  }
+
+  public function direct_swap_transactions()
+  {
+    return $this->hasMany(DirectSwapTransaction::class);
   }
 
   public function createCreditPurchaseTransaction(float $amount, int $recorder_id, string $payment_type, int $bank_id = null): CreditTransaction

@@ -5,7 +5,11 @@ namespace App\Modules\SuperAdmin\Models;
 use App\User;
 use Illuminate\Database\Eloquent\Builder;
 use App\Modules\SuperAdmin\Models\StaffRole;
+use App\Modules\PurchaseOrder\Models\CashLodgement;
+use App\Modules\PurchaseOrder\Models\PurchaseOrder;
+use App\Modules\FzCustomer\Models\CreditTransaction;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use App\Modules\PurchaseOrder\Models\DirectSwapTransaction;
 use App\Modules\SuperAdmin\Database\Factories\SuperAdminFactory;
 
 /**
@@ -30,6 +34,10 @@ class SuperAdmin extends User
   const DASHBOARD_ROUTE_PREFIX = 'super-admin';
   const ROUTE_NAME_PREFIX = 'superadmin.';
 
+  static function cash_in_office(): float
+  {
+    return CreditTransaction::cashInOffice() + PurchaseOrder::cashInOffice() - DirectSwapTransaction::cash()->sum('amount') - CashLodgement::sum('amount');
+  }
 
   protected static function newFactory()
   {

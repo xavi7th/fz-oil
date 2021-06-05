@@ -2,23 +2,25 @@
 
 namespace App\Modules\SuperAdmin\Tests\Feature;
 
+use Str;
 use Tests\TestCase;
 use Illuminate\Http\UploadedFile;
 use App\Modules\SalesRep\Models\SalesRep;
 use Illuminate\Foundation\Testing\WithFaker;
 use App\Modules\FzCustomer\Models\FzCustomer;
+use App\Modules\SuperAdmin\Models\SuperAdmin;
 use App\Modules\Supervisor\Models\Supervisor;
 use App\Modules\FzStockManagement\Models\FzStock;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use App\Modules\OfficeExpense\Models\OfficeExpense;
 use App\Modules\PurchaseOrder\Models\CashLodgement;
 use App\Modules\PurchaseOrder\Models\PurchaseOrder;
+use App\Modules\FzCustomer\Models\CreditTransaction;
 use App\Modules\FzStockManagement\Models\FzPriceBatch;
 use App\Modules\FzStockManagement\Models\FzProductType;
+use App\Modules\PurchaseOrder\Models\DirectSwapTransaction;
 use App\Modules\CompanyBankAccount\Models\CompanyBankAccount;
-use App\Modules\FzCustomer\Models\CreditTransaction;
-use App\Modules\OfficeExpense\Models\OfficeExpense;
 use App\Modules\SuperAdmin\Database\Seeders\StaffRoleTableSeeder;
-use Str;
 
 class SalesRepTest extends TestCase
 {
@@ -109,6 +111,13 @@ class SalesRepTest extends TestCase
     $this->assertArrayHasKey('isInertiaRequest', (array)$page->props);
     $this->assertArrayHasKey('auth', (array)$page->props);
     $this->assertArrayHasKey('flash', (array)$page->props);
+    $this->assertArrayHasKey('registered_customers_count', (array)$page->props);
+    $this->assertArrayHasKey('available_oil_stock_count', (array)$page->props);
+    $this->assertArrayHasKey('available_gallon_stock_count', (array)$page->props);
+    $this->assertArrayHasKey('price_batch_count', (array)$page->props);
+    $this->assertArrayHasKey('total_purchase_orders_count', (array)$page->props);
+    $this->assertArrayHasKey('total_daily_purchase_order_count', (array)$page->props);
+    $this->assertArrayHasKey('sales_rep_daily_purchase_order_count', (array)$page->props);
   }
 
   /** @test */
@@ -393,7 +402,16 @@ class SalesRepTest extends TestCase
   {
     // $this->withoutExceptionHandling();
     $company_bank_account = CompanyBankAccount::factory()->create();
-    ray(CreditTransaction::factory()->cash()->repayment()->create(['amount' => 500000, 'is_lodged' => false]));
+    CreditTransaction::factory()->cash()->repayment()->create(['amount' => 500000, 'is_lodged' => false]);
+
+    ray(SuperAdmin::cash_in_office());
+    ray()->showQueries();
+    ray(CreditTransaction::cashInOffice());
+    ray()->stopShowingQueries();
+    ray(PurchaseOrder::cashInOffice());
+    ray(DirectSwapTransaction::cash()->sum('amount'));
+    ray(CashLodgement::sum('amount'));
+    ray(CreditTransaction::all()->toArray());
 
     $this->actingAs($this->sales_rep, 'sales_rep')->post(route('purchaseorders.cashlodgement.create'), ['amount' => 300000, 'company_bank_account_id' => $company_bank_account->id, 'lodgement_date' => now(), 'teller' => UploadedFile::fake()->image('teller.jpg')])
       // ->dumpSession()
@@ -651,4 +669,44 @@ class SalesRepTest extends TestCase
     $this->actingAs($this->sales_rep, 'sales_rep')->get(route('fzcustomer.credit_transactions.list', $customer))->assertStatus(403);
   }
 
+  /** @test */
+  public function sales_rep_manage_create_direct_swap_transaction()
+  {
+    $this->withoutExceptionHandling();
+
+    $customer = FzCustomer::factory()->create();
+    PurchaseOrder::factory()->count(2)->cash()->notLodged()->create(['total_amount_paid' => 20000]);
+    $cash_in_office = SuperAdmin::cash_in_office();
+
+    $request_data = array_merge($this->data_to_create_direct_swap(), ['amount' => 15000, 'customer_paid_via' => 'bank']);
+
+    $this->actingAs($this->sales_rep, 'sales_rep')->post(route('purchaseorders.directswaptransactions.create', $customer), $request_data)
+      // ->dumpSession()
+      ->assertRedirect()
+      ->assertSessionHasNoErrors()
+      ->assertSessionMissing('flash.error')
+      ->assertSessionHas('flash.success', 'Customer trade in recorded.');
+
+    $this->assertDatabaseCount('direct_swap_transactions', 1);
+
+    $this->assertEquals(10, DirectSwapTransaction::first()->quantity);
+    $this->assertTrue(DirectSwapTransaction::first()->sales_rep->is(SalesRep::first()));
+    $this->assertTrue(DirectSwapTransaction::first()->customer->is(FzCustomer::first()));
+    $this->assertTrue(FzCustomer::first()->direct_swap_transactions()->first()->is(DirectSwapTransaction::first()));
+    $this->assertTrue(SalesRep::first()->direct_swap_transactions()->first()->is(DirectSwapTransaction::first()));
+
+    /** Assert that cash swaps will reduce cash in office */
+    $this->actingAs($this->sales_rep, 'sales_rep')->post(route('purchaseorders.directswaptransactions.create', $customer), array_merge($request_data, ['customer_paid_via' => 'cash']))->assertSessionHas('flash.success', 'Customer trade in recorded.');
+
+    $this->assertDatabaseCount('direct_swap_transactions', 2);
+    $this->assertEquals(number_format(($cash_in_office - 15000)), number_format(SuperAdmin::cash_in_office()));
+
+    $rsp = $this->actingAs($this->sales_rep, 'sales_rep')->get(route('purchaseorders.directswaptransactions.create', $customer))->assertOk();
+    $page = $this->getResponseData($rsp);
+
+    $this->assertEquals('PurchaseOrder::DirectSwapTransactions', $page->component);
+    $this->assertArrayHasKey('errors', (array)$page->props);
+    $this->assertCount(2, (array)$page->props->direct_swap_transactions);
+    $this->assertEquals(2, $page->props->direct_swap_transactions_count);
+  }
 }

@@ -3,9 +3,10 @@
 namespace App\Modules\CompanyBankAccount\Models;
 
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Factories\HasFactory;
-use App\Modules\CompanyBankAccount\Database\Factories\CompanyBankAccountFactory;
 use App\Modules\PurchaseOrder\Models\CashLodgement;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
+use App\Modules\PurchaseOrder\Models\DirectSwapTransaction;
+use App\Modules\CompanyBankAccount\Database\Factories\CompanyBankAccountFactory;
 
 /**
  * App\Modules\CompanyBankAccount\Models\CompanyBankAccount
@@ -50,6 +51,10 @@ class CompanyBankAccount extends Model
     return $this->hasMany(CashLodgement::class);
   }
 
+  public function direct_swap_transactions()
+  {
+    return $this->hasMany(DirectSwapTransaction::class);
+  }
 
   protected static function newFactory()
   {

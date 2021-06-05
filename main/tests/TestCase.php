@@ -10,8 +10,6 @@ use App\Modules\SuperAdmin\Models\StaffRole;
 use App\Modules\FzCustomer\Models\FzCustomer;
 use Illuminate\Database\Schema\SQLiteBuilder;
 use App\Modules\FzStockManagement\Models\FzStock;
-use App\Modules\FzStockManagement\Models\FzPriceBatch;
-use App\Modules\FzStockManagement\Models\FzProductType;
 use Illuminate\Foundation\Testing\TestCase as BaseTestCase;
 use App\Modules\CompanyBankAccount\Models\CompanyBankAccount;
 use App\Modules\SalesRep\Models\SalesRep;
@@ -136,6 +134,17 @@ abstract class TestCase extends BaseTestCase
       'amount' => $this->faker->randomFloat(),
       'trans_date' => $this->faker->dateTimeThisYear,
       'payment_type' => $this->faker->randomElement(['cash', 'bank']),
+      'company_bank_account_id' => CompanyBankAccount::factory()->create()->id,
+    ];
+  }
+
+  protected function data_to_create_direct_swap()
+  {
+    return [
+      'fz_product_type_id' => optional(FzStock::gallon()->first())->fz_product_type_id ?? FzStock::factory()->gallon()->create()->fz_product_type_id,
+      'quantity' => 10,
+      'customer_paid_via' => $this->faker->randomElement(['cash', 'bank']),
+      'amount' => $this->faker->randomFloat(),
       'company_bank_account_id' => CompanyBankAccount::factory()->create()->id,
     ];
   }

@@ -30,7 +30,7 @@ class CreditTransaction extends Model
 
   static function cashInOffice(): float
   {
-    return self::cash()->notLodged()->sum('total_amount_paid');
+    return self::cash()->repayment()->notLodged()->sum('amount');
   }
 
   public function getTotalCostPriceAttribute()

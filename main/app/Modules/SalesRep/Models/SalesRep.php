@@ -7,8 +7,11 @@ use Illuminate\Database\Eloquent\Builder;
 use App\Modules\SuperAdmin\Traits\IsAStaff;
 use App\Modules\SuperAdmin\Models\StaffRole;
 use App\Modules\OfficeExpense\Models\OfficeExpense;
+use App\Modules\PurchaseOrder\Models\PurchaseOrder;
 use App\Modules\FzCustomer\Models\CreditTransaction;
+use App\Modules\PurchaseOrder\Models\CashLodgement;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use App\Modules\PurchaseOrder\Models\DirectSwapTransaction;
 use App\Modules\SalesRep\Database\Factories\SalesRepFactory;
 
 /**
@@ -41,6 +44,26 @@ class SalesRep extends User
   public function recorded_credit_transactions()
   {
     return $this->hasMany(CreditTransaction::class, 'recorded_by');
+  }
+
+  public function direct_swap_transactions()
+  {
+    return $this->hasMany(DirectSwapTransaction::class);
+  }
+
+  public function purchase_orders()
+  {
+    return $this->hasMany(PurchaseOrder::class);
+  }
+
+  public function cash_lodgements()
+  {
+    return $this->hasMany(CashLodgement::class);
+  }
+
+  public function cash_in_office(): float
+  {
+    return $this->recorded_credit_transactions()->cashInOffice() + $this->purchase_orders()->cashInOffice() - $this->direct_swap_transactions()->sum('amount') - $this->cash_lodgements()->sum('amount');
   }
 
   protected static function newFactory()

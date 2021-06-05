@@ -15,6 +15,7 @@ class CreateCashLodgementsTable extends Migration
   {
     Schema::create('cash_lodgements', function (Blueprint $table) {
       $table->id();
+      $table->foreignId('sales_rep_id')->constrained('fz_staff');
       $table->foreignId('company_bank_account_id')->constrained();
       $table->decimal('amount', 10, 2);
       $table->date('lodgement_date');

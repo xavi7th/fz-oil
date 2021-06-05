@@ -8,14 +8,17 @@ use Illuminate\Support\Facades\DB;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Route;
 use App\Modules\FzCustomer\Models\FzCustomer;
+use App\Modules\SuperAdmin\Models\SuperAdmin;
 use App\Modules\PurchaseOrder\Models\CashLodgement;
 use App\Modules\PurchaseOrder\Models\PurchaseOrder;
 use App\Modules\FzStockManagement\Models\FzPriceBatch;
 use App\Modules\FzStockManagement\Models\FzProductType;
+use Illuminate\Database\Eloquent\ModelNotFoundException;
+use App\Modules\PurchaseOrder\Models\DirectSwapTransaction;
 use App\Modules\PurchaseOrder\Services\PurchaseOrderService;
 use App\Modules\CompanyBankAccount\Models\CompanyBankAccount;
+use App\Modules\FzCustomer\Policies\FzCustomerPolicy;
 use App\Modules\PurchaseOrder\Http\Requests\CreatePurchaseOrderRequest;
-use Illuminate\Database\Eloquent\ModelNotFoundException;
 
 class PurchaseOrderController extends Controller
 {
@@ -24,12 +27,19 @@ class PurchaseOrderController extends Controller
   {
     Route::prefix(PurchaseOrder::DASHBOARD_ROUTE_PREFIX)->name(PurchaseOrder::ROUTE_NAME_PREFIX)->group(function () {
       Route::get('', [self::class, 'index'])->name('list');
-      Route::get('cash-lodgement/create', [self::class, 'viewCashLodgements'])->name('cashlodgement.create');
-      Route::post('cash-lodgement/create', [self::class, 'createCashLodgements']);
 
-      Route::get('{customer}/create', [self::class, 'create'])->name('create');
-      Route::post('{customer}/create', [self::class, 'store']);
+      Route::get('sales/{customer}/create', [self::class, 'create'])->name('create');
+      Route::post('sales/{customer}/create', [self::class, 'store']);
 
+      Route::name('cashlodgement.')->prefix('cash-lodgement')->group(function () {
+        Route::get('create', [self::class, 'viewCashLodgements'])->name('create');
+        Route::post('create', [self::class, 'createCashLodgement']);
+      });
+
+      Route::prefix('direct-swap-transactions')->name('directswaptransactions.')->group(function () {
+        Route::get('{customer}/create', [self::class, 'viewDirectSwapTransactions'])->name('create');
+        Route::post('{customer}/create', [self::class, 'createDirectSwapTransaction']);
+      });
     });
   }
   public function index()
@@ -85,7 +95,7 @@ class PurchaseOrderController extends Controller
     ]);
   }
 
-  public function createCashLodgements(Request $request)
+  public function createCashLodgement(Request $request)
   {
     $this->authorize('create', CashLodgement::class);
 
@@ -93,14 +103,17 @@ class PurchaseOrderController extends Controller
       'company_bank_account_id' => ['required', 'exists:company_bank_accounts,id', function ($attribute, $value, $fail) {
         DB::table('company_bank_accounts')->where('id', $value)->first()->is_active ? null : $fail('This bank account has been suspended from use');
       }],
-      'amount' => ['required', 'numeric', function ($attribute, $value, $fail) { (DB::table('purchase_orders')->where('payment_type', 'cash')->where('is_lodged', false)->sum('total_amount_paid') + DB::table('credit_transactions')->where('payment_type', 'cash')->where('is_lodged', false)->sum('amount')) > $value ? null : $fail('There is not enough cash in the office to make this cash lodgement.');
-      }],
+      'amount' => ['required', 'numeric', fn ($attribute, $value, $fail) => SuperAdmin::cash_in_office() > $value ? null : $fail('There is not enough cash in the office to make this cash lodgement.')],
       'lodgement_date' => ['required', 'date'],
       'teller' => ['required', 'image']
     ]);
 
-    try {
-      (new PurchaseOrderService)->setImage('teller', 'cash-lodgement-tellers')->lodgeCashToBank($request->amount, $request->company_bank_account_id, $request->lodgement_date);
+    try { (new PurchaseOrderService)
+        ->setSalesRep($request->user()->id)
+        ->setImage('teller', 'cash-lodgement-tellers')
+        ->setAmount(null, $request->amount)
+        ->setPaymentType(null, $request->company_bank_account_id)
+        ->lodgeCashToBank($request->lodgement_date);
     } catch (ModelNotFoundException $th) {
       return redirect()->route('purchaseorders.cashlodgement.create')->withFlash(['error' => 'The bank account was not found']);
     } catch (\Throwable $th) {
@@ -108,5 +121,50 @@ class PurchaseOrderController extends Controller
     }
 
     return redirect()->route('purchaseorders.cashlodgement.create')->withFlash(['success' => 'Cash lodgement record created.']);
+  }
+
+  public function viewDirectSwapTransactions(Request $request)
+  {
+    $this->authorize('viewAny', DirectSwapTransaction::class);
+
+    return Inertia::render('PurchaseOrder::DirectSwapTransactions', [
+      'direct_swap_transactions' => DirectSwapTransaction::all(),
+      'direct_swap_transactions_count' => DirectSwapTransaction::count(),
+    ]);
+  }
+
+  public function createDirectSwapTransaction(Request $request, FzCustomer $customer)
+  {
+    ray($request->all());
+
+    $this->authorize('create', DirectSwapTransaction::class);
+
+    $request->validate([
+      'fz_product_type_id' => ['required', 'exists:fz_product_types,id'],
+      'quantity' => ['required', 'numeric'],
+      'customer_paid_via' => ['required', 'in:cash,bank'],
+      'amount' => ['required', 'numeric', function ($attribute, $value, $fail) use ($request) {
+        if ($request->customer_paid_via == 'cash') {
+          SuperAdmin::cash_in_office() > $value ? null : $fail('There is not enough cash in the office to facilitate this trade in swap');
+        }
+      }],
+      'company_bank_account_id' => ['exclude_unless:customer_paid_via,cash', 'required', 'exists:company_bank_accounts,id'],
+    ]);
+
+    try {
+      (new PurchaseOrderService)->setAmount(null, $request->amount)
+        ->setProductType($request->fz_product_type_id)
+        ->setPaymentType($request->customer_paid_via, $request->company_bank_account_id)
+        ->setPurchasedQuantity($request->quantity)
+        ->setCustomer($customer->id)
+        ->setSalesRep($request->user()->id)
+        ->createDirectSwapTransaction();
+    } catch (ModelNotFoundException $th) {
+      return redirect()->route('purchaseorders.directswaptransactions.create')->withFlash(['error' => 'The bank account was not found']);
+    } catch (\Throwable $th) {
+      return redirect()->route('purchaseorders.directswaptransactions.create')->withFlash(['error' => $th->getMessage()]);
+    }
+
+    return redirect()->route('purchaseorders.directswaptransactions.create', $customer)->withFlash(['success' => 'Customer trade in recorded.']);
   }
 }

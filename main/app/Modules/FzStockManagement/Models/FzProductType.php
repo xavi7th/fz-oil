@@ -3,10 +3,11 @@
 namespace App\Modules\FzStockManagement\Models;
 
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Factories\HasFactory;
-use App\Modules\FzStockManagement\Database\Factories\FzProductTypeFactory;
-use App\Modules\PurchaseOrder\Models\PurchaseOrder;
 use Illuminate\Database\Eloquent\Builder;
+use App\Modules\PurchaseOrder\Models\PurchaseOrder;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
+use App\Modules\PurchaseOrder\Models\DirectSwapTransaction;
+use App\Modules\FzStockManagement\Database\Factories\FzProductTypeFactory;
 
 /**
  * App\Modules\FzStockManagement\Models\FzProductType
@@ -29,6 +30,11 @@ class FzProductType extends Model
   public function purchase_orders()
   {
     return $this->hasMany(PurchaseOrder::class);
+  }
+
+  public function direct_swap_transactions()
+  {
+    return $this->hasMany(DirectSwapTransaction::class);
   }
 
   static function gallonId(): int

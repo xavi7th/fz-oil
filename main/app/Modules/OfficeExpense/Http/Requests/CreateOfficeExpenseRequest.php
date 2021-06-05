@@ -5,6 +5,7 @@ namespace App\Modules\OfficeExpense\Http\Requests;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Foundation\Http\FormRequest;
 use App\Modules\OfficeExpense\Models\OfficeExpense;
+use App\Modules\SuperAdmin\Models\SuperAdmin;
 
 class CreateOfficeExpenseRequest extends FormRequest
 {
@@ -13,8 +14,7 @@ class CreateOfficeExpenseRequest extends FormRequest
     return [
       'amount' => ['required', 'numeric', function ($attribute, $value, $fail) {
         if ($this->payment_type == 'cash') {
-          (DB::table('purchase_orders')->where('payment_type', 'cash')->where('is_lodged', false)->sum('total_amount_paid') + DB::table('credit_transactions')->where('payment_type', 'cash')->where('is_lodged', false)->sum('amount')) > $value
-            ? null : $fail('There is not enough cash in the office to fund this expense');
+          SuperAdmin::cash_in_office() > $value ? null : $fail('There is not enough cash in the office to fund this expense');
         }
       }],
       'payment_type' => ['required', 'in:cash,transfer'],

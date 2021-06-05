@@ -58,6 +58,11 @@ class PurchaseOrder extends Model
     return $query->where('payment_type', 'credit');
   }
 
+  public function scopeToday(Builder $query)
+  {
+    return $query->whereDate('created_at', today());
+  }
+
   protected static function newFactory()
   {
     return PurchaseOrderFactory::new();

@@ -58,4 +58,13 @@ class PurchaseOrderFactory extends Factory
       ];
     });
   }
+
+  public function notLodged()
+  {
+    return $this->state(function (array $attributes) {
+      return [
+        'is_lodged' => false
+      ];
+    });
+  }
 }

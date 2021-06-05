@@ -9,6 +9,7 @@ use App\Modules\PurchaseOrder\Models\CashLodgement;
 use App\Modules\PurchaseOrder\Models\PurchaseOrder;
 use App\Modules\FzStockManagement\Models\FzProductType;
 use App\Modules\CompanyBankAccount\Models\CompanyBankAccount;
+use App\Modules\PurchaseOrder\Models\DirectSwapTransaction;
 
 class PurchaseOrderService
 {
@@ -112,17 +113,37 @@ class PurchaseOrderService
     }
   }
 
-  public function lodgeCashToBank($amount, $bank_id, $lodgement_date): CashLodgement
+  public function lodgeCashToBank(string $lodgement_date): CashLodgement
   {
     if (is_null($this->img_url)) throw new Exception('Teller not uploaded');
 
-    $bank = CompanyBankAccount::findOrFail($bank_id);
+    $bank = CompanyBankAccount::findOrFail($this->bank_id);
 
     return CashLodgement::create([
-      'company_bank_account_id' => $bank_id,
-      'amount' => $amount,
+      'sales_rep_id' => $this->sales_rep_id,
+      'company_bank_account_id' => $this->bank_id,
+      'amount' => $this->total_amount_paid,
       'lodgement_date' => $lodgement_date,
       'teller_url' => $this->img_url,
+    ]);
+  }
+
+  public function createDirectSwapTransaction(): DirectSwapTransaction
+  {
+    if (is_null($this->purchased_quantity)) throw new Exception('Specify how many items are bein traded in');
+    if (is_null($this->payment_type)) throw new Exception('Specify how you intend to pay the customer');
+    if ($this->payment_type == 'cash' && is_null($this->bank_id)) throw new Exception('Specify the bank payment will be made from');
+
+    $fz_stock = FzStock::where('fz_product_type_id', $this->fz_product_type_id)->firstOrFail();
+
+    return DirectSwapTransaction::create([
+      'fz_product_type_id' => $this->fz_product_type_id,
+      'fz_customer_id' => $this->fz_customer_id,
+      'sales_rep_id' => $this->sales_rep_id,
+      'company_bank_account_id' => $this->bank_id,
+      'quantity' => $this->purchased_quantity,
+      'amount' => $this->total_amount_paid,
+      'customer_paid_via' => $this->payment_type,
     ]);
   }
 
