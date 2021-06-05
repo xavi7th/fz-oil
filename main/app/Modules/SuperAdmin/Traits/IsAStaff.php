@@ -37,7 +37,7 @@ trait IsAStaff
    */
   static function staffRoutes()
   {
-    Route::middleware('auth:super_admin')->group(function () {
+    Route::middleware('auth:super_admin,supervisor')->group(function () {
       Route::get('list', [self::class, 'getAllStaff'])->name('list')->defaults('ex', __e('ss', 'aperture'));
       Route::post('create', [self::class, 'createStaff'])->name('create');
       Route::put('{staff}/edit', [self::class, 'editStaff'])->name('update');

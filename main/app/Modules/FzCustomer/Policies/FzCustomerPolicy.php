@@ -20,36 +20,36 @@ class FzCustomerPolicy
   }
   public function create(User $user)
   {
-      return $user->isSalesRep() ? $this->allow() : $this->deny('You cannot create customers.');
+    return $user->is_operative() && $user->isSalesRep() ? $this->allow() : $this->deny('You cannot create customers.');
   }
 
   public function update(User $user, FzCustomer $fz_customer)
   {
-    return $user->isSupervisor() ? $this->allow() : $this->deny('You cannot update customers profile.');
+    return $user->is_operative() && $user->isSupervisor() ? $this->allow() : $this->deny('You cannot update customers profile.');
   }
 
   public function delete(User $user, FzCustomer $fz_customer)
   {
-    return $user->isSuperAdmin() ? $this->allow() : $this->deny('You cannot delete customers profile.');
+    return $user->is_operative() && $user->isSuperAdmin() ? $this->allow() : $this->deny('You cannot delete customers profile.');
   }
 
   public function restore(User $user, FzCustomer $fz_customer)
   {
-    return $user->isSuperAdmin() ? $this->allow() : $this->deny('You cannot restore customers profile.');
+    return $user->is_operative() && $user->isSuperAdmin() ? $this->allow() : $this->deny('You cannot restore customers profile.');
   }
 
   public function suspend(User $user, FzCustomer $fz_customer)
   {
-    return $user->isSuperAdmin() ? $this->allow() : $this->deny('You cannot suspend customers account.');
+    return $user->is_operative() && $user->isSupervisor() ? $this->allow() : $this->deny('You cannot suspend customers account.');
   }
 
   public function activate(User $user, FzCustomer $fz_customer)
   {
-    return $user->isSuperAdmin() ? $this->allow() : $this->deny('You cannot activate customers account.');
+    return $user->is_operative() && $user->isSupervisor() ? $this->allow() : $this->deny('You cannot activate customers account.');
   }
 
   public function setCreditLimit(User $user, FzCustomer $fzCustomer)
   {
-    return $user->isSuperAdmin() ? $this->allow() : $this->deny('You cannot set cutomer\'s credit limit.');
+    return $user->is_operative() && $user->isSupervisor() ? $this->allow() : $this->deny('You cannot set cutomer\'s credit limit.');
   }
 }

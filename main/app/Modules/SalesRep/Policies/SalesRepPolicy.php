@@ -12,7 +12,7 @@ class SalesRepPolicy
 
   public function accessDashboard(User $user)
   {
-    return $user->isSalesRep() ? $this->allow() : $this->deny('You cannot view registered supervisors accounts.');
+    return $user->is_operative() && $user->isSalesRep() ? $this->allow() : $this->deny('You cannot view registered supervisors accounts.');
   }
 
   /**
@@ -23,7 +23,7 @@ class SalesRepPolicy
    */
   public function viewAny(User $user)
   {
-      return $user->isSuperAdmin() ? $this->allow() : $this->deny('You cannot view registered sales reps accounts.');
+    return $user->is_operative() && ($user->isSuperAdmin() || $user->isSupervisor()) ? $this->allow() : $this->deny('You cannot view registered sales reps accounts.');
   }
     /**
    * Determine if the given sales_rep can be created by the user.
@@ -33,7 +33,7 @@ class SalesRepPolicy
    */
   public function view(User $user, SalesRep $sales_rep)
   {
-      return $user->isSuperAdmin() ? $this->allow() : $this->deny('You cannot create this sales rep\'s details.');
+    return $user->is_operative() && ($user->isSuperAdmin() || $user->isSupervisor()) ? $this->allow() : $this->deny('You cannot create this sales rep\'s details.');
   }
     /**
    * Determine if the given sales_rep can be created by the user.
@@ -43,7 +43,7 @@ class SalesRepPolicy
    */
   public function create(User $user)
   {
-      return $user->isSuperAdmin() ? $this->allow() : $this->deny('You cannot create sales reps.');
+    return $user->is_operative() && ($user->isSuperAdmin() || $user->isSupervisor()) ? $this->allow() : $this->deny('You cannot create sales reps.');
   }
 
   /**
@@ -54,7 +54,7 @@ class SalesRepPolicy
    */
   public function update(User $user, SalesRep $sales_rep)
   {
-    return $user->isSuperAdmin() ? $this->allow() : $this->deny('You cannot update sales reps profile.');
+    return $user->is_operative() && ($user->isSuperAdmin() || $user->isSupervisor()) ? $this->allow() : $this->deny('You cannot update sales reps profile.');
   }
 
   /**
@@ -65,7 +65,7 @@ class SalesRepPolicy
    */
   public function delete(User $user, SalesRep $sales_rep)
   {
-    return $user->isSuperAdmin() ? $this->allow() : $this->deny('You cannot delete sales reps profile.');
+    return $user->is_operative() && $user->isSuperAdmin() ? $this->allow() : $this->deny('You cannot delete sales reps profile.');
   }
 
   /**
@@ -76,7 +76,7 @@ class SalesRepPolicy
    */
   public function suspend(User $user, SalesRep $sales_rep)
   {
-    return $user->isSuperAdmin() ? $this->allow() : $this->deny('You cannot suspend sales reps account.');
+    return $user->is_operative() && ($user->isSuperAdmin() || $user->isSupervisor()) ? $this->allow() : $this->deny('You cannot suspend sales reps account.');
   }
   /**
    * Determine if the given supervisor can be restored by the user.
@@ -86,7 +86,7 @@ class SalesRepPolicy
    */
   public function restore(User $user, SalesRep $sales_rep)
   {
-    return $user->isSuperAdmin() ? $this->allow() : $this->deny('You cannot restore sales reps profile.');
+    return $user->is_operative() && $user->isSuperAdmin() ? $this->allow() : $this->deny('You cannot restore sales reps profile.');
   }
 
   /**
@@ -97,6 +97,6 @@ class SalesRepPolicy
    */
   public function activate(User $user, SalesRep $sales_rep)
   {
-    return $user->isSuperAdmin() ? $this->allow() : $this->deny('You cannot activate sales reps account.');
+    return $user->is_operative() && ($user->isSuperAdmin() || $user->isSupervisor()) ? $this->allow() : $this->deny('You cannot activate sales reps account.');
   }
 }

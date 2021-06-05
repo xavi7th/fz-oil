@@ -67,10 +67,9 @@ class User extends Authenticatable
     return $this instanceof SalesRep;
   }
 
-  public function isFzAdmin(): bool
+  public function isSupervisor(): bool
   {
-    return false;
-    return $this instanceof SalesRep;
+    return $this instanceof Supervisor;
   }
 
   public function is_verified():bool
@@ -102,8 +101,8 @@ class User extends Authenticatable
   {
     if ($this->isSalesRep()) {
       return ['isSalesRep' => true, 'user_type' => strtolower($this->getType())];
-    } elseif ($this->isFzAdmin()) {
-      return ['isFzAdmin' => true,'user_type' => strtolower($this->getType())];
+    } elseif ($this->isSupervisor()) {
+      return ['isSupervisor' => true, 'user_type' => strtolower($this->getType())];
     } elseif ($this->isSuperAdmin()) {
       return ['isSuperAdmin' => true, 'user_type' => strtolower($this->getType())];
     }

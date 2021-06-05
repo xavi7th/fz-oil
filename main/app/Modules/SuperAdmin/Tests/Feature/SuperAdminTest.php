@@ -230,11 +230,4 @@ class SuperAdminTest extends TestCase
 
     $this->assertSoftDeleted($supervisor);
   }
-
-  /** @test */
-  public function super_admin_can_flag_customer_account()
-  {
-    $this->markTestSkipped('To be implemented');
-  }
-
 }

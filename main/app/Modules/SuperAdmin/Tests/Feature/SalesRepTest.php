@@ -21,6 +21,7 @@ use App\Modules\FzStockManagement\Models\FzProductType;
 use App\Modules\PurchaseOrder\Models\DirectSwapTransaction;
 use App\Modules\CompanyBankAccount\Models\CompanyBankAccount;
 use App\Modules\SuperAdmin\Database\Seeders\StaffRoleTableSeeder;
+use Tymon\JWTAuth\Claims\Custom;
 
 class SalesRepTest extends TestCase
 {
@@ -153,13 +154,23 @@ class SalesRepTest extends TestCase
   {
     $this->assertDatabaseCount('fz_customers', 0);
 
-    $this->actingAs($this->sales_rep, 'sales_rep')->post(route('fzcustomer.create', $this->data_to_create_customer()))
+    $this->actingAs($this->sales_rep, 'sales_rep')->post(route('fzcustomer.create'), $this->data_to_create_customer())
       ->assertRedirect(route('fzcustomer.list'))
       ->assertSessionHasNoErrors()
       ->assertSessionMissing('flash.error')
       ->assertSessionHas('flash.success', 'Customer account created. Transactions can be carried out for the user.');
 
     $this->assertDatabaseCount('fz_customers', 1);
+
+    /**
+     * ? Test can access user details page
+     */
+    $rsp = $this->actingAs($this->sales_rep, 'sales_rep')->get(route('fzcustomer.details', FzCustomer::first()), $this->data_to_create_customer())->assertOk();
+    $page = $this->getResponseData($rsp);
+
+    $this->assertEquals('FzCustomer::CustomerDetails', $page->component);
+    $this->assertArrayHasKey('errors', (array)$page->props);
+    $this->assertArrayHasKey('customer_details', (array)$page->props);
   }
 
   /** @test */
@@ -312,7 +323,7 @@ class SalesRepTest extends TestCase
   {
     $this->withoutExceptionHandling();
 
-    $customer = FzCustomer::factory()->create();
+    $customer = FzCustomer::factory()->create(['credit_limit' => 100000000000, 'credit_balance' => 10000000000]);
     FzStock::factory()->gallon()->create(['stock_quantity' => 150]);
     FzStock::factory()->oil()->count(3)->create(['stock_quantity' => 50]);
 
