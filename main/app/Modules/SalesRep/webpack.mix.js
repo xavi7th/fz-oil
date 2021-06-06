@@ -1,14 +1,15 @@
-const dotenvExpand = require('dotenv-expand');
-dotenvExpand(require('dotenv').config({ path: '../../.env'/*, debug: true*/}));
-
 const mix = require('laravel-mix');
-require('laravel-mix-merge-manifest');
 
-mix.setPublicPath('../../public').mergeManifest();
+mix.webpackConfig({
+	resolve: {
+		extensions: ['.js', '.svelte', '.json'],
+		alias: {
+			'@superadmin-pages': __dirname + '/Resources/js/Pages',
+			'@superadmin-shared': __dirname + '/Resources/js/Shared',
+			'@superadmin-assets': __dirname + '/Resources'
+		},
+	},
+})
 
-mix.js(__dirname + '/Resources/assets/js/app.js', 'js/salesrep.js')
-    .sass( __dirname + '/Resources/assets/sass/app.scss', 'css/salesrep.css');
-
-if (mix.inProduction()) {
-    mix.version();
-}
+// mix.js(__dirname + '/Resources/js/app.js', 'js/superadmin.js')
+// mix.sass(__dirname + '/Resources/sass/app.scss', 'css/superadmin-app.css')

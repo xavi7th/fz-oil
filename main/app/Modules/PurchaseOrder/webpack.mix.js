@@ -1,14 +1,15 @@
-const dotenvExpand = require('dotenv-expand');
-dotenvExpand(require('dotenv').config({ path: '../../.env'/*, debug: true*/}));
-
 const mix = require('laravel-mix');
-require('laravel-mix-merge-manifest');
 
-mix.setPublicPath('../../public').mergeManifest();
+mix.webpackConfig({
+	resolve: {
+		extensions: ['.js', '.svelte', '.json'],
+		alias: {
+			'@purchaseorder-pages': __dirname + '/Resources/js/Pages',
+			'@purchaseorder-shared': __dirname + '/Resources/js/Shared',
+			'@purchaseorder-assets': __dirname + '/Resources'
+		},
+	},
+})
 
-mix.js(__dirname + '/Resources/assets/js/app.js', 'js/purchaseorder.js')
-    .sass( __dirname + '/Resources/assets/sass/app.scss', 'css/purchaseorder.css');
-
-if (mix.inProduction()) {
-    mix.version();
-}
+// mix.js(__dirname + '/Resources/js/app.js', 'js/purchaseorder.js')
+// mix.sass(__dirname + '/Resources/sass/app.scss', 'css/purchaseorder-app.css')

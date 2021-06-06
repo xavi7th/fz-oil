@@ -4,12 +4,9 @@
 <head>
 	@routes(['supervisor', 'generic', 'public', 'auth'])
 
-	<title>{{ config('app.name') }}</title>
+	<title>{{ config('app.name') }} | Welcome</title>
 	<meta charset="utf-8">
 	<meta content="ie=edge" http-equiv="x-ua-compatible">
-	<meta content="template language" name="keywords">
-	<meta content="Tamerlan Soziev" name="author">
-	<meta content="Admin dashboard html template" name="description">
 	<meta content="width=device-width, initial-scale=1" name="viewport">
 	<link href="favicon.png" rel="shortcut icon">
 	<link href="apple-touch-icon.png" rel="apple-touch-icon">

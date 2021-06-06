@@ -13,15 +13,6 @@ require('laravel-mix-purgecss');
 let fs = require('fs-extra');
 let modules = fs.readdirSync('./main/app/Modules');
 
-// dotenvExpand(require('dotenv')
-// 	.config({
-// 		path: __dirname + '/main/.env',
-// 		debug: true
-// 	}));
-// let siteUrl = process.env.APP_URL.replace(/(^\w+:|^)\/\//, '');
-
-// console.log(process.env);
-
 if (modules && modules.length > 0) {
 	modules.forEach((module) => {
 		let path = `./main/app/Modules/${module}/webpack.mix.js`;
@@ -71,10 +62,6 @@ mix
 				cssDeclarationSorter: true
 			})
     ],
-    //  hmrOptions: {
-    //  	host: siteUrl,
-    //  	port: 8081 // Can't use 443 here because address already in use
-    //  }
 	})
 	.svelte({
 		dev: !mix.inProduction(),
@@ -153,69 +140,67 @@ mix
 			safelist: {
 				standard: [/[pP]aginat(e|ion)/, /active/, /page/, /disabled/, /^dt-/],
 				deep: [/[dD]ata[tT]able/],
-				greedy: [/^dt/, /yay/, /fancy/, /modal/, /rui-chartist-donut/, /rui-widget/]
+				greedy: [/^dt/, /modal/]
 			},
 			rejected: true,
 			variables: true
 		}
 	})
 	.then(() => {
-		const _ = require('lodash');
+    const _ = require( 'lodash' );
+    const crypto = require( "crypto" );
+    const saltCssId = crypto.randomBytes( 7 ).toString( 'hex' );
 
 		let oldManifestData = JSON.parse(fs.readFileSync('./public_html/mix-manifest.json', 'utf-8'))
 		let newManifestData = {};
 
 		_.map(oldManifestData, (actualFilename, mixKeyName) => {
 			if (_.startsWith(mixKeyName, '/css')) {
-				/** Exclude CSS files from renaming for now till we start cache busting them */
-				newManifestData[mixKeyName] = actualFilename;
+        newManifestData[ mixKeyName ] = actualFilename + '?' + saltCssId;
 			} else {
-				let newMixKeyName = _.split(mixKeyName, '.')
-					.tap(o => {
-						_.pullAt(o, 1);
-					})
-					.join('.')
+				let newMixKeyName = _.split(mixKeyName, '.').tap(o => { _.pullAt(o, 1); }).join('.')
 
 				/** If the js extension has been stripped we add it back */
 				newMixKeyName = _.endsWith(newMixKeyName, '.js') ? newMixKeyName : newMixKeyName + '.js'
 
 				newManifestData[newMixKeyName] = actualFilename;
 			}
-
 		});
 
+    /** Build the manifest file again */
 		let data = JSON.stringify(newManifestData, null, 2);
 		fs.writeFileSync('./public_html/mix-manifest.json', data);
 	})
 
 if (!mix.inProduction()) {
 	mix.sourceMaps();
+  mix.bundleAnalyzer();
 }
 
 if (mix.inProduction()) {
 	// mix.bundleAnalyzer();
 }
 
-// mix.browserSync({
-//   proxy:'romzynew.test/login',
-//   // Disable UI completely
-//   // ui: false,
-//   // files: [
-//   //   "wp-content/themes/**/*.css",
-//   //   {
-//   //       match: ["wp-content/themes/**/*.php"],
-//   //       fn:    function (event, file) {
-//   //           /** Custom event handler **/
-//   //       }
-//   //   }
-//   // ],
-//   // ghostMode: {
-//   //   clicks: true,
-//   //   forms: true,
-//   //   scroll: false
-//   // },
-//   // notify: false,
-//   // reloadDelay: 2000,
-//   // // Don't append timestamps to injected files
-//   // timestamps: false
-// })
+mix.browserSync({
+  proxy:'fz-project.test/login',
+  // Disable UI completely
+  // ui: false,
+  // files: [
+  //   "wp-content/themes/**/*.css",
+  //   {
+  //       match: ["wp-content/themes/**/*.php"],
+  //       fn:    function (event, file) {
+  //           /** Custom event handler **/
+  //       }
+  //   }
+  // ],
+  // ghostMode: {
+  //   clicks: true,
+  //   forms: true,
+  //   scroll: false
+  // },
+  // notify: false,
+  // reloadDelay: 2000,
+  // // Don't append timestamps to injected files
+  // timestamps: false
+})

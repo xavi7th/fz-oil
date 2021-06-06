@@ -13,6 +13,8 @@ mix.webpackConfig({
 
 mix.copyDirectory(__dirname + '/Resources/img', 'public_html/img');
 
+mix.copy([__dirname + '/Resources/js/vendor/html2pdf.js'], 'public_html/js/html2pdf.js');
+
 mix.scripts([
   __dirname + '/Resources/sass/vendor/bower_components/jquery/dist/jquery.min.js',
   __dirname + '/Resources/sass/vendor/bower_components/popper.js/dist/umd/popper.min.js',
@@ -45,10 +47,6 @@ mix.scripts([
   __dirname + '/Resources/js/vendor/demo_customizer.js',
   __dirname + '/Resources/js/vendor/dataTables.bootstrap4.min.js',
 ], 'public_html/js/dashboard-app-vendor.js');
-
-mix.copy([
-  __dirname + '/Resources/js/vendor/html2pdf.js',
-], 'public_html/js/html2pdf.js');
 
 mix.scripts([
   __dirname + '/Resources/js/vendor/main.js',
