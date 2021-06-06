@@ -13,6 +13,43 @@ use App\Modules\FzCustomer\Database\Factories\FzCustomerFactory;
 /**
  * App\Modules\FzCustomer\Models\FzCustomer
  *
+ * @property int $id
+ * @property string $full_name
+ * @property string $email
+ * @property string $phone
+ * @property string $gender
+ * @property string $address
+ * @property float $credit_balance
+ * @property float $credit_limit
+ * @property bool $is_active
+ * @property bool $is_flagged
+ * @property string|null $flag_message
+ * @property \Illuminate\Support\Carbon|null $created_at
+ * @property \Illuminate\Support\Carbon|null $updated_at
+ * @property string|null $deleted_at
+ * @property-read \Illuminate\Database\Eloquent\Collection|\App\Modules\FzCustomer\Models\CreditTransaction[] $credit_transactions
+ * @property-read int|null $credit_transactions_count
+ * @property-read \Illuminate\Database\Eloquent\Collection|DirectSwapTransaction[] $direct_swap_transactions
+ * @property-read int|null $direct_swap_transactions_count
+ * @property-read \Illuminate\Database\Eloquent\Collection|PurchaseOrder[] $purchase_orders
+ * @property-read int|null $purchase_orders_count
+ * @method static Builder|FzCustomer active()
+ * @method static Builder|FzCustomer flagged()
+ * @method static Builder|FzCustomer suspended()
+ * @method static Builder|FzCustomer whereAddress($value)
+ * @method static Builder|FzCustomer whereCreatedAt($value)
+ * @method static Builder|FzCustomer whereCreditBalance($value)
+ * @method static Builder|FzCustomer whereCreditLimit($value)
+ * @method static Builder|FzCustomer whereDeletedAt($value)
+ * @method static Builder|FzCustomer whereEmail($value)
+ * @method static Builder|FzCustomer whereFlagMessage($value)
+ * @method static Builder|FzCustomer whereFullName($value)
+ * @method static Builder|FzCustomer whereGender($value)
+ * @method static Builder|FzCustomer whereId($value)
+ * @method static Builder|FzCustomer whereIsActive($value)
+ * @method static Builder|FzCustomer whereIsFlagged($value)
+ * @method static Builder|FzCustomer wherePhone($value)
+ * @method static Builder|FzCustomer whereUpdatedAt($value)
  * @method static \App\Modules\FzCustomer\Database\Factories\FzCustomerFactory factory(...$parameters)
  * @method static \Illuminate\Database\Eloquent\Builder|FzCustomer newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|FzCustomer newQuery()

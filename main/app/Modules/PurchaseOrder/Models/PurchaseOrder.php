@@ -9,6 +9,57 @@ use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use App\Modules\PurchaseOrder\Database\Factories\PurchaseOrderFactory;
 
+/**
+ * App\Modules\PurchaseOrder\Models\PurchaseOrder
+ *
+ * @property int $id
+ * @property string $payment_type
+ * @property int $fz_customer_id
+ * @property int $fz_product_type_id
+ * @property int $fz_price_batch_id
+ * @property int $sales_rep_id
+ * @property int $purchased_quantity
+ * @property string $total_selling_price
+ * @property int $is_swap_transaction
+ * @property int|null $swap_product_type_id
+ * @property int|null $swap_quantity
+ * @property string|null $swap_value
+ * @property string $total_amount_paid
+ * @property int $is_lodged
+ * @property \Illuminate\Support\Carbon|null $created_at
+ * @property \Illuminate\Support\Carbon|null $updated_at
+ * @property string|null $deleted_at
+ * @property-read FzCustomer $buyer
+ * @property-read FzStock $fz_stock
+ * @property-read mixed $total_cost_price
+ * @method static Builder|PurchaseOrder bank()
+ * @method static Builder|PurchaseOrder cash()
+ * @method static Builder|PurchaseOrder credit()
+ * @method static \App\Modules\PurchaseOrder\Database\Factories\PurchaseOrderFactory factory(...$parameters)
+ * @method static Builder|PurchaseOrder newModelQuery()
+ * @method static Builder|PurchaseOrder newQuery()
+ * @method static Builder|PurchaseOrder notLodged()
+ * @method static Builder|PurchaseOrder query()
+ * @method static Builder|PurchaseOrder today()
+ * @method static Builder|PurchaseOrder whereCreatedAt($value)
+ * @method static Builder|PurchaseOrder whereDeletedAt($value)
+ * @method static Builder|PurchaseOrder whereFzCustomerId($value)
+ * @method static Builder|PurchaseOrder whereFzPriceBatchId($value)
+ * @method static Builder|PurchaseOrder whereFzProductTypeId($value)
+ * @method static Builder|PurchaseOrder whereId($value)
+ * @method static Builder|PurchaseOrder whereIsLodged($value)
+ * @method static Builder|PurchaseOrder whereIsSwapTransaction($value)
+ * @method static Builder|PurchaseOrder wherePaymentType($value)
+ * @method static Builder|PurchaseOrder wherePurchasedQuantity($value)
+ * @method static Builder|PurchaseOrder whereSalesRepId($value)
+ * @method static Builder|PurchaseOrder whereSwapProductTypeId($value)
+ * @method static Builder|PurchaseOrder whereSwapQuantity($value)
+ * @method static Builder|PurchaseOrder whereSwapValue($value)
+ * @method static Builder|PurchaseOrder whereTotalAmountPaid($value)
+ * @method static Builder|PurchaseOrder whereTotalSellingPrice($value)
+ * @method static Builder|PurchaseOrder whereUpdatedAt($value)
+ * @mixin \Eloquent
+ */
 class PurchaseOrder extends Model
 {
   use HasFactory;

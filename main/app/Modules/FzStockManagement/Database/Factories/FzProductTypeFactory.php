@@ -23,7 +23,7 @@ class FzProductTypeFactory extends Factory
   {
     return [
       'product_type' => $this->faker->unique()->randomElement(['oil', 'gallon']),
-      'swap_value' => $this->faker->randomFloat(),
+      'swap_value' => $this->faker->randomFloat(2, 1000, 5000),
     ];
   }
 }

@@ -21,6 +21,16 @@ use App\Modules\CompanyBankAccount\Database\Factories\CompanyBankAccountFactory;
  * @property \Illuminate\Support\Carbon|null $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at
  * @property string|null $deleted_at
+ * @property string $acount_number
+ * @property string $bank_name
+ * @property int $is_active
+ * @property-read \Illuminate\Database\Eloquent\Collection|CashLodgement[] $cash_lodgements
+ * @property-read int|null $cash_lodgements_count
+ * @property-read \Illuminate\Database\Eloquent\Collection|DirectSwapTransaction[] $direct_swap_transactions
+ * @property-read int|null $direct_swap_transactions_count
+ * @method static \Illuminate\Database\Eloquent\Builder|CompanyBankAccount whereAcountNumber($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|CompanyBankAccount whereBankName($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|CompanyBankAccount whereIsActive($value)
  * @method static \App\Modules\CompanyBankAccount\Database\Factories\CompanyBankAccountFactory factory(...$parameters)
  * @method static \Illuminate\Database\Eloquent\Builder|CompanyBankAccount newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|CompanyBankAccount newQuery()

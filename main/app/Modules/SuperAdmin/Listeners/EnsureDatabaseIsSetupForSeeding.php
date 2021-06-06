@@ -3,6 +3,7 @@
 namespace App\Modules\SuperAdmin\Listeners;
 
 use Illuminate\Database\Events\MigrationsEnded;
+use App\Modules\SuperAdmin\Database\State\EnsureStaffRolesArePresentInDatabase;
 use App\Modules\SuperAdmin\Database\State\EnsureProductTypesArePresentInDatabase;
 
 class EnsureDatabaseIsSetupForSeeding
@@ -17,6 +18,7 @@ class EnsureDatabaseIsSetupForSeeding
   {
     collect([
       new EnsureProductTypesArePresentInDatabase,
+      new EnsureStaffRolesArePresentInDatabase,
     ])->each->__invoke();
   }
 }

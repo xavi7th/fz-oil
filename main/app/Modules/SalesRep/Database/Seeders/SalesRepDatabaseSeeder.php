@@ -13,9 +13,7 @@ class SalesRepDatabaseSeeder extends Seeder
      * @return void
      */
     public function run()
-    {
-        Model::unguard();
-
+  {
         // $this->call("OthersTableSeeder");
     }
 }

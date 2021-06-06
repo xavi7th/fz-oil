@@ -11,6 +11,30 @@ use App\Modules\FzStockManagement\Database\Factories\FzStockFactory;
 /**
  * App\Modules\FzStockManagement\Models\FzStock
  *
+ * @property int $id
+ * @property int $fz_product_type_id
+ * @property int $fz_price_batch_id
+ * @property int $stock_quantity
+ * @property \Illuminate\Support\Carbon|null $created_at
+ * @property \Illuminate\Support\Carbon|null $updated_at
+ * @property string|null $deleted_at
+ * @property-read mixed $cost_price
+ * @property-read mixed $selling_price
+ * @property-read mixed $swap_value
+ * @property-read \App\Modules\FzStockManagement\Models\FzPriceBatch $price_batch
+ * @property-read \App\Modules\FzStockManagement\Models\FzProductType $product_type
+ * @property-read \Illuminate\Database\Eloquent\Collection|PurchaseOrder[] $purchase_orders
+ * @property-read int|null $purchase_orders_count
+ * @method static \App\Modules\FzStockManagement\Database\Factories\FzStockFactory factory(...$parameters)
+ * @method static Builder|FzStock gallon()
+ * @method static Builder|FzStock oil()
+ * @method static Builder|FzStock whereCreatedAt($value)
+ * @method static Builder|FzStock whereDeletedAt($value)
+ * @method static Builder|FzStock whereFzPriceBatchId($value)
+ * @method static Builder|FzStock whereFzProductTypeId($value)
+ * @method static Builder|FzStock whereId($value)
+ * @method static Builder|FzStock whereStockQuantity($value)
+ * @method static Builder|FzStock whereUpdatedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder|FzStock newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|FzStock newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|FzStock query()

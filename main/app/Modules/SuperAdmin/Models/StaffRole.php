@@ -10,6 +10,16 @@ use App\Modules\SuperAdmin\Database\Factories\StaffRoleFactory;
 /**
  * App\Modules\SuperAdmin\Models\StaffRole
  *
+ * @property int $id
+ * @property string $role_name
+ * @property string $role_slug
+ * @property \Illuminate\Support\Carbon|null $created_at
+ * @property \Illuminate\Support\Carbon|null $updated_at
+ * @method static \Illuminate\Database\Eloquent\Builder|StaffRole whereCreatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|StaffRole whereId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|StaffRole whereRoleName($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|StaffRole whereRoleSlug($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|StaffRole whereUpdatedAt($value)
  * @method static \App\Modules\SuperAdmin\Database\Factories\StaffRoleFactory factory(...$parameters)
  * @method static \Illuminate\Database\Eloquent\Builder|StaffRole newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|StaffRole newQuery()
@@ -21,11 +31,6 @@ class StaffRole extends Model
   use HasFactory;
 
   protected $fillable = ['role_name', 'role_slug'];
-
-  protected static function newFactory()
-  {
-    return StaffRoleFactory::new();
-  }
 
   static function salesRepId(): int
   {
@@ -49,5 +54,10 @@ class StaffRole extends Model
     static::creating(function ($staff_role) {
       $staff_role->role_slug = Str::slug($staff_role->role_name);
     });
+  }
+
+  protected static function newFactory()
+  {
+    return StaffRoleFactory::new();
   }
 }
