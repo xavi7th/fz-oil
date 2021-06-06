@@ -3,7 +3,7 @@
 
 <head>
 	<meta charset="utf-8" />
-	@routes(['superadmin', 'auth'])
+	@routes(['superadmin', 'auth', 'generic'])
 
 	<title>{{ config('app.name') }} | Welcome</title>
 	<meta charset="utf-8">

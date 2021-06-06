@@ -1,3 +1,8 @@
+<script context="module">
+  import { writable } from 'svelte/store'
+  export const title = writable(null)
+</script>
+
 <script>
   import DashboardTopBar from './Partials/DashboardTopBar.svelte';
 
@@ -11,6 +16,8 @@
   import { Portal } from 'svelte-teleport';
   import { modalRoot } from "@public-shared/stores";
 
+  $: ({ app, routes, auth } = $page.props);
+
   let isMounted = false;
 
   onMount(() => {
@@ -18,11 +25,15 @@
   });
 </script>
 
+<svelte:head>
+  <title>{$title ? `${$title} | FZ` : 'Welcome | FZ'}</title>
+</svelte:head>
+
 {#if isMounted}
   <div class="all-wrapper with-side-panel solid-bg-all" >
     <div class="layout-w">
-      <MobileMenu></MobileMenu>
-     <DesktopMenu></DesktopMenu>
+      <MobileMenu {routes}></MobileMenu>
+     <DesktopMenu {routes}></DesktopMenu>
       <div class="content-w">
         <DashboardTopBar></DashboardTopBar>
 
@@ -37,7 +48,6 @@
     <div class="display-type"></div>
     <Portal bind:this={$modalRoot}></Portal>
   </div>
-
 {/if}
 
 {#if isMounted}

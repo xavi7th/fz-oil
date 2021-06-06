@@ -26,7 +26,7 @@ class PurchaseOrderController extends Controller
   static function routes()
   {
     Route::prefix(PurchaseOrder::DASHBOARD_ROUTE_PREFIX)->name(PurchaseOrder::ROUTE_NAME_PREFIX)->group(function () {
-      Route::get('', [self::class, 'index'])->name('list');
+      Route::get('', [self::class, 'index'])->name('list')->defaults('menu', __e('Purchase Orders', 'viewAny,' . PurchaseOrder::class, 'box', false));
 
       Route::get('sales/{customer}/create', [self::class, 'create'])->name('create');
       Route::post('sales/{customer}/create', [self::class, 'store']);
@@ -42,13 +42,18 @@ class PurchaseOrderController extends Controller
       });
     });
   }
-  public function index()
+  public function index(Request $request)
   {
     $this->authorize('viewAny', PurchaseOrder::class);
 
     return Inertia::render('PurchaseOrder::List', [
       'purchase_orders' => PurchaseOrder::all(),
       'purchase_orders_count' => PurchaseOrder::count(),
+      'can_create_customer' => $request->user()->can('create', PurchaseOrder::class),
+      'can_create_view_lodgement' => $request->user()->can('viewAny', CashLodgement::class),
+      'can_create_cash_lodgement' => $request->user()->can('create', CashLodgement::class),
+      'can_create_view_direct_swap_transactions' => $request->user()->can('viewAny', DirectSwapTransaction::class),
+      'can_create_cash_direct_swap_transactions' => $request->user()->can('create', DirectSwapTransaction::class),
     ]);
   }
 
@@ -135,8 +140,6 @@ class PurchaseOrderController extends Controller
 
   public function createDirectSwapTransaction(Request $request, FzCustomer $customer)
   {
-    ray($request->all());
-
     $this->authorize('create', DirectSwapTransaction::class);
 
     $request->validate([

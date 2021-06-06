@@ -18,7 +18,7 @@ class FzCustomerController extends Controller
   static function routes()
   {
     Route::prefix(FzCustomer::DASHBOARD_ROUTE_PREFIX)->name(FzCustomer::ROUTE_NAME_PREFIX)->group(function () {
-      Route::get('', [self::class, 'index'])->name('list');
+      Route::get('', [self::class, 'index'])->name('list')->defaults('menu', __e('Manage Customers', 'viewAny,' . FzCustomer::class, 'box'));
       Route::get('{customer}/details', [self::class, 'details'])->name('details');
       Route::post('create', [self::class, 'store'])->name('create');
       Route::put('{customer}/update', [self::class, 'update'])->name('update');
@@ -32,7 +32,7 @@ class FzCustomerController extends Controller
     });
   }
 
-  public function index()
+  public function index(Request $request)
   {
     $this->authorize('viewAny', FzCustomer::class);
 
@@ -42,6 +42,8 @@ class FzCustomerController extends Controller
       'fz_active_customer_count' => FzCustomer::active()->count(),
       'fz_suspended_customer_count' => FzCustomer::suspended()->count(),
       'fz_flagged_customer_count' => FzCustomer::flagged()->count(),
+      'can_view_details' => $request->user()->can('viewAny', FzCustomer::class),
+      'can_view_credit_transactions' => $request->user()->can('viewAny', CreditTransaction::class),
     ]);
   }
 

@@ -1,12 +1,20 @@
+
+<script context="module">
+  import Layout, {title} from "@superadmin-shared/SuperAdminLayout.svelte";
+  export const layout = Layout
+</script>
+
+
 <script>
-  import Layout from "@superadmin-shared/SuperAdminLayout.svelte";
+  // import Layout from "@superadmin-shared/SuperAdminLayout.svelte";
+  $title = "Super Admin Dashboard"
 </script>
 
 <svelte:head>
   <script src="/js/html2pdf.js"></script>
 </svelte:head>
 
-<Layout title="Super Admin Dashboard">
+<!-- <Layout title="Super Admin Dashboard"> -->
   <div class="row pt-2 pb-2">
     <div class="col-sm-12">
       <div class="element-wrapper">
@@ -64,4 +72,4 @@
       </div>
     </div>
   </div>
-</Layout>
+<!-- </Layout> -->

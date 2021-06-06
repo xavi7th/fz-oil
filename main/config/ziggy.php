@@ -21,6 +21,9 @@ return [
     'generic' => [
       'fzcustomer.*',
       'purchaseorders.*',
+      'companybankaccount.*',
+      'fzcustomer.*',
+      'officeexpense.*',
     ],
     'public' => [
       'app.*',

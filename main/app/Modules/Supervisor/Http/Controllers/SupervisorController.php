@@ -13,7 +13,7 @@ class SupervisorController extends Controller
   static function routes()
   {
     Route::prefix(Supervisor::DASHBOARD_ROUTE_PREFIX)->name(Supervisor::ROUTE_NAME_PREFIX)->group(function () {
-      Route::get('/', [self::class, 'dashboardPage'])->name('dashboard')->middleware('auth:supervisor');
+      Route::get('/', [self::class, 'dashboardPage'])->name('dashboard')->middleware('auth:supervisor')->defaults('menu', __e('Dashboard', 'accessDashboard,' . Supervisor::class, 'box', false));
 
       Supervisor::staffRoutes();
     });

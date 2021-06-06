@@ -15,6 +15,7 @@ class CompanyBankAccountController extends Controller
   {
     Route::prefix(CompanyBankAccount::DASHBOARD_ROUTE_PREFIX)->name(CompanyBankAccount::ROUTE_NAME_PREFIX)->group(function () {
       Route::get('', [self::class, 'index'])->name('index')->defaults('menu', __e('Bank Accounts', 'viewAny,' . CompanyBankAccount::class, 'box', false));
+      Route::get('qwrve', [self::class, 'index'])->name('index2')->defaults('menu', __e('Bank Accounts 2', 'viewAny,' . CompanyBankAccount::class, 'box', false));
     });
   }
   /**

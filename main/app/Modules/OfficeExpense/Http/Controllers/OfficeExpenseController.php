@@ -15,7 +15,7 @@ class OfficeExpenseController extends Controller
   static function routes()
   {
     Route::middleware('web')->prefix(OfficeExpense::DASHBOARD_ROUTE_PREFIX)->name(OfficeExpense::ROUTE_NAME_PREFIX)->group(function () {
-      Route::get('', [self::class, 'index'])->name('list');
+      Route::get('', [self::class, 'index'])->name('list')->defaults('menu', __e('Office Expenses', 'viewAny,' . OfficeExpense::class, 'box', false));
       Route::post('ceate', [self::class, 'createOfficeExpense'])->name('create');
     });
   }

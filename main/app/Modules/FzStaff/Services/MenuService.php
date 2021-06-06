@@ -68,6 +68,12 @@ class MenuService
         ];
       });
 
+    /**
+     * ? Set the Dashboard as the first menu item
+     */
+    $user_slug = Str::of($this->user->getType())->snake()->replace('_', '-')->__toString();
+    $routes->prepend($routes->pull($user_slug), $user_slug);
+
     return $this->is_heirarchical ? $this->getHeirachicalRoutes($routes) : $routes->values()->toArray();
   }
 

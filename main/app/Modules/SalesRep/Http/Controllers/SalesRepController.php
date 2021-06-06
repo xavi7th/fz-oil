@@ -17,7 +17,7 @@ class SalesRepController extends Controller
   static function routes()
   {
     Route::prefix(SalesRep::DASHBOARD_ROUTE_PREFIX)->name(SalesRep::ROUTE_NAME_PREFIX)->group(function () {
-      Route::get('/', [self::class, 'index'])->name('dashboard')->middleware('auth:sales_rep');
+      Route::get('/', [self::class, 'index'])->name('dashboard')->middleware('auth:sales_rep')->defaults('menu', __e('Dashboard', 'accessDashboard,' . SalesRep::class, 'box', false));
 
       SalesRep::staffRoutes();
     });

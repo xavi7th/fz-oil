@@ -180,26 +180,26 @@ if (mix.inProduction()) {
 	mix.bundleAnalyzer();
 }
 
-mix.browserSync({
-  proxy:'fz-project.test/login',
-  // Disable UI completely
-  // ui: false,
-  // files: [
-  //   "wp-content/themes/**/*.css",
-  //   {
-  //       match: ["wp-content/themes/**/*.php"],
-  //       fn:    function (event, file) {
-  //           /** Custom event handler **/
-  //       }
-  //   }
-  // ],
-  // ghostMode: {
-  //   clicks: true,
-  //   forms: true,
-  //   scroll: false
-  // },
-  // notify: false,
-  // reloadDelay: 2000,
-  // // Don't append timestamps to injected files
-  // timestamps: false
-})
+// mix.browserSync({
+//   proxy:'fz-project.test/login',
+//   // Disable UI completely
+//   // ui: false,
+//   // files: [
+//   //   "wp-content/themes/**/*.css",
+//   //   {
+//   //       match: ["wp-content/themes/**/*.php"],
+//   //       fn:    function (event, file) {
+//   //           /** Custom event handler **/
+//   //       }
+//   //   }
+//   // ],
+//   // ghostMode: {
+//   //   clicks: true,
+//   //   forms: true,
+//   //   scroll: false
+//   // },
+//   // notify: false,
+//   // reloadDelay: 2000,
+//   // // Don't append timestamps to injected files
+//   // timestamps: false
+// })

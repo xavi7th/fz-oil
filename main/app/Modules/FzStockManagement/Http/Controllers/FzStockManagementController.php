@@ -16,13 +16,8 @@ class FzStockManagementController extends Controller
   {
     Route::middleware('web')->prefix(FzStock::DASHBOARD_ROUTE_PREFIX)->name(FzStock::ROUTE_NAME_PREFIX)->group(function () {
       Route::prefix(FzProductType::DASHBOARD_ROUTE_PREFIX)->name(FzProductType::ROUTE_NAME_PREFIX)->group(function () {
-        Route::get('', [self::class, 'index'])->name('index');
+        Route::get('', [self::class, 'index'])->name('index')->defaults('menu', __e('Manage Stock', 'viewAny,' . FzStock::class, 'box', false));
       });
-      // Route::prefix(FzProductBatch::DASHBOARD_ROUTE_PREFIX)->name(FzProductBatch::ROUTE_NAME_PREFIX)->group(function () {
-      //   Route::get('', [self::class, 'getProductBatches'])->name('index');
-      //   Route::get('trade-in', [self::class, 'manageSwapWithoutPurchase'])->name('trade-in');
-      //   Route::get('{customer}/purchase-orders', [self::class, 'manageCustomerPurchaseOrder'])->name('customer.purchase_order');
-      // });
     });
   }
 

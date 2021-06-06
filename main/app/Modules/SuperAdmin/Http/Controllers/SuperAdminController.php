@@ -16,13 +16,13 @@ class SuperAdminController extends Controller
   static function routes()
   {
     Route::middleware(['auth:super_admin'])->prefix(SuperAdmin::DASHBOARD_ROUTE_PREFIX)->name(SuperAdmin::ROUTE_NAME_PREFIX)->group(function () {
-      Route::get('', [self::class, 'index'])->name('dashboard');
+      Route::get('', [self::class, 'index'])->name('dashboard')->defaults('menu', __e('Dashboard', 'accessDashboard,' . SuperAdmin::class, 'box', false));
     });
   }
 
   public function index(Request $request)
   {
-    dd((new MenuService)->setUser($request->user())->setHeirarchical(true)->getRoutes());
+    $this->authorize('accessDashboard', SuperAdmin::class);
     return Inertia::render('SuperAdmin::SuperAdminDashboard', self::getDashboardStatistics($request->records_date))->withViewData([
       'title' => 'Hello theEects',
       'metaDesc' => ' This page is ...'
