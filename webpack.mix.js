@@ -174,11 +174,10 @@ mix
 
 if (!mix.inProduction()) {
 	mix.sourceMaps();
-  mix.bundleAnalyzer();
 }
 
 if (mix.inProduction()) {
-	// mix.bundleAnalyzer();
+	mix.bundleAnalyzer();
 }
 
 mix.browserSync({

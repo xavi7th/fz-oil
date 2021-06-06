@@ -2,15 +2,16 @@
 
 namespace App\Http\Middleware;
 
-use App\Modules\FzStaff\Models\FzStaff;
-use App\Modules\SalesRep\Models\SalesRep;
-use App\Modules\SuperAdmin\Models\SuperAdmin;
 use Inertia\Middleware;
 use Illuminate\Support\Str;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Cache;
+use App\Modules\FzStaff\Models\FzStaff;
 use Illuminate\Support\Facades\Session;
+use App\Modules\SalesRep\Models\SalesRep;
+use App\Modules\FzStaff\Services\MenuService;
+use App\Modules\SuperAdmin\Models\SuperAdmin;
 
 class HandleInertiaRequests extends Middleware
 {
@@ -47,6 +48,7 @@ class HandleInertiaRequests extends Middleware
    */
   public function share(Request $request)
   {
+
     return array_merge(parent::share($request), [
       'app' => fn() => [
         'name' => config('app.name'),
@@ -61,13 +63,13 @@ class HandleInertiaRequests extends Middleware
         'opening_hours' => config('app.opening_hours'),
       ],
       'routes' => function (Request $request) {
-        return Cache::remember('routes', config('cache.user_routes_cache_duration'), fn () => $request->user() ? $request->user()->get_navigation_routes() : get_related_routes('app.', ['GET'], true));
+        return Cache::remember('routes', config('cache.user_routes_cache_duration'), fn () => (new MenuService)->setUser($request->user())->getRoutes());
       },
       'isInertiaRequest' => (bool)request()->header('X-Inertia'),
       'auth' => function (Request $request) {
         return [
           'user' => Auth::user() ? collect(Auth::user())->merge(request()->user()->getUserType()) : (object)[],
-          'notification_count' => Auth::user() ? $request->user()->unreadNotifications()->count() : null
+          // 'notification_count' => Auth::user() ? $request->user()->unreadNotifications()->count() : null
         ];
       },
       'flash' => fn () => Session::get('flash') ?? (object)[],

@@ -29,7 +29,6 @@ class RedirectIfAuthenticated
       }
     } else {
       foreach ($guards as $guard) {
-        ray($guard);
         if (Auth::guard($guard)->check()) {
           return redirect()->route(Auth::guard($guard)->user()->getDashboardRoute());
         }

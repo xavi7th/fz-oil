@@ -6,7 +6,7 @@ use Inertia\Inertia;
 use Illuminate\Http\Request;
 use RachidLaasri\Travel\Travel;
 use App\Http\Controllers\Controller;
-use App\Modules\FzStaff\Models\FzStaff;
+use App\Modules\FzStaff\Services\MenuService;
 use Illuminate\Support\Facades\Route;
 use App\Modules\SuperAdmin\Models\SuperAdmin;
 
@@ -15,13 +15,14 @@ class SuperAdminController extends Controller
 
   static function routes()
   {
-    Route::middleware(['web', 'auth:super_admin'])->prefix(SuperAdmin::DASHBOARD_ROUTE_PREFIX)->name(SuperAdmin::ROUTE_NAME_PREFIX)->group(function () {
+    Route::middleware(['auth:super_admin'])->prefix(SuperAdmin::DASHBOARD_ROUTE_PREFIX)->name(SuperAdmin::ROUTE_NAME_PREFIX)->group(function () {
       Route::get('', [self::class, 'index'])->name('dashboard');
     });
   }
 
   public function index(Request $request)
   {
+    dd((new MenuService)->setUser($request->user())->setHeirarchical(true)->getRoutes());
     return Inertia::render('SuperAdmin::SuperAdminDashboard', self::getDashboardStatistics($request->records_date))->withViewData([
       'title' => 'Hello theEects',
       'metaDesc' => ' This page is ...'

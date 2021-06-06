@@ -127,7 +127,6 @@ class LoginController extends Controller
 
   private function attemptGuardLogin(string $guard)
   {
-    ray($this->credentials(request()), $guard);
     if (Auth::guard($guard)->attempt($this->credentials(request()), request()->filled('remember'))) {
       return true;
     }

@@ -230,4 +230,10 @@ class SuperAdminTest extends TestCase
 
     $this->assertSoftDeleted($supervisor);
   }
+
+  /** @test */
+  public function super_admin_can_manage_company_bank_accounts()
+  {
+    $this->markTestSkipped('implement ASAP');
+  }
 }

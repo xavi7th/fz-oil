@@ -89,7 +89,7 @@ let handleLogin = e => {
 			<form on:submit|preventDefault={handleLogin}>
 				<div class="form-group">
           <label for="">Username</label>
-          <input class="form-control" placeholder="Enter your username" type="text" bind:value={details.email}>
+          <input class="form-control" placeholder="Enter your username" type="text" bind:value={details.user_name}>
 					<div class="pre-icon os-icon os-icon-user-male-circle"></div>
 				</div>
 				<div class="form-group">

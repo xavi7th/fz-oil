@@ -13,8 +13,8 @@ class CompanyBankAccountController extends Controller
 {
   static function routes()
   {
-    Route::middleware('web')->prefix(CompanyBankAccount::DASHBOARD_ROUTE_PREFIX)->name(CompanyBankAccount::ROUTE_NAME_PREFIX)->group(function () {
-      Route::get('', [self::class, 'index'])->name('index');
+    Route::prefix(CompanyBankAccount::DASHBOARD_ROUTE_PREFIX)->name(CompanyBankAccount::ROUTE_NAME_PREFIX)->group(function () {
+      Route::get('', [self::class, 'index'])->name('index')->defaults('menu', __e('Bank Accounts', 'viewAny,' . CompanyBankAccount::class, 'box', false));
     });
   }
   /**
@@ -23,6 +23,7 @@ class CompanyBankAccountController extends Controller
    */
   public function index()
   {
+    $this->authorize('viewAny', CompanyBankAccount::class);
     return Inertia::render('CompanyBankAccount::ManageAccounts')->withViewData([
       'title' => 'Hello theEects',
       'metaDesc' => ' This page is ...'
