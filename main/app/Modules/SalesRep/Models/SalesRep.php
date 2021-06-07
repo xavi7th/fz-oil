@@ -76,7 +76,7 @@ class SalesRep extends User
 
   protected $table = parent::TABLE_NAME;
 
-  const DASHBOARD_ROUTE_PREFIX = 'sales-rep';
+  const DASHBOARD_ROUTE_PREFIX = 'sales-reps';
   const ROUTE_NAME_PREFIX = 'salesrep.';
 
   public function expenses()

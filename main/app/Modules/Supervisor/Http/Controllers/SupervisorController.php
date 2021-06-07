@@ -19,9 +19,8 @@ class SupervisorController extends Controller
     });
   }
 
-  public function index(Request $request)
+  public function dashboardPage(Request $request)
   {
-    dd('here');
     $this->authorize('accessDashboard', Supervisor::class);
 
     return Inertia::render('Supervisor::Dashboard');

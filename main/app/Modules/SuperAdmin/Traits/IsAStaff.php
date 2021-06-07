@@ -60,6 +60,7 @@ trait IsAStaff
 
     return Inertia::render('SuperAdmin::Manage' . Str::of(__CLASS__)->afterLast('\\')->plural(), [
       (string)Str::of(class_basename(self::class))->snake()->plural() => (new StaffTransformer)->collectionTransformer(self::all(), 'transformForSuperAdminViewSalesReps'),
+      'staff_count' => self::count(),
       'can_delete' => Gate::allows('delete', self::class),
       'can_create' => Gate::allows('create', self::class),
       'can_edit' => Gate::allows('update', self::class),

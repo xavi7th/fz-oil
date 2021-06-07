@@ -12,6 +12,7 @@
   $title = "Manage Supervisors";
 
   export let supervisors = [],
+  staff_count = 0,
   can_delete = false,
   can_create = false,
   can_activate = false,
@@ -39,7 +40,7 @@
   <div class="col-6 col-sm-3 col-xxl-3">
     <a class="element-box el-tablo centered trend-in-corner smaller" href="#">
       <div class="label">Registered Supervisors</div>
-      <div class="value">12</div>
+      <div class="value">{staff_count}</div>
     </a>
   </div>
 </div>

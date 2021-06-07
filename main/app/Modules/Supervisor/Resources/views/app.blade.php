@@ -2,7 +2,7 @@
 <html>
 
 <head>
-	@routes(['supervisor', 'generic', 'public', 'auth'])
+	@routes(['supervisor', 'salesrep', 'public', 'auth', 'generic'])
 
 	<title>{{ config('app.name') }} | Welcome</title>
 	<meta charset="utf-8">

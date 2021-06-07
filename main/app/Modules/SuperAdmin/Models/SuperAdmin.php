@@ -64,7 +64,7 @@ class SuperAdmin extends User
 
   protected $table = parent::TABLE_NAME;
 
-  const DASHBOARD_ROUTE_PREFIX = 'super-admin';
+  const DASHBOARD_ROUTE_PREFIX = 'super-admins';
   const ROUTE_NAME_PREFIX = 'superadmin.';
 
   static function cash_in_office(): float

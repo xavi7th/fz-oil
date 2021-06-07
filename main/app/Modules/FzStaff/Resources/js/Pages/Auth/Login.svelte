@@ -7,7 +7,6 @@
 <script>
   import { Inertia } from '@inertiajs/inertia';
   import { page } from '@inertiajs/inertia-svelte';
-  import { getErrorString } from '@public-shared/helpers';
   import { onMount } from 'svelte';
 
   $: ({errors} = $page.props);

@@ -13,7 +13,7 @@ class MenuService
   private $user;
   private $is_heirarchical = false;
 
-  public function setUser(User $user): self
+  public function setUser(?User $user): self
   {
     $this->user = $user;
     return $this;
@@ -32,6 +32,26 @@ class MenuService
     } else {
       return $this->getUserRoutes();
     }
+  }
+
+  private function getPublicRoutes()
+  {
+    $routes = collect(Route::getRoutes()->getRoutesByName())
+    ->filter(function ($value, $key) {
+      return in_array('GET', $value->methods())  &&  Str::startsWith($value->getName(), ['public', 'auth']);
+    })
+    ->map(function (RouteObject $route) {
+      return (object)[
+        'uri' => $route->uri(),
+        'method' => $route->methods()[0],
+        'name' => $route->getName(),
+        // 'nav_skip' => $route->defaults['menu']['nav_skip'] ?? false,
+        // 'icon' => $route->defaults['menu']['icon'] ?? null,
+        // 'menu_name' => $route->defaults['menu']['name']
+      ];
+    });
+
+  return $this->is_heirarchical ? $this->getHeirachicalRoutes($routes) : $routes->values()->toArray();
   }
 
   public function getAllRoutes(): array
@@ -68,13 +88,16 @@ class MenuService
         ];
       });
 
-    /**
-     * ? Set the Dashboard as the first menu item
-     */
-    $user_slug = Str::of($this->user->getType())->snake()->replace('_', '-')->__toString();
-    $routes->prepend($routes->pull($user_slug), $user_slug);
 
-    return $this->is_heirarchical ? $this->getHeirachicalRoutes($routes) : $routes->values()->toArray();
+      /**
+       * ? Set the Dashboard as the first menu item
+       */
+      $user_slug = Str::of($this->user->getType())->plural()->snake()->replace('_', '-')->__toString();
+      $routes->prepend($routes->pull($user_slug), $user_slug);
+
+      // dd($routes);
+
+      return $this->is_heirarchical ? $this->getHeirachicalRoutes($routes) : $routes->values()->toArray();
   }
 
   private function getUserRoutesViaMiddleware(): array
