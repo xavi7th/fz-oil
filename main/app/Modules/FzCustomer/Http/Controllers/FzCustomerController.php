@@ -7,13 +7,16 @@ use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Route;
 use App\Modules\FzCustomer\Models\FzCustomer;
+use App\Modules\FzCustomer\Models\CreditTransaction;
+use App\Modules\SuperAdmin\Traits\AccessibleToAllStaff;
+use App\Modules\FzCustomer\Transformers\FzCustomerTransformer;
 use App\Modules\FzCustomer\Http\Requests\CreateCustomerRequest;
 use App\Modules\FzCustomer\Http\Requests\CreateCustomerCreditRepaymentTransactionRequest;
-use App\Modules\FzCustomer\Models\CreditTransaction;
-use App\Modules\FzCustomer\Transformers\FzCustomerTransformer;
 
 class FzCustomerController extends Controller
 {
+
+  use AccessibleToAllStaff;
 
   static function routes()
   {

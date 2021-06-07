@@ -7,22 +7,24 @@ use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Contracts\Support\Renderable;
+use App\Modules\SuperAdmin\Traits\AccessibleToAllStaff;
 use App\Modules\CompanyBankAccount\Models\CompanyBankAccount;
 
 class CompanyBankAccountController extends Controller
 {
+  use AccessibleToAllStaff;
+
   static function routes()
   {
     Route::prefix(CompanyBankAccount::DASHBOARD_ROUTE_PREFIX)->name(CompanyBankAccount::ROUTE_NAME_PREFIX)->group(function () {
       Route::get('', [self::class, 'index'])->name('index')->defaults('menu', __e('Bank Accounts', 'viewAny,' . CompanyBankAccount::class, 'box', false));
-      Route::get('qwrve', [self::class, 'index'])->name('index2')->defaults('menu', __e('Bank Accounts 2', 'viewAny,' . CompanyBankAccount::class, 'box', false));
     });
   }
   /**
    * Display a listing of the resource.
    * @return Renderable
    */
-  public function index()
+  public function index(Request $request)
   {
     $this->authorize('viewAny', CompanyBankAccount::class);
     return Inertia::render('CompanyBankAccount::ManageAccounts')->withViewData([

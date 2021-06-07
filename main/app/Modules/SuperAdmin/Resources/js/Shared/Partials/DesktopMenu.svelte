@@ -1,4 +1,5 @@
 <script>
+  import { InertiaLink } from "@inertiajs/inertia-svelte";
   export let routes = [];
   $: console.log(routes);
 </script>
@@ -48,11 +49,11 @@
     {#each Object.entries(routes) as [route_name, route_cont]}
       {#if route_cont.length == 1}
         <li class="selected">
-          <a href="{route(route_cont[0].name)}">
+          <InertiaLink href="{route(route_cont[0].name)}">
             <div class="icon-w">
               <div class="os-icon os-icon-layout"></div>
             </div><span>{route_cont[0].menu_name}</span>
-          </a>
+          </InertiaLink>
         </li>
       {:else if route_cont.length > 1}
         <li class="selected has-sub-menu">
@@ -67,7 +68,7 @@
             <div class="sub-menu-i">
               <ul class="sub-menu">
                 {#each route_cont as elem}
-                   <li><a href="{route(elem.name)}">{elem.menu_name}</a></li>
+                   <li><InertiaLink href="{route(elem.name)}">{elem.menu_name}</InertiaLink></li>
                 {/each}
               </ul>
             </div>

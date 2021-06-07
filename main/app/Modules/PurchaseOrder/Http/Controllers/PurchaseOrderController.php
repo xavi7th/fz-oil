@@ -13,15 +13,16 @@ use App\Modules\PurchaseOrder\Models\CashLodgement;
 use App\Modules\PurchaseOrder\Models\PurchaseOrder;
 use App\Modules\FzStockManagement\Models\FzPriceBatch;
 use App\Modules\FzStockManagement\Models\FzProductType;
+use App\Modules\SuperAdmin\Traits\AccessibleToAllStaff;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use App\Modules\PurchaseOrder\Models\DirectSwapTransaction;
 use App\Modules\PurchaseOrder\Services\PurchaseOrderService;
 use App\Modules\CompanyBankAccount\Models\CompanyBankAccount;
-use App\Modules\FzCustomer\Policies\FzCustomerPolicy;
 use App\Modules\PurchaseOrder\Http\Requests\CreatePurchaseOrderRequest;
 
 class PurchaseOrderController extends Controller
 {
+  use AccessibleToAllStaff;
 
   static function routes()
   {
@@ -46,7 +47,7 @@ class PurchaseOrderController extends Controller
   {
     $this->authorize('viewAny', PurchaseOrder::class);
 
-    return Inertia::render('PurchaseOrder::List', [
+    return Inertia::render('PurchaseOrder::ManageCustomerPurchaseOrder', [
       'purchase_orders' => PurchaseOrder::all(),
       'purchase_orders_count' => PurchaseOrder::count(),
       'can_create_customer' => $request->user()->can('create', PurchaseOrder::class),

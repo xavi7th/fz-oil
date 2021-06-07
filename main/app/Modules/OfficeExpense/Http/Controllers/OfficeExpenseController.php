@@ -8,13 +8,16 @@ use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Contracts\Support\Renderable;
 use App\Modules\OfficeExpense\Models\OfficeExpense;
+use App\Modules\SuperAdmin\Traits\AccessibleToAllStaff;
 use App\Modules\OfficeExpense\Http\Requests\CreateOfficeExpenseRequest;
 
 class OfficeExpenseController extends Controller
 {
+  use AccessibleToAllStaff;
+
   static function routes()
   {
-    Route::middleware('web')->prefix(OfficeExpense::DASHBOARD_ROUTE_PREFIX)->name(OfficeExpense::ROUTE_NAME_PREFIX)->group(function () {
+    Route::prefix(OfficeExpense::DASHBOARD_ROUTE_PREFIX)->name(OfficeExpense::ROUTE_NAME_PREFIX)->group(function () {
       Route::get('', [self::class, 'index'])->name('list')->defaults('menu', __e('Office Expenses', 'viewAny,' . OfficeExpense::class, 'box', false));
       Route::post('ceate', [self::class, 'createOfficeExpense'])->name('create');
     });

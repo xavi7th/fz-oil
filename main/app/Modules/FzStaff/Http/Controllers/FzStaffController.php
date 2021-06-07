@@ -7,9 +7,11 @@ use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Route;
 use App\Modules\FzStaff\Models\FzStaff;
+use App\Modules\SuperAdmin\Traits\AccessibleToAllStaff;
 
 class FzStaffController extends Controller
 {
+  use AccessibleToAllStaff;
   static function routes()
   {
     // Route::middleware(['web'])->prefix(FzStaff::DASHBOARD_ROUTE_PREFIX)->name(FzStaff::ROUTE_NAME_PREFIX)->group(function () {

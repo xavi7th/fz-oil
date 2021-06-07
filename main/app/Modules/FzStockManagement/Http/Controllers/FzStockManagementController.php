@@ -8,13 +8,15 @@ use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Route;
 use App\Modules\FzStockManagement\Models\FzStock;
 use App\Modules\FzStockManagement\Models\FzProductType;
-use App\Modules\FzStockManagement\Models\FzProductBatch;
+use App\Modules\SuperAdmin\Traits\AccessibleToAllStaff;
 
 class FzStockManagementController extends Controller
 {
+  use AccessibleToAllStaff;
+
   static function routes()
   {
-    Route::middleware('web')->prefix(FzStock::DASHBOARD_ROUTE_PREFIX)->name(FzStock::ROUTE_NAME_PREFIX)->group(function () {
+    Route::prefix(FzStock::DASHBOARD_ROUTE_PREFIX)->name(FzStock::ROUTE_NAME_PREFIX)->group(function () {
       Route::prefix(FzProductType::DASHBOARD_ROUTE_PREFIX)->name(FzProductType::ROUTE_NAME_PREFIX)->group(function () {
         Route::get('', [self::class, 'index'])->name('index')->defaults('menu', __e('Manage Stock', 'viewAny,' . FzStock::class, 'box', false));
       });

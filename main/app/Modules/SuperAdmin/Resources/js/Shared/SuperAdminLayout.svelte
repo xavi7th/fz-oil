@@ -12,11 +12,16 @@
 
   import { onMount } from "svelte";
   import { page } from "@inertiajs/inertia-svelte";
+  import { Inertia } from "@inertiajs/inertia";
   import { fly } from "svelte/transition";
   import { Portal } from 'svelte-teleport';
   import { modalRoot } from "@public-shared/stores";
 
-  $: ({ app, routes, auth } = $page.props);
+  $: ({ routes, isInertiaRequest } = $page.props);
+
+  if (!isInertiaRequest) {
+    Inertia.reload({ only: ['routes'] })
+  }
 
   let isMounted = false;
 

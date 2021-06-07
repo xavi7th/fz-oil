@@ -2,6 +2,7 @@
 
 namespace App\Http\Middleware;
 
+use Inertia\Inertia;
 use Inertia\Middleware;
 use Illuminate\Support\Str;
 use Illuminate\Http\Request;
@@ -62,9 +63,7 @@ class HandleInertiaRequests extends Middleware
         'opening_days' => config('app.opening_days'),
         'opening_hours' => config('app.opening_hours'),
       ],
-      'routes' => function (Request $request) {
-        return Cache::remember('routes', config('cache.user_routes_cache_duration'), fn () => (new MenuService)->setHeirarchical(true)->setUser($request->user())->getRoutes());
-      },
+      'routes' => Inertia::lazy(fn (Request $request) => Cache::remember('routes', config('cache.user_routes_cache_duration'), fn () => (new MenuService)->setHeirarchical(true)->setUser($request->user())->getRoutes())),
       'isInertiaRequest' => (bool)request()->header('X-Inertia'),
       'auth' => function (Request $request) {
         return [
