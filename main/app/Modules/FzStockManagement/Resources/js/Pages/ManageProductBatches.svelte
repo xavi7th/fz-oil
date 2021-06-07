@@ -1,7 +1,14 @@
+
+<script context="module">
+  import Layout, {title} from "@superadmin-shared/SuperAdminLayout.svelte";
+  export const layout = Layout
+</script>
+
 <script>
-  import Layout from "@superadmin-shared/SuperAdminLayout.svelte";
   import { modalRoot } from "@public-shared/stores";
   import { Portal } from 'svelte-teleport';
+
+  $title = "Manage Product Bacthes";
 
   let productBatchModals;
 
@@ -14,7 +21,6 @@
 
 </script>
 
-<Layout title="Manage Product Batches">
 <div class="row pt-2 pb-2">
     <div class="col-6 col-sm-3 col-xxl-3">
         <a class="element-box el-tablo centered trend-in-corner smaller" href="#">
@@ -202,4 +208,3 @@
       </div>
   </div>
 </Portal>
-</Layout>

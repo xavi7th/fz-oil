@@ -25820,7 +25820,7 @@ body.rentals-wrapper .select2-container--default .select2-results__option[aria-s
     top: 15px;
     right: 20px;
     float: none;
-    z-index: 999;
+    z-index: 9999;
     color: #111;
     opacity: 1;
     text-shadow: none

@@ -1,7 +1,14 @@
+
+<script context="module">
+  import Layout, {title} from "@superadmin-shared/SuperAdminLayout.svelte";
+  export const layout = Layout
+</script>
+
 <script>
-  import Layout from "@superadmin-shared/SuperAdminLayout.svelte";
   import { modalRoot } from "@public-shared/stores";
   import { Portal } from 'svelte-teleport';
+
+  $title = "Customers";
 
   let customerModals;
 
@@ -14,7 +21,6 @@
 
 </script>
 
-<Layout title="Customers">
   <div class="row pt-2 pb-2">
     <div class="col-6 col-sm-3 col-xxl-3">
         <a class="element-box el-tablo centered trend-in-corner smaller" href="#">
@@ -139,7 +145,7 @@
 <div class="onboarding-modal modal fade animated" id="deleteCustomerModal" role="dialog" tabindex="-1" style="display: none;" aria-hidden="true">
     <div class="modal-dialog modal-centered" role="document">
         <div class="modal-content text-center"><button aria-label="Close" class="close" data-dismiss="modal" type="button"><span class="close-label">Close</span><span class="os-icon os-icon-close"></span></button>
-            <div class="onboarding-media"><img alt="" src="img/bigicon5.png" width="200px"></div>
+            <div class="onboarding-media"><img alt="" src="/img/bigicon5.png" width="200px"></div>
             <div class="onboarding-content with-gradient">
                 <h4 class="onboarding-title">Delete Customer?</h4>
                 <div class="onboarding-text"><strong>This action cannot be reversed</strong></div>
@@ -155,7 +161,7 @@
                 <span class="close-label">Close</span>
                 <span class="os-icon os-icon-close"></span>
             </button>
-            <div class="onboarding-media"><img alt="" src="img/bigicon6.png" width="200px"></div>
+            <div class="onboarding-media"><img alt="" src="/img/bigicon6.png" width="200px"></div>
             <div class="onboarding-content with-gradient">
                 <h4 class="onboarding-title">Add Customer</h4>
                 <div class="onboarding-text">Please provide all informations.</div>
@@ -211,4 +217,3 @@
     </div>
 </div>
 </Portal>
-</Layout>

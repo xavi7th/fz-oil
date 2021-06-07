@@ -1,5 +1,5 @@
 <div class="menu-mobile menu-activated-on-click color-scheme-dark">
-        <div class="mm-logo-buttons-w"><a class="mm-logo" href="index.html"><img src="img/logo.png" alt=""><span>FZ Oil</span></a>
+        <div class="mm-logo-buttons-w"><a class="mm-logo" href="index.html"><img src="/img/logo.png" alt=""><span>FZ Oil</span></a>
           <div class="mm-buttons">
             <div class="mobile-menu-trigger">
               <div class="os-icon os-icon-hamburger-menu-1"></div>
@@ -8,7 +8,7 @@
         </div>
         <div class="menu-and-user">
           <div class="logged-user-w">
-            <div class="avatar-w"><img alt="" src="img/avatar1.jpg"></div>
+            <div class="avatar-w"><img alt="" src="/img/avatar1.jpg"></div>
             <div class="logged-user-info-w">
               <div class="logged-user-name">FZ Oil</div>
               <div class="logged-user-role">Administrator</div>

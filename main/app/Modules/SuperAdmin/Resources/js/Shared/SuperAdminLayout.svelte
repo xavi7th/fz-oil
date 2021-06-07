@@ -12,16 +12,11 @@
 
   import { onMount } from "svelte";
   import { page } from "@inertiajs/inertia-svelte";
-  import { Inertia } from "@inertiajs/inertia";
-  import { fly } from "svelte/transition";
+  import { fade } from "svelte/transition";
   import { Portal } from 'svelte-teleport';
   import { modalRoot } from "@public-shared/stores";
 
-  $: ({ routes, isInertiaRequest } = $page.props);
-
-  if (!isInertiaRequest) {
-    Inertia.reload({ only: ['routes'] })
-  }
+  $: ({ routes } = $page.props);
 
   let isMounted = false;
 
@@ -30,12 +25,18 @@
   });
 </script>
 
+<style>
+  .layout-w{
+    min-height: 100vh;
+  }
+</style>
+
 <svelte:head>
   <title>{$title ? `${$title} | FZ` : 'Welcome | FZ'}</title>
 </svelte:head>
 
 {#if isMounted}
-  <div class="all-wrapper with-side-panel solid-bg-all" >
+  <div class="all-wrapper with-side-panel solid-bg-all" out:fade>
     <div class="layout-w">
       <MobileMenu {routes}></MobileMenu>
      <DesktopMenu {routes}></DesktopMenu>

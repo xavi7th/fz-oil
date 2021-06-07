@@ -19,7 +19,7 @@ Main javascript functions to init most of the elements
 #13. EMAIL APP
 #14. FULL CHAT APP
 #15. CRM PIPELINE
-#16. OUR OWN CUSTOM DROPDOWNS 
+#16. OUR OWN CUSTOM DROPDOWNS
 #17. BOOTSTRAP RELATED JS ACTIVATIONS
 #18. TODO Application
 #19. Fancy Selector
@@ -683,7 +683,7 @@ $(function() {
         $('.all-wrapper').toggleClass('content-panel-active');
     });
 
-    // #13. EMAIL APP 
+    // #13. EMAIL APP
 
     $('.more-messages').on('click', function() {
         $(this).hide();
@@ -733,7 +733,7 @@ $(function() {
 
     // #14. FULL CHAT APP
     function add_full_chat_message($input) {
-        $('.chat-content').append('<div class="chat-message self"><div class="chat-message-content-w"><div class="chat-message-content">' + $input.val() + '</div></div><div class="chat-message-date">1:23pm</div><div class="chat-message-avatar"><img alt="" src="img/avatar1.jpg"></div></div>');
+        $('.chat-content').append('<div class="chat-message self"><div class="chat-message-content-w"><div class="chat-message-content">' + $input.val() + '</div></div><div class="chat-message-date">1:23pm</div><div class="chat-message-avatar"><img alt="" src="/img/avatar1.jpg"></div></div>');
         $input.val('');
         var $messages_w = $('.chat-content-w');
         $messages_w.scrollTop($messages_w[0].scrollHeight);
@@ -763,7 +763,7 @@ $(function() {
         });
     }
 
-    // #16. OUR OWN CUSTOM DROPDOWNS 
+    // #16. OUR OWN CUSTOM DROPDOWNS
     $('.os-dropdown-trigger').on('mouseenter', function() {
         $(this).addClass('over');
     });

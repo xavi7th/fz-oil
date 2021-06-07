@@ -10,7 +10,9 @@ return [
   'blacklist' => ['debugbar.*', 'horizon.*', 'ignition.*', 'admin.*', 'superadmin.*'],
   'groups' => [
     'superadmin' => [
-      'superadmin.*'
+      'superadmin.*',
+      'salesrep.list',
+      'supervisor.list',
     ],
     'salesrep' => [
       'salesrep.*'

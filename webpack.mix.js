@@ -139,7 +139,7 @@ mix
       ],
 			safelist: {
 				standard: [/[pP]aginat(e|ion)/, /active/, /page/, /disabled/, /^dt-/],
-				deep: [/[dD]ata[tT]able/],
+				deep: [/[dD]ata[tT]able/, /modal/],
 				greedy: [/^dt/, /modal/]
 			},
 			rejected: true,

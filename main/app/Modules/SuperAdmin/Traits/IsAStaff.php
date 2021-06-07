@@ -38,7 +38,7 @@ trait IsAStaff
   static function staffRoutes()
   {
     Route::middleware('auth:super_admin,supervisor')->group(function () {
-      Route::get('list', [self::class, 'getAllStaff'])->name('list')->defaults('ex', __e('ss', 'aperture'));
+      Route::get('list', [self::class, 'getAllStaff'])->name('list')->defaults('menu', __e('Manage ' . Str::of(class_basename(self::class))->snake()->replace('_', ' ')->title()->plural(), 'viewAny,' . self::class, 'box', false));
       Route::post('create', [self::class, 'createStaff'])->name('create');
       Route::put('{staff}/edit', [self::class, 'editStaff'])->name('update');
       Route::put('{staff}/suspend', [self::class, 'suspendStaff'])->name('suspend');
@@ -52,7 +52,7 @@ trait IsAStaff
   {
     $this->authorize('viewAny', self::class);
 
-    return Inertia::render('SuperAdmin,ManageStaff/Manage' . Str::of(__CLASS__)->afterLast('\\')->plural(), [
+    return Inertia::render('SuperAdmin::Manage' . Str::of(__CLASS__)->afterLast('\\')->plural(), [
       (string)Str::of(class_basename(self::class))->snake()->plural() => (new StaffTransformer)->collectionTransformer(self::all(), 'transformForSuperAdminViewSalesReps'),
     ]);
   }

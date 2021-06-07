@@ -28,7 +28,7 @@ class LoginController extends Controller
 
   public function __construct()
   {
-    $this->middleware('guest:' . collect(config('auth.guards'))->keys()->implode(','))->except('auth.logout');
+    $this->middleware('guest:' . collect(config('auth.guards'))->keys()->implode(','))->except('logout');
   }
 
   static function routes()
@@ -99,7 +99,7 @@ class LoginController extends Controller
     $request->session()->invalidate();
 
     return Inertia::location(route('auth.login'));
-    return redirect()->route('auth.login');
+    return redirect()->route('auth.login')->withFlash(['success' => 'Account logged out successfully']);
   }
 
   protected function validateLogin(Request $request)

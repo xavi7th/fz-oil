@@ -1,7 +1,13 @@
+<script context="module">
+  import Layout, {title} from "@superadmin-shared/SuperAdminLayout.svelte";
+  export const layout = Layout
+</script>
+
 <script>
-  import Layout from "@superadmin-shared/SuperAdminLayout.svelte";
   import { modalRoot } from "@public-shared/stores";
   import { Portal } from 'svelte-teleport';
+
+  $title = "Manage Customer Credit";
 
   let customerCreditModal;
 
@@ -14,7 +20,6 @@
 
 </script>
 
-<Layout title="Manage Customer Credit">
 <div class="row pt-2 pb-2">
     <div class="col-6 col-sm-6 col-xxl-6">
         <div class="element-box">
@@ -121,7 +126,7 @@
       <div class="modal-content text-center"><button aria-label="Close" class="close" data-dismiss="modal"
               type="button"><span class="close-label">Close</span><span
                   class="os-icon os-icon-close"></span></button>
-          <div class="onboarding-media"><img alt="" src="img/bigicon5.png" width="200px"></div>
+          <div class="onboarding-media"><img alt="" src="/img/bigicon5.png" width="200px"></div>
           <div class="onboarding-content with-gradient">
               <h4 class="onboarding-title">Delete Order?</h4>
               <div class="onboarding-text"><strong>This action cannot be reversed</strong></div>
@@ -132,4 +137,3 @@
   </div>
 </div>
 </Portal>
-</Layout>

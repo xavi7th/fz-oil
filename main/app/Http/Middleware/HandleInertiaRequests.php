@@ -51,7 +51,7 @@ class HandleInertiaRequests extends Middleware
   {
 
     return array_merge(parent::share($request), [
-      'app' => fn() => [
+      'app' =>  Inertia::lazy(fn () => [
         'name' => config('app.name'),
         'whatsapp' => config('app.whatsapp'),
         'address' => config('app.address'),
@@ -62,8 +62,8 @@ class HandleInertiaRequests extends Middleware
         'twitter' => config('app.twitter'),
         'opening_days' => config('app.opening_days'),
         'opening_hours' => config('app.opening_hours'),
-      ],
-      'routes' => Inertia::lazy(fn (Request $request) => Cache::remember('routes', config('cache.user_routes_cache_duration'), fn () => (new MenuService)->setHeirarchical(true)->setUser($request->user())->getRoutes())),
+      ]),
+      'routes' => fn (Request $request) => Cache::remember('routes', config('cache.user_routes_cache_duration'), fn () => (new MenuService)->setHeirarchical(true)->setUser($request->user())->getRoutes()),
       'isInertiaRequest' => (bool)request()->header('X-Inertia'),
       'auth' => function (Request $request) {
         return [

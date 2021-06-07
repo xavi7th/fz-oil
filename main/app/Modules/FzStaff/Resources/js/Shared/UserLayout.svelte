@@ -1,3 +1,8 @@
+<script context="module">
+  import { writable } from 'svelte/store'
+  export const title = writable(null)
+</script>
+
 <script>
   import { afterUpdate } from "svelte";
 
