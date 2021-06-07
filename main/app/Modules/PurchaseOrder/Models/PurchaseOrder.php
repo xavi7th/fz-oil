@@ -114,6 +114,11 @@ class PurchaseOrder extends Model
     return $query->whereDate('created_at', today());
   }
 
+  public function scopeThisMonth(Builder $query)
+  {
+    return $query->whereMonth('created_at', today())->whereYear('created_at', today());
+  }
+
   protected static function newFactory()
   {
     return PurchaseOrderFactory::new();
