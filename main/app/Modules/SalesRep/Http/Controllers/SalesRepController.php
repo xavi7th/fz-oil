@@ -27,6 +27,7 @@ class SalesRepController extends Controller
   {
     $this->authorize('accessDashboard', SalesRep::class);
 
+
     return Inertia::render('SalesRep::Dashboard', [
       'registered_customers_count' => FzCustomer::count(),
       'available_oil_stock_count' => FzStock::oil()->sum('stock_quantity'),

@@ -21,6 +21,7 @@ class SupervisorController extends Controller
 
   public function index(Request $request)
   {
+    dd('here');
     $this->authorize('accessDashboard', Supervisor::class);
 
     return Inertia::render('Supervisor::Dashboard');

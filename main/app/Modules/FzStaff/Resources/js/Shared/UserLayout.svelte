@@ -4,24 +4,22 @@
 </script>
 
 <script>
-  import { afterUpdate } from "svelte";
+  import { onMount } from "svelte";
 
-  export let title = app.name;
+  let isMounted = false;
 
-  let isLoaded = false;
-
-  afterUpdate(() => {
-    isLoaded = true;
+  onMount(() => {
+    isMounted = true;
   });
 </script>
 
 <svelte:head>
-  <title>{title}</title>
+  <title>{$title ? `${$title} | FZ` : 'Login | FZ'}</title>
 </svelte:head>
 
 <slot></slot>
 
-{#if isLoaded}
+{#if isMounted}
   <script src="/js/user-dashboard-init.js">
 
   </script>

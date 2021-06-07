@@ -40,9 +40,9 @@ class Authenticate extends Middleware
    *
    * @throws ValidationException
    */
-  private function accountSuspended($request, array $guards)
+  private function accountSuspended($request, array $guards, $guard)
   {
-    // $this->auth->guard($guard)->logout();
+    $this->auth->guard($guard)->logout();
     session()->flash('errors', (new ViewErrorBag())->put('default', new MessageBag(['email' => 'Account Suspended. Contact your manager.'])));
 
     throw new AuthenticationException(
@@ -73,7 +73,7 @@ class Authenticate extends Middleware
 
         /** Check if the user is active and deny access if not*/
         if (!$this->auth->guard($guard)->user()->is_active && !$this->auth->guard($guard)->user()->isSuperAdmin()) {
-          $this->accountSuspended($request, $guards);
+          $this->accountSuspended($request, $guards, $guard);
         }
 
         return $this->auth->shouldUse($guard);

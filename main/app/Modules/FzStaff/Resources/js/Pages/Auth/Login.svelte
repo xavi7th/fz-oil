@@ -6,6 +6,11 @@
 
 <script>
   import { Inertia } from '@inertiajs/inertia';
+  import { page } from '@inertiajs/inertia-svelte';
+  import { getErrorString } from '@public-shared/helpers';
+  import { onMount } from 'svelte';
+
+  $: ({errors} = $page.props);
 
   $title = "Login Page";
 
@@ -85,6 +90,17 @@
       })
     }
   };
+
+  onMount(() => {
+    if (errors.email) {
+      Toast.fire( {
+        html: errors.email,
+        icon: "error",
+        timer:10000,
+        position:'top'
+      } );
+    }
+  })
 </script>
 
 <div class="all-wrapper menu-side with-pattern">
