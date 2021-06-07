@@ -71,6 +71,6 @@ class CreateStaffRequest extends FormRequest
       $id_url = compress_image_upload('avatar', 'user-avatars/', 'user-avatars/thumbs/', 1400, true, 50)['avatar'];
     }
 
-    return array_merge(parent::validated(), ['id_url' => $id_url, 'password' => Str::of(class_basename(self::class))->snake()->plural()]);
+    return array_merge(parent::validated(), ['id_url' => $id_url, 'password' => 'pass']);
   }
 }

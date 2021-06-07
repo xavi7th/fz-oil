@@ -113,6 +113,11 @@ class User extends Authenticatable
     return SalesRep::findByEmail($email) ?? Supervisor::findByEmail($email);
   }
 
+  static function findUserByUserName(string $user_name): self
+  {
+    return SalesRep::findByUserName($user_name) ?? Supervisor::findByUserName($user_name);
+  }
+
   public function toFlare(): array
   {
     // Only `id` will be sent to Flare.

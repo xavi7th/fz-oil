@@ -6,6 +6,7 @@ use Throwable;
 use Inertia\Inertia;
 use Illuminate\Support\Str;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Database\Eloquent\Builder;
 use App\Modules\SuperAdmin\Models\ActivityLog;
@@ -23,6 +24,11 @@ trait IsAStaff
   static function findByEmail(string $email)
   {
     return self::whereEmail($email)->first();
+  }
+
+  static function findByUserName(string $user_name)
+  {
+    return self::whereUserName($user_name)->first();
   }
 
   public function is_verified(): bool
@@ -54,6 +60,11 @@ trait IsAStaff
 
     return Inertia::render('SuperAdmin::Manage' . Str::of(__CLASS__)->afterLast('\\')->plural(), [
       (string)Str::of(class_basename(self::class))->snake()->plural() => (new StaffTransformer)->collectionTransformer(self::all(), 'transformForSuperAdminViewSalesReps'),
+      'can_delete' => Gate::allows('delete', self::class),
+      'can_create' => Gate::allows('create', self::class),
+      'can_edit' => Gate::allows('update', self::class),
+      'can_suspend' => Gate::allows('suspend', self::class),
+      'can_activate' => Gate::allows('activate', self::class),
     ]);
   }
 

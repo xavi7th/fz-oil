@@ -74,11 +74,11 @@ class LoginController extends Controller
   {
     if (!request('password')) throw ValidationException::withMessages(['err' => "A new password is required for your account."])->status(Response::HTTP_UNPROCESSABLE_ENTITY);
 
-    $user = User::findUserByEmail(request('email')) ?? back()->withFlash(['error'=>'Not Found']);
+    $user = User::findUserByuserName(request('user_name')) ?? back()->withFlash(['error'=>'This user record was not found']);
 
     if ($user && !$user->is_verified()) {
 
-      $user->password = request('pw');
+      $user->password = request('password');
       $user->verified_at = now();
       $user->save();
 

@@ -25,6 +25,7 @@ class StaffTransformer
     return [
       'id' => (int)$staff->id,
       'full_name' => (string)$staff->full_name,
+      'user_name' => (string)$staff->user_name,
       'email' => (string)$staff->email,
       'phone' => (string)$staff->phone,
       'address' => (string)$staff->address,

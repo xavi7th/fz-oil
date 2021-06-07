@@ -31,7 +31,7 @@ class SalesRepPolicy
    * @param  \App\Models\User  $user
    * @return bool
    */
-  public function view(User $user, SalesRep $sales_rep)
+  public function view(User $user)
   {
     return $user->is_operative() && ($user->isSuperAdmin() || $user->isSupervisor()) ? $this->allow() : $this->deny('You cannot create this sales rep\'s details.');
   }
@@ -52,7 +52,7 @@ class SalesRepPolicy
    * @param  \App\Models\User  $user
    * @return bool
    */
-  public function update(User $user, SalesRep $sales_rep)
+  public function update(User $user)
   {
     return $user->is_operative() && ($user->isSuperAdmin() || $user->isSupervisor()) ? $this->allow() : $this->deny('You cannot update sales reps profile.');
   }
@@ -63,7 +63,7 @@ class SalesRepPolicy
    * @param  \App\Models\User  $user
    * @return bool
    */
-  public function delete(User $user, SalesRep $sales_rep)
+  public function delete(User $user)
   {
     return $user->is_operative() && $user->isSuperAdmin() ? $this->allow() : $this->deny('You cannot delete sales reps profile.');
   }
@@ -74,7 +74,7 @@ class SalesRepPolicy
    * @param  \App\Models\User  $user
    * @return bool
    */
-  public function suspend(User $user, SalesRep $sales_rep)
+  public function suspend(User $user)
   {
     return $user->is_operative() && ($user->isSuperAdmin() || $user->isSupervisor()) ? $this->allow() : $this->deny('You cannot suspend sales reps account.');
   }
@@ -84,7 +84,7 @@ class SalesRepPolicy
    * @param  \App\Models\User  $user
    * @return bool
    */
-  public function restore(User $user, SalesRep $sales_rep)
+  public function restore(User $user)
   {
     return $user->is_operative() && $user->isSuperAdmin() ? $this->allow() : $this->deny('You cannot restore sales reps profile.');
   }
@@ -95,7 +95,7 @@ class SalesRepPolicy
    * @param  \App\Models\User  $user
    * @return bool
    */
-  public function activate(User $user, SalesRep $sales_rep)
+  public function activate(User $user)
   {
     return $user->is_operative() && ($user->isSuperAdmin() || $user->isSupervisor()) ? $this->allow() : $this->deny('You cannot activate sales reps account.');
   }

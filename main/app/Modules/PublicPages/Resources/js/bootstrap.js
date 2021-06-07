@@ -7,6 +7,9 @@ import { getErrorString, mediaHandler } from "@public-shared/helpers";
 window.swal = require('sweetalert2')
 window._ = {
 	compact: require('lodash/compact'),
+	isString: require('lodash/isString'),
+	reduce: require('lodash/reduce'),
+	size: require('lodash/size'),
 	split: require('lodash/split'),
 }
 window.initialiseDatatable = initialiseDatatable;

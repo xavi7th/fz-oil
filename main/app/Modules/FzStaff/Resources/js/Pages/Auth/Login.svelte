@@ -56,16 +56,16 @@
                 showCancelButton: true,
                 confirmButtonText: "Set Password",
                 showLoaderOnConfirm: true,
-                preConfirm: pw => {
-                  if (!pw) {
+                preConfirm: password => {
+                  if (!password) {
                     swal.showValidationMessage(
                     `You must provide a password for your account`
                     );
                     return false;
                   }
-                  return Inertia.post(route("app.password.new"), {
-                    pw,
-                    email: details.email
+                  return Inertia.post(route("auth.password"), {
+                    password,
+                    user_name: details.user_name
                   })
                 },
                 allowOutsideClick: () => !swal.isLoading()
