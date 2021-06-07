@@ -62,6 +62,11 @@ class OfficeExpense extends Model
     return $query->where('payment_type', 'transfer');
   }
 
+  public function scopeToday(Builder $query)
+  {
+    return $query->whereDate('created_at', today());
+  }
+
   protected static function newFactory()
   {
     return OfficeExpenseFactory::new();

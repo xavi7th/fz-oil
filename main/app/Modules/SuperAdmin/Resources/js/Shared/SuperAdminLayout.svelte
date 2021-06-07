@@ -4,12 +4,9 @@
 </script>
 
 <script>
-  import DashboardTopBar from './Partials/DashboardTopBar.svelte';
-
-  import DesktopMenu from './Partials/DesktopMenu.svelte';
-
-  import MobileMenu from './Partials/MobileMenu.svelte';
-
+  import DashboardTopBar from '@superadmin-shared/Partials/DashboardTopBar.svelte';
+  import DesktopMenu from '@superadmin-shared/Partials/DesktopMenu.svelte';
+  import MobileMenu from '@superadmin-shared/Partials/MobileMenu.svelte';
   import { onMount } from "svelte";
   import { page } from "@inertiajs/inertia-svelte";
   import { fade } from "svelte/transition";
@@ -42,7 +39,6 @@
      <DesktopMenu {routes}></DesktopMenu>
       <div class="content-w">
         <DashboardTopBar></DashboardTopBar>
-
 
         <div class="content-i">
           <div class="content-box">

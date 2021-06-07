@@ -4,9 +4,18 @@
   export const layout = Layout
 </script>
 
-
 <script>
-  $title = "Supervisor Dashboard"
+import { toCurrency } from '@public-shared/helpers';
+
+  $title = "Supervisor Dashboard";
+  export let registered_customers_count = 0,
+  available_oil_stock_count = 0,
+  available_gallon_stock_count = 0,
+  price_batch_count = 0,
+  total_daily_expenses = 0,
+  sales_rep_daily_purchase_order_amount = 0,
+  sales_rep_daily_purchase_order_count = 0,
+  total_daily_purchase_order_count = 0;
 </script>
 
 <svelte:head>
@@ -21,49 +30,49 @@
         <div class="col-6 col-sm-3 col-xxl-3">
           <a class="element-box el-tablo centered trend-in-corner smaller" href="#">
             <div class="label">Registered Customers</div>
-            <div class="value">512</div>
+            <div class="value">{registered_customers_count}</div>
           </a>
         </div>
         <div class="col-6 col-sm-3 col-xxl-3">
           <a class="element-box el-tablo centered trend-in-corner smaller" href="#">
-            <div class="label">Total Staffs</div>
-            <div class="value">12</div>
+            <div class="label">Your Daily Sale Count</div>
+            <div class="value">{sales_rep_daily_purchase_order_count}</div>
           </a>
         </div>
         <div class="col-6 col-sm-3 col-xxl-3">
           <a class="element-box el-tablo centered trend-in-corner smaller" href="#">
             <div class="label">Available Stock (Oil)</div>
-            <div class="value">3,412</div>
+            <div class="value">{available_oil_stock_count}</div>
           </a>
         </div>
         <div class="col-6 col-sm-3 col-xxl-3">
           <a class="element-box el-tablo centered trend-in-corner smaller" href="#">
             <div class="label">Available Stock (Gallons)</div>
-            <div class="value">1,245</div>
+            <div class="value">{available_gallon_stock_count}</div>
           </a>
         </div>
         <div class="col-6 col-sm-3 col-xxl-3">
           <a class="element-box el-tablo centered trend-in-corner smaller" href="#">
             <div class="label">Total Batches</div>
-            <div class="value">234</div>
+            <div class="value">{price_batch_count}</div>
           </a>
         </div>
         <div class="col-6 col-sm-3 col-xxl-3">
           <a class="element-box el-tablo centered trend-in-corner smaller" href="#">
-            <div class="label">Total Transactions</div>
-            <div class="value">16,234</div>
+            <div class="label">Total Transactions Today</div>
+            <div class="value">{total_daily_purchase_order_count}</div>
           </a>
         </div>
         <div class="col-6 col-sm-3 col-xxl-3">
           <a class="element-box el-tablo centered trend-in-corner smaller" href="#">
             <div class="label">Today's Expense</div>
-            <div class="value">₦10,200.64</div>
+            <div class="value">{toCurrency(total_daily_expenses)}</div>
           </a>
         </div>
         <div class="col-6 col-sm-3 col-xxl-3">
           <a class="element-box el-tablo centered trend-in-corner smaller" href="#">
-            <div class="label">Today's Profits</div>
-            <div class="value">₦220,000.00</div>
+            <div class="label">Your Sales Amount Today</div>
+            <div class="value">{toCurrency(sales_rep_daily_purchase_order_amount)}</div>
           </a>
         </div>
       </div>

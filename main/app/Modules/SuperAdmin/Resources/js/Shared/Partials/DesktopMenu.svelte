@@ -1,5 +1,5 @@
 <script>
-  import { inertia, InertiaLink } from "@inertiajs/inertia-svelte";
+  import { page, inertia, InertiaLink } from "@inertiajs/inertia-svelte";
   export let routes = {};
 </script>
 
@@ -13,31 +13,31 @@
   </div>
   <div class="logged-user-w avatar-inline">
     <div class="logged-user-i">
-      <div class="avatar-w"><img alt="" src="/img/avatar1.jpg"></div>
+      <div class="avatar-w"><img alt="" src="{$page.props.auth.user.id_url || '/img/avatar1.jpg'}"></div>
       <div class="logged-user-info-w">
         <div class="logged-user-name">FZ Oil</div>
-        <div class="logged-user-role">Administrator</div>
+        <div class="logged-user-role">{$page.props.auth.user.user_type}</div>
       </div>
       <div class="logged-user-toggler-arrow">
         <div class="os-icon os-icon-chevron-down"></div>
       </div>
       <div class="logged-user-menu color-style-bright">
         <div class="logged-user-avatar-info">
-          <div class="avatar-w"><img alt="" src="/img/avatar1.jpg"></div>
+          <div class="avatar-w"><img alt="" src="{$page.props.auth.user.id_url || '/img/avatar1.jpg'}"></div>
           <div class="logged-user-info-w">
             <div class="logged-user-name">FZ Oil</div>
-            <div class="logged-user-role">Administrator</div>
+            <div class="logged-user-role">{$page.props.auth.user.user_type}</div>
           </div>
         </div>
         <div class="bg-icon"><i class="os-icon os-icon-wallet-loaded"></i></div>
-        <ul>
+        <!-- <ul> -->
           <!-- <li><a href="apps_email.html"><i class="os-icon os-icon-mail-01"></i><span>Incoming Mail</span></a></li>
           <li><a href="users_profile_big.html"><i class="os-icon os-icon-user-male-circle2"></i><span>Profile Details</span></a></li>
           <li><a href="users_profile_small.html"><i class="os-icon os-icon-coins-4"></i><span>Billing Details</span></a></li>
           <li><a href="#"><i class="os-icon os-icon-others-43"></i><span>Notifications</span></a></li> -->
           <!-- <li></li> -->
 
-        </ul>
+        <!-- </ul> -->
       </div>
     </div>
   </div>
