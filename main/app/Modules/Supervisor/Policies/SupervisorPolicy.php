@@ -37,7 +37,7 @@ class SupervisorPolicy
    * @param  \App\Models\User  $user
    * @return bool
    */
-  public function view(User $user, Supervisor $supervisor)
+  public function view(User $user)
   {
       return $user->isSuperAdmin() ? $this->allow() : $this->deny('You cannot create this supervisor\'s details.');
   }
@@ -58,7 +58,7 @@ class SupervisorPolicy
    * @param  \App\Models\User  $user
    * @return bool
    */
-  public function update(User $user, Supervisor $supervisor)
+  public function update(User $user)
   {
     return $user->isSuperAdmin() ? $this->allow() : $this->deny('You cannot update supervisors profile.');
   }
@@ -69,7 +69,7 @@ class SupervisorPolicy
    * @param  \App\Models\User  $user
    * @return bool
    */
-  public function delete(User $user, Supervisor $supervisor)
+  public function delete(User $user)
   {
     return $user->isSuperAdmin() ? $this->allow() : $this->deny('You cannot delete supervisors profile.');
   }
@@ -80,7 +80,7 @@ class SupervisorPolicy
    * @param  \App\Models\User  $user
    * @return bool
    */
-  public function suspend(User $user, Supervisor $supervisor)
+  public function suspend(User $user)
   {
     return $user->isSuperAdmin() ? $this->allow() : $this->deny('You cannot suspend supervisors account.');
   }
@@ -90,7 +90,7 @@ class SupervisorPolicy
    * @param  \App\Models\User  $user
    * @return bool
    */
-  public function restore(User $user, Supervisor $supervisor)
+  public function restore(User $user)
   {
     return $user->isSuperAdmin() ? $this->allow() : $this->deny('You cannot restore supervisors profile.');
   }
@@ -101,7 +101,7 @@ class SupervisorPolicy
    * @param  \App\Models\User  $user
    * @return bool
    */
-  public function activate(User $user, Supervisor $supervisor)
+  public function activate(User $user)
   {
     return $user->isSuperAdmin() ? $this->allow() : $this->deny('You cannot activate supervisors account.');
   }
