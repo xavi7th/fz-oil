@@ -51,7 +51,8 @@ class CompanyBankAccount extends Model
 {
   use HasFactory;
 
-  protected $fillable = ['account_name','acount_number','bank_name',];
+  protected $fillable = ['account_name','account_number','bank_name',];
+  protected $casts = ['is_active' => 'bool'];
 
   const DASHBOARD_ROUTE_PREFIX = 'company-bank-accounts';
   const ROUTE_NAME_PREFIX = 'companybankaccount.';

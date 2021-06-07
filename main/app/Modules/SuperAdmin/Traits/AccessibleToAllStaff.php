@@ -11,6 +11,6 @@ trait AccessibleToAllStaff
 
   public function __construct()
   {
-    $this->middleware('auth:' . collect(config('auth.guards'))->keys()->implode(','))->except('auth.logout');
+    $this->middleware('auth:' . collect(config('auth.guards'))->keys()->implode(','));
   }
 }

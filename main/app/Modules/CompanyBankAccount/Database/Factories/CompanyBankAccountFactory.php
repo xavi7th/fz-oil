@@ -23,7 +23,7 @@ class CompanyBankAccountFactory extends Factory
   {
     return [
       'account_name' => $this->faker->name,
-      'acount_number' => $this->faker->bankAccountNumber,
+      'account_number' => $this->faker->bankAccountNumber,
       'bank_name' => $this->faker->company,
       'is_active' => true
     ];

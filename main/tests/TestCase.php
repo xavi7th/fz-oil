@@ -148,4 +148,14 @@ abstract class TestCase extends BaseTestCase
       'company_bank_account_id' => CompanyBankAccount::factory()->create()->id,
     ];
   }
+
+  protected function data_to_create_bank_account()
+  {
+    return [
+      'account_name' => 'FZ Oil',
+      'account_number' => '123456789',
+      'bank_name' => 'GTB',
+      'is_active' => true,
+    ];
+  }
 }

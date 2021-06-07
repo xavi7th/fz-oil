@@ -16,7 +16,7 @@ class CreateCompanyBankAccountsTable extends Migration
     Schema::create('company_bank_accounts', function (Blueprint $table) {
       $table->id();
       $table->string('account_name');
-      $table->string('acount_number');
+      $table->string('account_number');
       $table->string('bank_name');
       $table->boolean('is_active')->default(true);
 

@@ -2,6 +2,7 @@
 
 namespace App\Modules\SuperAdmin\Tests\Feature;
 
+use App\Modules\CompanyBankAccount\Models\CompanyBankAccount;
 use Tests\TestCase;
 use App\Modules\SalesRep\Models\SalesRep;
 use App\Modules\SuperAdmin\Models\StaffRole;
@@ -15,11 +16,15 @@ class SuperAdminTest extends TestCase
 {
   use RefreshDatabase, WithFaker;
 
+  private $super_admin;
+
   public function setUp(): void
   {
     parent::setUp();
 
     $this->seed(StaffRoleTableSeeder::class);
+
+    $this->super_admin = SuperAdmin::factory()->create();
   }
 
   /** @test  */
@@ -234,6 +239,93 @@ class SuperAdminTest extends TestCase
   /** @test */
   public function super_admin_can_manage_company_bank_accounts()
   {
-    $this->markTestSkipped('implement ASAP');
+    $this->assertCount(0, CompanyBankAccount::all());
+
+    /**
+     * ? Test create account
+     */
+    $this->actingAs($this->super_admin, 'super_admin')->post( route('companybankaccount.create'), $this->data_to_create_bank_account())
+      // ->dumpSession()
+      ->assertSessionHasNoErrors()
+      ->assertSessionMissing('flash.error')
+      ->assertSessionHas('flash.success', 'Bank account created. Sales reps can naow record transactions for this bank.')
+      ->assertRedirect(route('companybankaccount.index'));
+
+    $this->assertCount(1, CompanyBankAccount::all());
+    $bank_account = CompanyBankAccount::first();
+
+    $this->assertTrue($bank_account->is_active);
+    $bank = $bank_account->bank;
+
+    /**
+     * ? Test update account
+     */
+
+    $this->actingAs($this->super_admin, 'super_admin')->put( route('companybankaccount.update', $bank_account), array_merge($this->data_to_create_bank_account(), ['account_name' => 'Daniel Ose']))
+      // ->dumpSession()
+      ->assertSessionHasNoErrors()
+      ->assertSessionMissing('flash.error')
+      ->assertSessionHas('flash.success', 'Bank account updated. This update will reflect instantly.')
+      ->assertRedirect(route('companybankaccount.index'));
+
+    $bank_account->refresh();
+
+    $this->assertDatabaseCount('company_bank_accounts', 1);
+    $this->assertEquals('Daniel Ose', $bank_account->account_name);
+    $this->assertEquals($bank, $bank_account->bank);
+
+    /**
+     * ? Test suspend account
+     */
+    $this->actingAs($this->super_admin, 'super_admin')->put( route('companybankaccount.suspend', $bank_account))
+      // ->dumpSession()
+      ->assertSessionHasNoErrors()
+      ->assertSessionMissing('flash.error')
+      ->assertSessionHas('flash.success', 'Bank account suspended. Transactions can no longer be recorded to this bank account.')
+      ->assertRedirect(route('companybankaccount.index'));
+
+    $bank_account->refresh();
+
+    $this->assertFalse($bank_account->is_active);
+
+    /**
+     * ? Test activate account
+     */
+    $this->actingAs($this->super_admin, 'super_admin')->put( route('companybankaccount.activate', $bank_account))
+      // ->dumpSession()
+      ->assertSessionHasNoErrors()
+      ->assertSessionMissing('flash.error')
+      ->assertSessionHas('flash.success', 'Bank account activated. Transactions can now be recorded to this bank account.')
+      ->assertRedirect(route('companybankaccount.index'));
+
+    $bank_account->refresh();
+
+    $this->assertTrue($bank_account->is_active);
+
+    /**
+     * ? Test view
+     */
+    $rsp = $this->actingAs($this->super_admin, 'super_admin')->get( route('companybankaccount.index'))->assertOk();
+    $page = $this->getResponseData($rsp);
+
+    $this->assertEquals('CompanyBankAccount::ManageAccounts', $page->component);
+    $this->assertArrayHasKey('errors', (array)$page->props);
+    $this->assertArrayHasKey('company_bank_accounts', (array)$page->props);
+    $this->assertEquals(1, $page->props->company_bank_accounts_count);
+    $this->assertArrayHasKey('can_create', (array)$page->props);
+    $this->assertArrayHasKey('can_edit', (array)$page->props);
+    $this->assertCount(1, (array)$page->props->company_bank_accounts);
+
+    /**
+     * ? Logout so we can try other users
+     */
+    $this->actingAs($this->super_admin, 'super_admin')->post( route('auth.logout'));
+
+    /**
+     * ? Authorization
+     */
+    $this->actingAs($supervisor = Supervisor::factory()->active()->verified()->create(), 'supervisor')->put(route('companybankaccount.activate', $bank_account))->assertStatus(403);
+    $this->actingAs($supervisor, 'supervisor')->post( route('auth.logout', $bank_account));
+    $this->actingAs(SalesRep::factory()->active()->verified()->create(), 'sales_rep')->put( route('companybankaccount.activate', $bank_account))->assertStatus(403);
   }
 }

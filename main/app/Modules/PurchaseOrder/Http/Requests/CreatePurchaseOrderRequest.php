@@ -49,7 +49,6 @@ class CreatePurchaseOrderRequest extends FormRequest
 
   public function authorize()
   {
-    ray($this->all());
     return true;
   }
 }
