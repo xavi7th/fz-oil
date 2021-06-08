@@ -25,7 +25,7 @@ class CreatePurchaseOrderRequest extends FormRequest
         $this->stock_exists && (DB::table('fz_price_batches')->where('id', $value)->first()->fz_product_type_id == $this->fz_product_type_id ? null : $fail('The selected price does not belong to ' . DB::table('fz_product_types')->where('id', $this->fz_product_type_id)->first()->product_type));
       }],
       'purchased_quantity' => ['required', 'numeric',   function ($attribute, $value, $fail) {
-        $this->stock_exists &&( DB::table('fz_stock')->where('fz_product_type_id', $this->fz_product_type_id)->first()->stock_quantity >= $value ? null : $fail('Not enough products in stock to process this order'));
+        $this->stock_exists &&( DB::table('fz_stock')->where('fz_product_type_id', $this->fz_product_type_id)->where('fz_price_batch_id', $this->fz_price_batch_id)->first()->stock_quantity >= $value ? null : $fail('Not enough products in stock to process this order'));
       }, function ($attribute, $value, $fail) {
         $this->stock_exists && (DB::table('fz_stock')->where('fz_product_type_id', FzProductType::gallonId())->first()->stock_quantity >= $value ? null : $fail('Not enough gallons in stock to process this order'));
       }],

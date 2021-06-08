@@ -12,6 +12,8 @@
 
   $title = "Purchase Order";
 
+  $: console.log((( swapValue(details.swap_product_type_id, details.swap_quantity) || 0)  ));
+
   let customerOrderModals, details = {};
 
   export let
@@ -26,24 +28,30 @@
   let validPriceBatches = prodId => price_batches.filter(batch => batch.fz_product_type_id == prodId)
 
   let totalCostPrice = (priceBatchId, quantity) => {
-    return (price_batches.filter(batch => batch.id === priceBatchId)[0] || {}).cost_price
+    return ((price_batches.filter(batch => batch.id === priceBatchId)[0] || {}).cost_price * quantity) || 0
+  }
+
+  let swapValue = (prodTypeId, quantity) => {
+    return ((stock_types.filter(type => type.id === prodTypeId)[0] || {}).swap_value * quantity) || 0
   }
 
   let totalSellingPrice = (priceBatchId, quantity) => {
-    return (price_batches.filter(batch => batch.id === priceBatchId)[0] || {}).selling_price
+    return ((price_batches.filter(batch => batch.id === priceBatchId)[0] || {}).selling_price * quantity) || 0
   }
 
   let createPurchaseOrder = ()=>{
     details.fz_customer_id = customer.id;
-    details.total_cost_price = totalCostPrice(details.fz_price_batch_id) * details.purchased_quantity;
-    details.total_selling_price = totalSellingPrice(details.fz_price_batch_id) * details.purchased_quantity;
+    details.total_cost_price = totalCostPrice(details.fz_price_batch_id, details.purchased_quantity);
+    details.total_selling_price = totalSellingPrice(details.fz_price_batch_id, details.purchased_quantity);
     if (!details.total_amount_paid) {
       Toast.fire({html:'Details not completed', position:'top', icon: 'error'});
       return;
     }
 
     Inertia.post(route('purchaseorders.create',customer), details,{
-
+      onSuccess:()=>{
+        details = {}
+      }
     });
 
   }
@@ -70,7 +78,7 @@
               <div class="form-group">
                 <label for="">Stock Type</label>
                 <select class="form-control" bind:value={details.fz_product_type_id}>
-                  <option value={null}>Select Stock Type</option>
+                  <option value={undefined}>Select Stock Type</option>
                   {#each stock_types as stock_type(stock_type.id)}
                   <option value={stock_type.id}>{stock_type.product_type}</option>
                   {/each}
@@ -97,11 +105,11 @@
 
           <div class="form-check">
             <label class="form-check-label">
-              <input class="form-check-input" type="checkbox" bind:checked={details.is_swap_transaction}> Swap Order?
+              <input class="form-check-input" type="checkbox" bind:checked={details.is_swap_purchase}> Swap Order?
             </label>
           </div>
 
-          {#if details.is_swap_transaction}
+          {#if details.is_swap_purchase}
           <fieldset class="form-group">
             <legend><span>Swap Section</span></legend>
             <div class="row">
@@ -109,7 +117,7 @@
                 <div class="form-group">
                   <label for="">Swap Stock Type</label>
                   <select class="form-control" bind:value={details.swap_product_type_id}>
-                    <option>Select Stock Type</option>
+                    <option value={undefined}>Select Stock Type</option>
                     {#each stock_types as stock_type(stock_type.id)}
                     <option value={stock_type.id}>{stock_type.product_type}</option>
                     {/each}
@@ -141,9 +149,9 @@
                 </div>
               </div>
               <div class="col-sm-6">
-                <div class="form-group">
+                <div class="form-group" class:text-danger={(totalSellingPrice(details.fz_price_batch_id, details.purchased_quantity) - swapValue(details.swap_product_type_id, details.swap_quantity)) < 0}>
                   <label for="">Total</label>
-                  <input class="form-control" disabled type="text" value="{toCurrency(totalSellingPrice(details.fz_price_batch_id) * details.purchased_quantity || 0)}">
+                  <input class="form-control" disabled type="text" value="{( (totalSellingPrice(details.fz_price_batch_id, details.purchased_quantity) - swapValue(details.swap_product_type_id, details.swap_quantity) ) )}" class:text-danger={(totalSellingPrice(details.fz_price_batch_id, details.purchased_quantity) - swapValue(details.swap_product_type_id, details.swap_quantity)) < 0}>
                 </div>
               </div>
             </div>
@@ -194,64 +202,40 @@
               <thead>
                 <tr>
                   <th>S/N</th>
+                    <th>Buyer</th>
                   <th>Stock Type</th>
                   <th>Qty</th>
                   <th>Swap / Qty / Value</th>
                   <th>Payment Type</th>
-                  <th>Total</th>
+                  <th>Paid/Selling Price</th>
                   <th>Date</th>
-                  <th>Actions</th>
                 </tr>
               </thead>
               <tfoot>
                 <tr>
                   <th>S/N</th>
+                  <th>Buyer</th>
                   <th>Stock Type</th>
                   <th>Qty</th>
                   <th>Swap / Qty / Value</th>
                   <th>Payment Type</th>
-                  <th>Total</th>
+                  <th>Paid/Selling Price</th>
                   <th>Date</th>
-                  <!-- <th>Actions</th> -->
                 </tr>
               </tfoot>
               <tbody>
                 {#each purchase_orders as order}
                 <tr>
                   <td>{order.id}</td>
-                  <td>{order.fz_product_type.product_type}</td>
+                  <td class="text-capitalize">{order.buyer.full_name}</td>
+                  <td class="text-capitalize">{order.product_type.product_type}</td>
                   <td>{order.purchased_quantity}</td>
-                  <td>{order.swap_product_type.product_type || 'N/A'} / {order.swap_quantity} / {toCurrency(order.swap_value)}</td>
-                  <td>{order.payment_type}</td>
-                  <td>{order.total_amount_paid} / {order.total_selling_price}</td>
-                  <td>{order.created_at}</td>
-                  <!-- <td class="row-actions remove-center">
-                    <a class="danger" data-target="#deleteOrderModal"
-                    data-toggle="modal" href="#">
-                    <i class="icon-feather-trash-2" data-placement="top"
-                    data-toggle="tooltip"
-                    data-original-title="Delete Order"></i>
-                  </a>
-                </td> -->
+                  <td class="text-capitalize">{order.swap_product_type?.product_type || 'N/A'} / {order.swap_quantity || 'N/A'} / {toCurrency(order.swap_value * order.swap_quantity)}</td>
+                  <td class="text-capitalize"> {order.payment_type == 'bank' ? `${order.bank?.bank_name} bank` : order.payment_type}</td>
+                  <td><span class="text-success">{toCurrency(order.total_amount_paid)}</span> / <span class="text-orange">{toCurrency(order.total_selling_price)}</span></td>
+                  <td>{new Date(order.created_at).toLocaleDateString()} {new Date(order.created_at).toLocaleTimeString()}</td>
               </tr>
               {/each}
-              <tr>
-                <td>2</td>
-                <td>Oil</td>
-                <td>450</td>
-                <td>Gallon / 12 / ₦12,000</td>
-                <td>Bank Transfer / GTB</td>
-                <td>₦22500</td>
-                <td>05/03/2021</td>
-                <td class="row-actions remove-center">
-                  <a class="danger" data-target="#deleteOrderModal"
-                  data-toggle="modal" href="#">
-                  <i class="icon-feather-trash-2" data-placement="top"
-                  data-toggle="tooltip"
-                  data-original-title="Delete Order"></i>
-                </a>
-              </td>
-            </tr>
           </tbody>
         </table>
       </div>

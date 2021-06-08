@@ -108,6 +108,7 @@ class FzCustomerController extends Controller
   {
     $this->authorize('setCreditLimit', FzCustomer::class);
 
+    $customer->credit_balance = $request->credit_limit - ($customer->credit_limit - $customer->credit_balance);
     $customer->credit_limit = $request->credit_limit;
     $customer->save();
 

@@ -2,11 +2,14 @@
 
 namespace App\Modules\PurchaseOrder\Models;
 
-use App\Modules\FzCustomer\Models\FzCustomer;
-use App\Modules\FzStockManagement\Models\FzStock;
+use App\Modules\CompanyBankAccount\Models\CompanyBankAccount;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Builder;
+use App\Modules\FzCustomer\Models\FzCustomer;
+use App\Modules\FzStockManagement\Models\FzStock;
+use App\Modules\FzStockManagement\Models\FzPriceBatch;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use App\Modules\FzStockManagement\Models\FzProductType;
 use App\Modules\PurchaseOrder\Database\Factories\PurchaseOrderFactory;
 
 /**
@@ -64,7 +67,7 @@ class PurchaseOrder extends Model
 {
   use HasFactory;
 
-  protected $fillable = ['fz_customer_id', 'fz_product_type_id', 'fz_price_batch_id', 'sales_rep_id', 'is_swap_transaction', 'purchased_quantity', 'swap_product_type_id', 'swap_quantity', 'swap_value', 'total_selling_price', 'total_amount_paid', 'payment_type', 'is_lodged'];
+  protected $fillable = ['fz_customer_id', 'fz_product_type_id', 'fz_price_batch_id', 'sales_rep_id', 'is_swap_transaction', 'purchased_quantity', 'swap_product_type_id', 'company_bank_account_id', 'swap_quantity', 'swap_value', 'total_selling_price', 'total_amount_paid', 'payment_type', 'is_lodged'];
 
   const DASHBOARD_ROUTE_PREFIX = 'purchase-orders';
   const ROUTE_NAME_PREFIX = 'purchaseorders.';
@@ -74,9 +77,29 @@ class PurchaseOrder extends Model
     return $this->belongsTo(FzStock::class, 'fz_product_type_id', 'fz_product_type_id')->where('fz_price_batch_id', $this->fz_price_batch_id);
   }
 
+  public function product_type()
+  {
+    return $this->belongsTo(FzProductType::class, 'fz_product_type_id');
+  }
+
+  public function swap_product_type()
+  {
+    return $this->belongsTo(FzProductType::class, 'swap_product_type_id');
+  }
+
+  public function price_batch()
+  {
+    return $this->belongsTo(FzPriceBatch::class, 'fz_price_batch_id');
+  }
+
   public function buyer()
   {
     return $this->belongsTo(FzCustomer::class, 'fz_customer_id');
+  }
+
+  public function bank()
+  {
+    return $this->belongsTo(CompanyBankAccount::class, 'company_bank_account_id');
   }
 
   static function cashInOffice(): float

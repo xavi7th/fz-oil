@@ -257,7 +257,7 @@ class SupervisorTest extends TestCase
     * ? Test update
     */
     $this->actingAs($this->supervisor, 'supervisor')->put(route('fzstock.update', $fz_stock), ['update_selling_price' => true, 'selling_price' => 3000])
-    ->dumpSession()
+    // ->dumpSession()
     ->assertRedirect(route('fzstock.list'))
     ->assertSessionHasNoErrors()
     ->assertSessionMissing('flash.error')

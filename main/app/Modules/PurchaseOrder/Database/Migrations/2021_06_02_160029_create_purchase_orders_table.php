@@ -27,6 +27,7 @@ class CreatePurchaseOrdersTable extends Migration
       $table->integer('swap_quantity')->nullable();
       $table->decimal('swap_value', 10, 2)->nullable();
       $table->decimal('total_amount_paid', 15, 2);
+      $table->foreignId('company_bank_account_id')->nullable()->constrained();
       $table->boolean('is_lodged')->default(true);
 
       $table->timestamps();

@@ -90,7 +90,7 @@ class PurchaseOrderService
 
     if (
       is_null($this->fz_product_type_id) || is_null($this->fz_price_batch_id) || is_null($this->purchased_quantity) || is_null($this->fz_customer_id)
-      || is_null($this->payment_type) || is_null($this->bank_id) || is_null($this->total_selling_price) || is_null($this->total_amount_paid)
+      || is_null($this->payment_type) || ($this->payment_type == 'bank' && is_null($this->bank_id) )|| is_null($this->total_selling_price) || is_null($this->total_amount_paid)
     ) {
       throw new Exception('Required parameters not set');
     }
@@ -194,6 +194,7 @@ class PurchaseOrderService
       'payment_type' => strtolower($this->payment_type),
       'fz_customer_id' => $this->fz_customer_id,
       'fz_product_type_id' => $this->fz_product_type_id,
+      'company_bank_account_id' => $this->bank_id,
       'fz_price_batch_id' => $this->fz_price_batch_id,
       'sales_rep_id' => $this->sales_rep_id,
       'purchased_quantity' => $this->purchased_quantity,

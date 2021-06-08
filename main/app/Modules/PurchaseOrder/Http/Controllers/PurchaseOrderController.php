@@ -49,7 +49,7 @@ class PurchaseOrderController extends Controller
     $this->authorize('viewAny', PurchaseOrder::class);
 
     return Inertia::render('PurchaseOrder::ManageCustomerPurchaseOrder', [
-      'purchase_orders' => PurchaseOrder::all(),
+      'purchase_orders' => PurchaseOrder::with('product_type', 'buyer')->get(),
       'purchase_orders_count' => PurchaseOrder::count(),
       'can_create_customer' => $request->user()->can('create', PurchaseOrder::class),
       'can_create_view_lodgement' => $request->user()->can('viewAny', CashLodgement::class),
@@ -69,7 +69,7 @@ class PurchaseOrderController extends Controller
       'price_batches_count' => FzPriceBatch::count(),
       'price_batches' => FzPriceBatch::all(),
       'company_bank_accounts' => CompanyBankAccount::all(),
-      'purchase_orders' => $customer->purchase_orders,
+      'purchase_orders' => $customer->purchase_orders->load('product_type', 'buyer', 'swap_product_type', 'bank'),
       'purchase_orders_count' => $customer->purchase_orders->count(),
       'can_create_purchase_order' => Gate::allows('create', PurchaseOrder::class)
     ]);
@@ -78,6 +78,8 @@ class PurchaseOrderController extends Controller
   public function store(CreatePurchaseOrderRequest $request, FzCustomer $customer)
   {
     $this->authorize('create', PurchaseOrder::class);
+
+    DB::beginTransaction();
 
     try {
       (new PurchaseOrderService)->setProductType($request->fz_product_type_id)
@@ -90,10 +92,12 @@ class PurchaseOrderController extends Controller
         ->setSalesRep($request->user()->id)
         ->create();
     } catch (\Throwable $th) {
-      return redirect()->route('purchaseorders.list')->withFlash(['error' => $th->getMessage()]);
+      return redirect()->route('purchaseorders.create', $customer)->withFlash(['error' => $th->getMessage()]);
     }
 
-    return redirect()->route('purchaseorders.list')->withFlash(['success' => 'Customer\'s Purchase Order created.']);
+    DB::commit();
+
+    return redirect()->route('purchaseorders.create', $customer)->withFlash(['success' => 'Customer\'s Purchase Order created.']);
   }
 
   public function viewCashLodgements(Request $request)
@@ -108,6 +112,8 @@ class PurchaseOrderController extends Controller
 
   public function createCashLodgement(Request $request)
   {
+    DB::beginTransaction();
+
     $this->authorize('create', CashLodgement::class);
 
     $request->validate([
@@ -131,6 +137,7 @@ class PurchaseOrderController extends Controller
       return redirect()->route('purchaseorders.cashlodgement.create')->withFlash(['error' => $th->getMessage()]);
     }
 
+    DB::commit();
     return redirect()->route('purchaseorders.cashlodgement.create')->withFlash(['success' => 'Cash lodgement record created.']);
   }
 
@@ -146,6 +153,8 @@ class PurchaseOrderController extends Controller
 
   public function createDirectSwapTransaction(Request $request, FzCustomer $customer)
   {
+    DB::beginTransaction();
+
     $this->authorize('create', DirectSwapTransaction::class);
 
     $request->validate([
@@ -173,6 +182,8 @@ class PurchaseOrderController extends Controller
     } catch (\Throwable $th) {
       return redirect()->route('purchaseorders.directswaptransactions.create')->withFlash(['error' => $th->getMessage()]);
     }
+
+    DB::commit();
 
     return redirect()->route('purchaseorders.directswaptransactions.create', $customer)->withFlash(['success' => 'Customer trade in recorded.']);
   }
