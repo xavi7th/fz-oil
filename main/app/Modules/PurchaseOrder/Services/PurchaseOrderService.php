@@ -132,9 +132,11 @@ class PurchaseOrderService
   {
     if (is_null($this->purchased_quantity)) throw new Exception('Specify how many items are bein traded in');
     if (is_null($this->payment_type)) throw new Exception('Specify how you intend to pay the customer');
-    if ($this->payment_type == 'cash' && is_null($this->bank_id)) throw new Exception('Specify the bank payment will be made from');
+    if ($this->payment_type == 'bank' && is_null($this->bank_id)) throw new Exception('Specify the bank payment will be made from');
 
     $fz_stock = FzStock::where('fz_product_type_id', $this->fz_product_type_id)->firstOrFail();
+
+    FzStock::gallon()->latest('id')->first()->incrementStock($this->purchased_quantity);
 
     return DirectSwapTransaction::create([
       'fz_product_type_id' => $this->fz_product_type_id,

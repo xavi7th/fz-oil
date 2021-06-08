@@ -19,13 +19,14 @@
   fz_customer_count = 0,
   fz_active_customer_count = 0,
   fz_suspended_customer_count = 0,
-  can_view_details = false,
+  // can_view_details = false,
   can_edit_user = false,
   can_create_customer = false,
   can_suspend_customer = false,
   can_activate_customer = false,
   can_set_credit_limit = false,
   can_view_purchase_orders = false,
+  can_view_direct_swaps = false,
   can_view_credit_transactions = false;
 
   $: {
@@ -169,10 +170,10 @@
                   </InertiaLink>
                   {/if}
 
-                  {#if can_view_details}
-                    <a href="#" data-placement="top" data-toggle="tooltip" data-original-title="View Complete Data">
-                      <i class="icon-feather-eye"></i>
-                    </a>
+                  {#if can_view_direct_swaps}
+                    <InertiaLink href="{route('purchaseorders.directswaptransactions.create',customer)}" data-placement="top" data-toggle="tooltip" data-original-title="View Direct Swaps">
+                      <i class="text-orange icon-feather-eye"></i>
+                    </InertiaLink>
                   {/if}
 
                   {#if can_edit_user}

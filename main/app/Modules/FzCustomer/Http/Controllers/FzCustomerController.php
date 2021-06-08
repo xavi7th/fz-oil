@@ -16,6 +16,7 @@ use App\Modules\CompanyBankAccount\Models\CompanyBankAccount;
 use App\Modules\FzCustomer\Transformers\FzCustomerTransformer;
 use App\Modules\FzCustomer\Http\Requests\CreateCustomerRequest;
 use App\Modules\FzCustomer\Http\Requests\CreateCustomerCreditRepaymentTransactionRequest;
+use App\Modules\PurchaseOrder\Models\DirectSwapTransaction;
 
 class FzCustomerController extends Controller
 {
@@ -57,6 +58,7 @@ class FzCustomerController extends Controller
       'can_activate_customer' => $request->user()->can('activate', FzCustomer::class),
       'can_set_credit_limit' => $request->user()->can('setCreditLimit', FzCustomer::class),
       'can_view_purchase_orders' => $request->user()->can('viewAny', PurchaseOrder::class),
+      'can_view_direct_swaps' => Gate::allows('viewAny', DirectSwapTransaction::class),
     ]);
   }
 
@@ -131,7 +133,7 @@ class FzCustomerController extends Controller
       'company_bank_accounts' => CompanyBankAccount::all(),
       'credit_transactions' => $customer->credit_transactions->load('sales_rep', 'bank'),
       'credit_transactions_count' => $customer->credit_transactions()->count(),
-      'can_create_credit_repayment' => Gate::allows('create', CreditTransaction::class)
+      'can_create_credit_repayment' => Gate::allows('create', CreditTransaction::class),
     ]);
   }
 

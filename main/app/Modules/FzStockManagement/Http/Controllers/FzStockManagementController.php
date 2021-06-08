@@ -35,10 +35,10 @@ class FzStockManagementController extends Controller
       'fz_stock_count' => FzStock::count(),
       'fz_oil_stock_count' => FzStock::oil()->sum('stock_quantity'),
       'fz_gallon_stock_count' => FzStock::gallon()->sum('stock_quantity'),
-      'can_create_stock' => Gate::allows('create', FzStock::class),
-      'can_edit_stock' => Gate::allows('update', FzStock::class),
       'stock_types' => FzProductType::all(),
       'price_batches' => FzPriceBatch::all(),
+      'can_edit_stock' => Gate::allows('update', FzStock::class),
+      'can_create_stock' => Gate::allows('create', FzStock::class),
     ]);
   }
 

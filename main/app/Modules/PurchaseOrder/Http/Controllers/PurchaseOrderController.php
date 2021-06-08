@@ -2,6 +2,7 @@
 
 namespace App\Modules\PurchaseOrder\Http\Controllers;
 
+use Gate;
 use Inertia\Inertia;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -9,6 +10,7 @@ use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Route;
 use App\Modules\FzCustomer\Models\FzCustomer;
 use App\Modules\SuperAdmin\Models\SuperAdmin;
+use App\Modules\FzStockManagement\Models\FzStock;
 use App\Modules\PurchaseOrder\Models\CashLodgement;
 use App\Modules\PurchaseOrder\Models\PurchaseOrder;
 use App\Modules\FzStockManagement\Models\FzPriceBatch;
@@ -19,7 +21,6 @@ use App\Modules\PurchaseOrder\Models\DirectSwapTransaction;
 use App\Modules\PurchaseOrder\Services\PurchaseOrderService;
 use App\Modules\CompanyBankAccount\Models\CompanyBankAccount;
 use App\Modules\PurchaseOrder\Http\Requests\CreatePurchaseOrderRequest;
-use Gate;
 
 class PurchaseOrderController extends Controller
 {
@@ -146,21 +147,27 @@ class PurchaseOrderController extends Controller
     return redirect()->route('purchaseorders.cashlodgement.create')->withFlash(['success' => 'Cash lodgement record created.']);
   }
 
-  public function viewDirectSwapTransactions(Request $request)
+  public function viewDirectSwapTransactions(Request $request, FzCustomer $customer)
   {
     $this->authorize('viewAny', DirectSwapTransaction::class);
 
     return Inertia::render('PurchaseOrder::DirectSwapTransactions', [
-      'direct_swap_transactions' => DirectSwapTransaction::all(),
+      'customer' => $customer,
+      'cash_in_office' => SuperAdmin::cashInOffice(),
+      'direct_swap_transactions' => DirectSwapTransaction::with('fz_product_type')->get(),
       'direct_swap_transactions_count' => DirectSwapTransaction::count(),
+      'fz_gallon_stock_count' => FzStock::gallon()->sum('stock_quantity'),
+      'stock_types' => FzProductType::all(),
+      'company_bank_accounts' => CompanyBankAccount::all(),
+      'can_create_direct_swap' => Gate::allows('create', DirectSwapTransaction::class)
     ]);
   }
 
   public function createDirectSwapTransaction(Request $request, FzCustomer $customer)
   {
-    DB::beginTransaction();
-
     $this->authorize('create', DirectSwapTransaction::class);
+
+    DB::beginTransaction();
 
     $request->validate([
       'fz_product_type_id' => ['required', 'exists:fz_product_types,id'],
@@ -171,7 +178,7 @@ class PurchaseOrderController extends Controller
           SuperAdmin::cashInOffice() > $value ? null : $fail('There is not enough cash in the office to facilitate this trade in swap');
         }
       }],
-      'company_bank_account_id' => ['exclude_unless:customer_paid_via,cash', 'required', 'exists:company_bank_accounts,id'],
+      'company_bank_account_id' => ['exclude_unless:customer_paid_via,bank', 'required', 'exists:company_bank_accounts,id'],
     ]);
 
     try {
@@ -183,9 +190,9 @@ class PurchaseOrderController extends Controller
         ->setSalesRep($request->user()->id)
         ->createDirectSwapTransaction();
     } catch (ModelNotFoundException $th) {
-      return redirect()->route('purchaseorders.directswaptransactions.create')->withFlash(['error' => 'The bank account was not found']);
+      return redirect()->route('purchaseorders.directswaptransactions.create', $customer)->withFlash(['error' => 'The bank account was not found']);
     } catch (\Throwable $th) {
-      return redirect()->route('purchaseorders.directswaptransactions.create')->withFlash(['error' => $th->getMessage()]);
+      return redirect()->route('purchaseorders.directswaptransactions.create', $customer)->withFlash(['error' => $th->getMessage()]);
     }
 
     DB::commit();
