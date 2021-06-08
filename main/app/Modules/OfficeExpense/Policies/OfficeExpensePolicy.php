@@ -4,7 +4,6 @@ namespace App\Modules\OfficeExpense\Policies;
 
 use App\User;
 use Illuminate\Auth\Access\HandlesAuthorization;
-use App\Modules\OfficeExpense\Models\OfficeExpense;
 
 class OfficeExpensePolicy
 {
@@ -12,21 +11,16 @@ class OfficeExpensePolicy
 
   public function viewAny(User $user)
   {
-    return $user->is_operative() ? $this->allow() : $this->deny('You cannot view registered office expenses.');
+    return $user->is_operative() && ($user->isSuperAdmin() || $user->isSupervisor()) ? $this->allow() : $this->deny('You are not authorized to view office expenses.');
   }
 
-  public function view(User $user, OfficeExpense $purchase_order)
+  public function view(User $user)
   {
-    return $user->is_operative() ? $this->allow() : $this->deny('You cannot create this office expense\'s details.');
+    return $user->is_operative() && ($user->isSuperAdmin() || $user->isSupervisor()) ? $this->allow() : $this->deny('You cannot create this office expense\'s details.');
   }
 
   public function create(User $user)
   {
-    return $user->is_operative() && $user->isSalesRep() ? $this->allow() : $this->deny('You cannot create office expenses.');
-  }
-
-  public function createPurchaseOrder(User $user)
-  {
-    return $user->is_operative() && $user->isSalesRep() ? $this->allow() : $this->deny('You cannot create office expenses.');
+    return $user->is_operative() && $user->isSupervisor() ? $this->allow() : $this->deny('You cannot create office expenses.');
   }
 }

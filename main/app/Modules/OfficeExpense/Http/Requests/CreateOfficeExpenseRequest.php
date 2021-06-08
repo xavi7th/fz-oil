@@ -2,7 +2,6 @@
 
 namespace App\Modules\OfficeExpense\Http\Requests;
 
-use Illuminate\Support\Facades\DB;
 use Illuminate\Foundation\Http\FormRequest;
 use App\Modules\OfficeExpense\Models\OfficeExpense;
 use App\Modules\SuperAdmin\Models\SuperAdmin;
@@ -17,7 +16,7 @@ class CreateOfficeExpenseRequest extends FormRequest
           SuperAdmin::cashInOffice() > $value ? null : $fail('There is not enough cash in the office to fund this expense');
         }
       }],
-      'payment_type' => ['required', 'in:cash,transfer'],
+      'payment_type' => ['required', 'in:cash,bank'],
       'description' => ['required', 'string'],
       'expense_date' => ['required', 'date'],
     ];
