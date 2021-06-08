@@ -3,10 +3,11 @@
 namespace App\Modules\FzCustomer\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use App\Modules\SalesRep\Models\SalesRep;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use App\Modules\CompanyBankAccount\Models\CompanyBankAccount;
 use App\Modules\FzCustomer\Database\Factories\CreditTransactionFactory;
-use App\Modules\SalesRep\Models\SalesRep;
 
 /**
  * App\Modules\FzCustomer\Models\CreditTransaction
@@ -65,6 +66,11 @@ class CreditTransaction extends Model
   public function sales_rep()
   {
     return $this->belongsTo(SalesRep::class, 'recorded_by');
+  }
+
+  public function bank()
+  {
+    return $this->belongsTo(CompanyBankAccount::class, 'company_bank_account_id');
   }
 
   static function cashInOffice(): float

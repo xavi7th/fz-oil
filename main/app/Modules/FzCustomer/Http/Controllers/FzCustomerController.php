@@ -2,17 +2,20 @@
 
 namespace App\Modules\FzCustomer\Http\Controllers;
 
+use Gate;
 use Inertia\Inertia;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Route;
 use App\Modules\FzCustomer\Models\FzCustomer;
+use App\Modules\PurchaseOrder\Models\PurchaseOrder;
 use App\Modules\FzCustomer\Models\CreditTransaction;
 use App\Modules\SuperAdmin\Traits\AccessibleToAllStaff;
+use App\Modules\CompanyBankAccount\Models\CompanyBankAccount;
 use App\Modules\FzCustomer\Transformers\FzCustomerTransformer;
 use App\Modules\FzCustomer\Http\Requests\CreateCustomerRequest;
 use App\Modules\FzCustomer\Http\Requests\CreateCustomerCreditRepaymentTransactionRequest;
-use App\Modules\PurchaseOrder\Models\PurchaseOrder;
 
 class FzCustomerController extends Controller
 {
@@ -124,22 +127,27 @@ class FzCustomerController extends Controller
   {
     $this->authorize('viewAny', CreditTransaction::class);
     return Inertia::render('FzCustomer::ManageCustomerCredit', [
-      'credit_transactions' => $customer->credit_transactions,
+      'customer' => $customer,
+      'company_bank_accounts' => CompanyBankAccount::all(),
+      'credit_transactions' => $customer->credit_transactions->load('sales_rep', 'bank'),
       'credit_transactions_count' => $customer->credit_transactions()->count(),
+      'can_create_credit_repayment' => Gate::allows('create', CreditTransaction::class)
     ]);
   }
 
   public function createCustomerCreditRepaymentTransaction(CreateCustomerCreditRepaymentTransactionRequest $request, FzCustomer $customer)
   {
     $this->authorize('create', CreditTransaction::class);
+    DB::beginTransaction();
 
     try {
       $request->createRepaymentTransaction();
     } catch (\Throwable $th) {
-      return redirect()->route('fzcustomer.credit_transactions.list', FzCustomer::class)->withFlash(['error' => $th->getMessage()]);
+      return redirect()->route('fzcustomer.credit_transactions.list', $customer)->withFlash(['error' => $th->getMessage()]);
     }
 
-    return redirect()->route('fzcustomer.credit_transactions.list', FzCustomer::class)->withFlash(['success' => 'Repayment transaction created.']);
+    DB::commit();
+    return redirect()->route('fzcustomer.credit_transactions.list', $customer)->withFlash(['success' => 'Repayment transaction created.']);
   }
 
 }

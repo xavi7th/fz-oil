@@ -164,9 +164,9 @@
                   </InertiaLink>
                   {/if}
                   {#if can_view_credit_transactions}
-                  <a href="credit_repayment.html" data-placement="top" data-toggle="tooltip" data-original-title="Credit Repayment">
+                  <InertiaLink href="{route('fzcustomer.credit_transactions.list',customer)}" data-placement="top" data-toggle="tooltip" data-original-title="Credit Repayment">
                     <i class="icon-feather-repeat"></i>
-                  </a>
+                  </InertiaLink>
                   {/if}
 
                   {#if can_view_details}
