@@ -12,16 +12,16 @@ class CashLodgementPolicy
 
   public function viewAny(User $user)
   {
-    return $user->is_operative() ? $this->allow() : $this->deny('You cannot view registered sales reps accounts.');
+    return $user->is_operative() ? $this->allow() : $this->deny('You cannot view cash lodgements.');
   }
 
-  public function view(User $user, CashLodgement $cash_lodgement)
+  public function view(User $user)
   {
-    return $user->is_operative() ? $this->allow() : $this->deny('You cannot create this sales rep\'s details.');
+    return $user->is_operative() ? $this->allow() : $this->deny('You cannot create this cash lodgement\'s details.');
   }
 
   public function create(User $user)
   {
-    return $user->is_operative() && $user->isSalesRep() ? $this->allow() : $this->deny('You cannot create sales reps.');
+    return $user->is_operative() && $user->isSalesRep() ? $this->allow() : $this->deny('You cannot create cash lodgements.');
   }
 }

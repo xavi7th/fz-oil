@@ -34,7 +34,7 @@ class PurchaseOrderController extends Controller
       Route::post('sales/{customer}/create', [self::class, 'store']);
 
       Route::name('cashlodgement.')->prefix('cash-lodgement')->group(function () {
-        Route::get('create', [self::class, 'viewCashLodgements'])->name('create');
+        Route::get('create', [self::class, 'viewCashLodgements'])->name('create')->defaults('menu', __e('Cash Lodgements', 'viewAny,' . CashLodgement::class, 'box', false));
         Route::post('create', [self::class, 'createCashLodgement']);
       });
 
@@ -105,16 +105,21 @@ class PurchaseOrderController extends Controller
     $this->authorize('viewAny', CashLodgement::class);
 
     return Inertia::render('PurchaseOrder::CashLodgements', [
-      'cash_lodgements' => CashLodgement::all(),
+      'company_bank_accounts' => CompanyBankAccount::all(),
+      'cash_lodgements' => CashLodgement::with('sales_rep', 'bank')->get(),
+      'cash_lodgements_amount' => CashLodgement::sum('amount'),
       'cash_lodgements_count' => CashLodgement::count(),
+      'can_create_cash_lodgements' => Gate::allows('create', CashLodgement::class),
+      'cash_in_office' => SuperAdmin::cashInOffice(),
+      'recorded_cash_in_office' => $request->user()->cashInOffice(),
     ]);
   }
 
   public function createCashLodgement(Request $request)
   {
-    DB::beginTransaction();
-
     $this->authorize('create', CashLodgement::class);
+
+    DB::beginTransaction();
 
     $request->validate([
       'company_bank_account_id' => ['required', 'exists:company_bank_accounts,id', function ($attribute, $value, $fail) {

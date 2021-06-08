@@ -106,7 +106,7 @@ class SalesRep extends User
 
   public function cashInOffice(): float
   {
-    return $this->recorded_credit_transactions()->cashInOffice() + $this->purchase_orders()->cashInOffice() - $this->direct_swap_transactions()->sum('amount') - $this->cash_lodgements()->sum('amount');
+    return $this->recorded_credit_transactions()->repayment()->notLodged()->sum('amount') + $this->purchase_orders()->cash()->notLodged()->sum('total_amount_paid') - $this->direct_swap_transactions()->sum('amount') - $this->cash_lodgements()->sum('amount');
   }
 
   protected static function newFactory()
