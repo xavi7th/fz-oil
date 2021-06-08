@@ -13,6 +13,7 @@ import { toCurrency } from '@public-shared/helpers';
   available_gallon_stock_count = 0,
   price_batch_count = 0,
   total_daily_expenses = 0,
+  cash_in_office = 0,
   sales_rep_daily_purchase_order_amount = 0,
   sales_rep_daily_purchase_order_count = 0,
   total_daily_purchase_order_count = 0;
@@ -73,6 +74,12 @@ import { toCurrency } from '@public-shared/helpers';
           <a class="element-box el-tablo centered trend-in-corner smaller" href="#">
             <div class="label">Your Sales Amount Today</div>
             <div class="value">{toCurrency(sales_rep_daily_purchase_order_amount)}</div>
+          </a>
+        </div>
+        <div class="col-6 col-sm-3 col-xxl-3">
+          <a class="element-box el-tablo centered trend-in-corner smaller" href="#">
+            <div class="label">Cash in Office</div>
+            <div class="value">{toCurrency(cash_in_office)}</div>
           </a>
         </div>
       </div>

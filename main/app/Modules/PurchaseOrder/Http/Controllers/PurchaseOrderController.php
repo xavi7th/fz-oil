@@ -19,6 +19,7 @@ use App\Modules\PurchaseOrder\Models\DirectSwapTransaction;
 use App\Modules\PurchaseOrder\Services\PurchaseOrderService;
 use App\Modules\CompanyBankAccount\Models\CompanyBankAccount;
 use App\Modules\PurchaseOrder\Http\Requests\CreatePurchaseOrderRequest;
+use Gate;
 
 class PurchaseOrderController extends Controller
 {
@@ -60,13 +61,17 @@ class PurchaseOrderController extends Controller
 
   public function create(Request $request, FzCustomer $customer)
   {
-    $this->authorize('create', PurchaseOrder::class);
+    $this->authorize('viewAny', PurchaseOrder::class);
 
-    return Inertia::render('PurchaseOrder::Create', [
+    return Inertia::render('PurchaseOrder::ManageCustomerPurchaseOrder', [
       'customer' => $customer,
       'stock_types' => FzProductType::all(),
-      'price_batches' => FzPriceBatch::count(),
-      'company_bank_accounts' => CompanyBankAccount::all()
+      'price_batches_count' => FzPriceBatch::count(),
+      'price_batches' => FzPriceBatch::all(),
+      'company_bank_accounts' => CompanyBankAccount::all(),
+      'purchase_orders' => $customer->purchase_orders,
+      'purchase_orders_count' => $customer->purchase_orders->count(),
+      'can_create_purchase_order' => Gate::allows('create', PurchaseOrder::class)
     ]);
   }
 
@@ -109,7 +114,7 @@ class PurchaseOrderController extends Controller
       'company_bank_account_id' => ['required', 'exists:company_bank_accounts,id', function ($attribute, $value, $fail) {
         DB::table('company_bank_accounts')->where('id', $value)->first()->is_active ? null : $fail('This bank account has been suspended from use');
       }],
-      'amount' => ['required', 'numeric', fn ($attribute, $value, $fail) => SuperAdmin::cash_in_office() > $value ? null : $fail('There is not enough cash in the office to make this cash lodgement.')],
+      'amount' => ['required', 'numeric', fn ($attribute, $value, $fail) => SuperAdmin::cashInOffice() > $value ? null : $fail('There is not enough cash in the office to make this cash lodgement.')],
       'lodgement_date' => ['required', 'date'],
       'teller' => ['required', 'image']
     ]);
@@ -149,7 +154,7 @@ class PurchaseOrderController extends Controller
       'customer_paid_via' => ['required', 'in:cash,bank'],
       'amount' => ['required', 'numeric', function ($attribute, $value, $fail) use ($request) {
         if ($request->customer_paid_via == 'cash') {
-          SuperAdmin::cash_in_office() > $value ? null : $fail('There is not enough cash in the office to facilitate this trade in swap');
+          SuperAdmin::cashInOffice() > $value ? null : $fail('There is not enough cash in the office to facilitate this trade in swap');
         }
       }],
       'company_bank_account_id' => ['exclude_unless:customer_paid_via,cash', 'required', 'exists:company_bank_accounts,id'],

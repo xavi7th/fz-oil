@@ -12,6 +12,7 @@ use App\Modules\FzStockManagement\Models\FzPriceBatch;
 use App\Modules\FzStockManagement\Models\FzStock;
 use App\Modules\OfficeExpense\Models\OfficeExpense;
 use App\Modules\PurchaseOrder\Models\PurchaseOrder;
+use App\Modules\SuperAdmin\Models\SuperAdmin;
 
 class SalesRepController extends Controller
 {
@@ -31,6 +32,7 @@ class SalesRepController extends Controller
 
     return Inertia::render('SalesRep::Dashboard', [
       'registered_customers_count' => FzCustomer::count(),
+      'cash_in_office' => SuperAdmin::cashInOffice(),
       'available_oil_stock_count' => FzStock::oil()->sum('stock_quantity'),
       'available_gallon_stock_count' => FzStock::gallon()->sum('stock_quantity'),
       'price_batch_count' => FzPriceBatch::count(),

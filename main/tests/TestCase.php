@@ -12,6 +12,8 @@ use Illuminate\Database\Schema\SQLiteBuilder;
 use App\Modules\FzStockManagement\Models\FzStock;
 use Illuminate\Foundation\Testing\TestCase as BaseTestCase;
 use App\Modules\CompanyBankAccount\Models\CompanyBankAccount;
+use App\Modules\FzStockManagement\Models\FzPriceBatch;
+use App\Modules\FzStockManagement\Models\FzProductType;
 use App\Modules\SalesRep\Models\SalesRep;
 
 abstract class TestCase extends BaseTestCase
@@ -156,6 +158,28 @@ abstract class TestCase extends BaseTestCase
       'account_number' => '123456789',
       'bank_name' => 'GTB',
       'is_active' => true,
+    ];
+  }
+
+  protected function data_to_create_stock()
+  {
+
+    return [
+      'fz_product_type_id' =>  optional(FzProductType::oil()->first())->id ?? FzProductType::factory()->oil()->create()->id,
+      'fz_price_batch_id' => optional(FzPriceBatch::oil()->first())->id ?? FzPriceBatch::factory()->oil()->create()->id,
+      'stock_quantity' => 100,
+    ];
+  }
+
+  protected function data_to_create_price_batch_and_stock()
+  {
+
+    return [
+      'fz_product_type_id' =>  optional(FzProductType::oil()->first())->id ?? FzProductType::factory()->oil()->create()->id,
+      'set_new_price_batch' => true,
+      'stock_quantity' => 100,
+      'cost_price' => 2000,
+      'selling_price' => 10000,
     ];
   }
 }

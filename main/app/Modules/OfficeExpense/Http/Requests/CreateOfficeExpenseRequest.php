@@ -14,7 +14,7 @@ class CreateOfficeExpenseRequest extends FormRequest
     return [
       'amount' => ['required', 'numeric', function ($attribute, $value, $fail) {
         if ($this->payment_type == 'cash') {
-          SuperAdmin::cash_in_office() > $value ? null : $fail('There is not enough cash in the office to fund this expense');
+          SuperAdmin::cashInOffice() > $value ? null : $fail('There is not enough cash in the office to fund this expense');
         }
       }],
       'payment_type' => ['required', 'in:cash,transfer'],

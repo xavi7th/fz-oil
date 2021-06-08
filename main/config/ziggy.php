@@ -26,6 +26,7 @@ return [
       'companybankaccount.*',
       'fzcustomer.*',
       'officeexpense.*',
+      'fzstock.*',
     ],
     'public' => [
       'app.*',

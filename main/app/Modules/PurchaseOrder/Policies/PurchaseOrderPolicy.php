@@ -15,7 +15,7 @@ class PurchaseOrderPolicy
     return $user->is_operative() ? $this->allow() : $this->deny('You cannot view registered purchase orders.');
   }
 
-  public function view(User $user, PurchaseOrder $purchase_order)
+  public function view(User $user)
   {
     return $user->is_operative() ? $this->allow() : $this->deny('You cannot create this purchase order\'s details.');
   }

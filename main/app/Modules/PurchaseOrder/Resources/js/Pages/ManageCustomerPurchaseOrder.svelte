@@ -7,10 +7,46 @@
 <script>
   import { modalRoot } from "@public-shared/stores";
   import { Portal } from 'svelte-teleport';
+  import { toCurrency } from '@public-shared/helpers';
+  import { Inertia } from '@inertiajs/inertia';
 
   $title = "Purchase Order";
 
-  let customerOrderModals;
+  let customerOrderModals, details = {};
+
+  export let
+  customer = {},
+  stock_types = [],
+  price_batches = [],
+  company_bank_accounts = [],
+  purchase_orders = [],
+  purchase_orders_count = [],
+  can_create_purchase_order = [];
+
+  let validPriceBatches = prodId => price_batches.filter(batch => batch.fz_product_type_id == prodId)
+
+  let totalCostPrice = (priceBatchId, quantity) => {
+    return (price_batches.filter(batch => batch.id === priceBatchId)[0] || {}).cost_price
+  }
+
+  let totalSellingPrice = (priceBatchId, quantity) => {
+    return (price_batches.filter(batch => batch.id === priceBatchId)[0] || {}).selling_price
+  }
+
+  let createPurchaseOrder = ()=>{
+    details.fz_customer_id = customer.id;
+    details.total_cost_price = totalCostPrice(details.fz_price_batch_id) * details.purchased_quantity;
+    details.total_selling_price = totalSellingPrice(details.fz_price_batch_id) * details.purchased_quantity;
+    if (!details.total_amount_paid) {
+      Toast.fire({html:'Details not completed', position:'top', icon: 'error'});
+      return;
+    }
+
+    Inertia.post(route('purchaseorders.create',customer), details,{
+
+    });
+
+  }
 
   $: {
     try {
@@ -20,9 +56,11 @@
 </script>
 
 <div class="row pt-2 pb-2">
+
   <div class="col-6 col-sm-6 col-xxl-6">
+    {#if can_create_purchase_order && stock_types.length}
     <div class="element-box">
-      <form>
+      <form on:submit|preventDefault|stopPropagation="{createPurchaseOrder}">
         <h5 class="form-header">New Purchase Order for Tiger Nixon</h5>
         <!-- <div class="form-desc">Discharge best employed your phase each the of shine. Be
           met even reason consider logbook redesigns. Never a turned interfaces among
@@ -31,56 +69,62 @@
             <div class="col-sm-6">
               <div class="form-group">
                 <label for="">Stock Type</label>
-                <select class="form-control">
-                  <option>Select Stock Type</option>
-                  <option>Oil</option>
-                  <option>Gallon</option>
+                <select class="form-control" bind:value={details.fz_product_type_id}>
+                  <option value={null}>Select Stock Type</option>
+                  {#each stock_types as stock_type(stock_type.id)}
+                  <option value={stock_type.id}>{stock_type.product_type}</option>
+                  {/each}
                 </select>
               </div>
             </div>
             <div class="col-sm-6">
               <div class="form-group">
                 <label for="">Batch/Price</label>
-                <select class="form-control">
+                <select class="form-control" bind:value={details.fz_price_batch_id}>
                   <option>Select Batch</option>
-                  <option>FZ0000001 / ₦10,000</option>
-                  <option>FZ0000002 / ₦12,000</option>
+                  {#each validPriceBatches(details.fz_product_type_id) as price_batch (price_batch.id)}
+                  <option value={price_batch.id}>{toCurrency(price_batch.selling_price)}</option>
+                  {/each}
                 </select>
               </div>
             </div>
           </div>
           <div class="form-group">
             <label for="">Quantity</label>
-            <input class="form-control" type="text" placeholder="Enter purchase quantity">
+            <input class="form-control" type="text" placeholder="Enter purchase quantity" bind:value={details.purchased_quantity}>
           </div>
 
 
           <div class="form-check">
             <label class="form-check-label">
-              <input class="form-check-input" type="checkbox"> Swap Order
+              <input class="form-check-input" type="checkbox" bind:checked={details.is_swap_transaction}> Swap Order?
             </label>
           </div>
 
+          {#if details.is_swap_transaction}
           <fieldset class="form-group">
             <legend><span>Swap Section</span></legend>
             <div class="row">
               <div class="col-sm-6">
                 <div class="form-group">
                   <label for="">Swap Stock Type</label>
-                  <select class="form-control">
+                  <select class="form-control" bind:value={details.swap_product_type_id}>
                     <option>Select Stock Type</option>
-                    <option>Gallon</option>
+                    {#each stock_types as stock_type(stock_type.id)}
+                    <option value={stock_type.id}>{stock_type.product_type}</option>
+                    {/each}
                   </select>
                 </div>
               </div>
               <div class="col-sm-6">
                 <div class="form-group">
                   <label for="">Swap Quantity</label>
-                  <input class="form-control" type="text" placeholder="Enter swap quantity">
+                  <input class="form-control" type="text" placeholder="Enter swap quantity" bind:value={details.swap_quantity}>
                 </div>
               </div>
             </div>
           </fieldset>
+          {/if}
 
           <fieldset class="form-group">
             <legend><span>Total Order Cost</span></legend>
@@ -88,29 +132,41 @@
               <div class="col-sm-6">
                 <div class="form-group">
                   <label for="">Payment Type</label>
-                  <select class="form-control">
-                    <option>Select Payment Type</option>
-                    <option>Cash</option>
-                    <option>Bank Transfer</option>
-                    <option>Swap</option>
+                  <select class="form-control" bind:value={details.payment_type}>
+                    <option value={undefined}>Select Payment Type</option>
+                    <option value="cash">Cash</option>
+                    <option value="bank">Bank Transfer</option>
+                    <option value="credit">Credit</option>
                   </select>
                 </div>
               </div>
               <div class="col-sm-6">
                 <div class="form-group">
                   <label for="">Total</label>
-                  <input class="form-control" disabled type="text" value="₦23,000">
+                  <input class="form-control" disabled type="text" value="{toCurrency(totalSellingPrice(details.fz_price_batch_id) * details.purchased_quantity || 0)}">
                 </div>
               </div>
             </div>
-            <div class="form-group">
-              <label for="">Select Bank</label>
-              <select class="form-control">
-                <option>Select Bank</option>
-                <option>GTB</option>
-                <option>FCMB</option>
-                <option>ACcess Bank</option>
-              </select>
+            <div class="row">
+              {#if details.payment_type == 'bank'}
+                <div class="col-sm-6">
+                  <div class="form-group">
+                    <label for="">Select Bank</label>
+                    <select class="form-control" bind:value={details.company_bank_account_id}>
+                      <option value={undefined}>Select Bank</option>
+                      {#each company_bank_accounts as bank(bank.id)}
+                      <option value={bank.id}>{bank.bank_name}</option>
+                      {/each}
+                    </select>
+                  </div>
+                </div>
+              {/if}
+              <div class:col-sm-6={details.payment_type == 'bank'} class:col-sm-12={details.payment_type !== 'bank'}>
+                <div class="form-group">
+                  <label for="">Total Amount Paid</label>
+                  <input class="form-control" type="text" bind:value={details.total_amount_paid}>
+                </div>
+              </div>
             </div>
           </fieldset>
           <div class="form-buttons-w">
@@ -118,14 +174,16 @@
           </div>
         </form>
       </div>
+      {/if}
     </div>
     <div class="col-6 col-sm-6 col-xxl-6">
       <a class="element-box el-tablo centered trend-in-corner smaller" href="#">
         <div class="label">Total Orders</div>
-        <div class="value">284</div>
+        <div class="value">{purchase_orders_count}</div>
       </a>
     </div>
   </div>
+
   <div class="row mt-5">
     <div class="col-sm-12">
       <div class="element-wrapper">
@@ -154,27 +212,29 @@
                   <th>Payment Type</th>
                   <th>Total</th>
                   <th>Date</th>
-                  <th>Actions</th>
+                  <!-- <th>Actions</th> -->
                 </tr>
               </tfoot>
               <tbody>
+                {#each purchase_orders as order}
                 <tr>
-                  <td>1</td>
-                  <td>Oil</td>
-                  <td>450</td>
-                  <td>Gallon / 12 / ₦12,000</td>
-                  <td>Swap</td>
-                  <td>₦22500</td>
-                  <td>05/03/2021</td>
-                  <td class="row-actions remove-center">
+                  <td>{order.id}</td>
+                  <td>{order.fz_product_type.product_type}</td>
+                  <td>{order.purchased_quantity}</td>
+                  <td>{order.swap_product_type.product_type || 'N/A'} / {order.swap_quantity} / {toCurrency(order.swap_value)}</td>
+                  <td>{order.payment_type}</td>
+                  <td>{order.total_amount_paid} / {order.total_selling_price}</td>
+                  <td>{order.created_at}</td>
+                  <!-- <td class="row-actions remove-center">
                     <a class="danger" data-target="#deleteOrderModal"
                     data-toggle="modal" href="#">
                     <i class="icon-feather-trash-2" data-placement="top"
                     data-toggle="tooltip"
                     data-original-title="Delete Order"></i>
                   </a>
-                </td>
+                </td> -->
               </tr>
+              {/each}
               <tr>
                 <td>2</td>
                 <td>Oil</td>
@@ -201,21 +261,16 @@
 </div>
 
 <Portal bind:this={customerOrderModals} >
-  <div class="onboarding-modal modal fade animated" id="deleteOrderModal" role="dialog" tabindex="-1"
-  style="display: none;" aria-hidden="true">
-  <div class="modal-dialog modal-centered" role="document">
-    <div class="modal-content text-center"><button aria-label="Close" class="close" data-dismiss="modal"
-      type="button"><span class="close-label">Close</span><span
-      class="os-icon os-icon-close"></span></button>
-      <div class="onboarding-media"><img alt="" src="/img/bigicon5.png" width="200px"></div>
-      <div class="onboarding-content with-gradient">
-        <h4 class="onboarding-title">Delete Order?</h4>
-        <div class="onboarding-text"><strong>This action cannot be reversed</strong></div>
-        <a class="btn btn-danger btn-md" href="#"><i class="icon-feather-trash-2"></i><span> Delete
-          Order</span></a>
+  <div class="onboarding-modal modal fade animated" id="deleteOrderModal" role="dialog" tabindex="-1" style="display: none;" aria-hidden="true">
+    <div class="modal-dialog modal-centered" role="document">
+      <div class="modal-content text-center"><button aria-label="Close" class="close" data-dismiss="modal" type="button"><span class="close-label">Close</span><span class="os-icon os-icon-close"></span></button>
+        <div class="onboarding-media"><img alt="" src="/img/bigicon5.png" width="200px"></div>
+        <div class="onboarding-content with-gradient">
+          <h4 class="onboarding-title">Delete Order?</h4>
+          <div class="onboarding-text"><strong>This action cannot be reversed</strong></div>
+          <a class="btn btn-danger btn-md" href="#"><i class="icon-feather-trash-2"></i><span> Delete Order</span></a>
         </div>
       </div>
     </div>
   </div>
-
 </Portal>

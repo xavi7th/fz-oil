@@ -26,4 +26,24 @@ class FzProductTypeFactory extends Factory
       'swap_value' => $this->faker->randomFloat(2, 1000, 5000),
     ];
   }
+
+  public function oil()
+  {
+    return $this->state(function (array $attributes) {
+      return [
+        'product_type' => optional(FzProductType::oil()->first())->product_type ?? 'oil',
+        'swap_value' => 0,
+      ];
+    });
+  }
+
+  public function gallon()
+  {
+    return $this->state(function (array $attributes) {
+      return [
+        'product_type' => optional(FzProductType::gallon()->first())->product_type ?? 'gallon',
+        'swap_value' => 0,
+      ];
+    });
+  }
 }

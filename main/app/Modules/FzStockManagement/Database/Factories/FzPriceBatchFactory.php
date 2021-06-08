@@ -42,7 +42,7 @@ class FzPriceBatchFactory extends Factory
   {
     return $this->state(function (array $attributes) {
       return [
-        'fz_product_type_id' => FzProductType::gallon()->first()->id,
+        'fz_product_type_id' => FzProductType::factory()->gallon()->create()->id,
         'selling_price' => 0,
       ];
     });

@@ -12,6 +12,7 @@ use App\Modules\SuperAdmin\Traits\AccessibleToAllStaff;
 use App\Modules\FzCustomer\Transformers\FzCustomerTransformer;
 use App\Modules\FzCustomer\Http\Requests\CreateCustomerRequest;
 use App\Modules\FzCustomer\Http\Requests\CreateCustomerCreditRepaymentTransactionRequest;
+use App\Modules\PurchaseOrder\Models\PurchaseOrder;
 
 class FzCustomerController extends Controller
 {
@@ -27,6 +28,7 @@ class FzCustomerController extends Controller
       Route::put('{customer}/update', [self::class, 'update'])->name('update');
       Route::put('{customer}/suspend', [self::class, 'suspend'])->name('suspend');
       Route::put('{customer}/activate', [self::class, 'activate'])->name('activate');
+      Route::put('{customer}/set-credit-limit', [self::class, 'setCreditLimit'])->name('set_credit_limit');
 
       Route::prefix('credit-transactions')->name('credit_transactions.')->group(function () {
         Route::get('{customer}', [self::class, 'viewCustomerCreditTransactions'])->name('list');
@@ -44,15 +46,20 @@ class FzCustomerController extends Controller
       'fz_customer_count' => FzCustomer::count(),
       'fz_active_customer_count' => FzCustomer::active()->count(),
       'fz_suspended_customer_count' => FzCustomer::suspended()->count(),
-      'fz_flagged_customer_count' => FzCustomer::flagged()->count(),
-      'can_view_details' => $request->user()->can('viewAny', FzCustomer::class),
+      'can_view_details' => $request->user()->can('view', FzCustomer::class),
+      'can_edit_user' => $request->user()->can('update', FzCustomer::class),
+      'can_create_customer' => $request->user()->can('create', FzCustomer::class),
       'can_view_credit_transactions' => $request->user()->can('viewAny', CreditTransaction::class),
+      'can_suspend_customer' => $request->user()->can('suspend', FzCustomer::class),
+      'can_activate_customer' => $request->user()->can('activate', FzCustomer::class),
+      'can_set_credit_limit' => $request->user()->can('setCreditLimit', FzCustomer::class),
+      'can_view_purchase_orders' => $request->user()->can('viewAny', PurchaseOrder::class),
     ]);
   }
 
   public function details(Request $request, FzCustomer $customer)
   {
-    $this->authorize('view', $customer);
+    $this->authorize('view', FzCustomer::class);
 
     return Inertia::render('FzCustomer::CustomerDetails', [
       'customer_details' => (new FzCustomerTransformer)->transformForDetails($customer),
@@ -70,7 +77,7 @@ class FzCustomerController extends Controller
 
   public function suspend(Request $request, FzCustomer $customer)
   {
-    $this->authorize('suspend', $customer);
+    $this->authorize('suspend', FzCustomer::class);
 
     $customer->is_active = false;
     $customer->save();
@@ -80,7 +87,7 @@ class FzCustomerController extends Controller
 
   public function activate(Request $request, FzCustomer $customer)
   {
-    $this->authorize('activate', $customer);
+    $this->authorize('activate', FzCustomer::class);
 
     $customer->is_active = true;
     $customer->save();
@@ -90,9 +97,19 @@ class FzCustomerController extends Controller
 
   public function update(CreateCustomerRequest $request, FzCustomer $customer)
   {
-    $this->authorize('update', $customer);
+    $this->authorize('update', FzCustomer::class);
 
     $request->updateFzCustomeDetails();
+
+    return redirect()->route('fzcustomer.list')->withFlash(['success' => 'Customer\'s details updated.']);
+  }
+
+  public function setCreditLimit(CreateCustomerRequest $request, FzCustomer $customer)
+  {
+    $this->authorize('setCreditLimit', FzCustomer::class);
+
+    $customer->credit_limit = $request->credit_limit;
+    $customer->save();
 
     return redirect()->route('fzcustomer.list')->withFlash(['success' => 'Customer\'s details updated.']);
   }
@@ -118,9 +135,10 @@ class FzCustomerController extends Controller
     try {
       $request->createRepaymentTransaction();
     } catch (\Throwable $th) {
-      return redirect()->route('fzcustomer.credit_transactions.list', $customer)->withFlash(['error' => $th->getMessage()]);
+      return redirect()->route('fzcustomer.credit_transactions.list', FzCustomer::class)->withFlash(['error' => $th->getMessage()]);
     }
 
-    return redirect()->route('fzcustomer.credit_transactions.list', $customer)->withFlash(['success' => 'Repayment transaction created.']);
+    return redirect()->route('fzcustomer.credit_transactions.list', FzCustomer::class)->withFlash(['success' => 'Repayment transaction created.']);
   }
+
 }

@@ -55,6 +55,16 @@ class FzProductType extends Model
     return $this->hasMany(DirectSwapTransaction::class);
   }
 
+  public function isGallon(): bool
+  {
+    return $this->product_type == 'gallon';
+  }
+
+  public function isOil(): bool
+  {
+    return $this->product_type == 'oil';
+  }
+
   static function gallonId(): int
   {
     return self::gallon()->first()->id;

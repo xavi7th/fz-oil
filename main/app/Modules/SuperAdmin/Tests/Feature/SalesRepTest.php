@@ -415,15 +415,6 @@ class SalesRepTest extends TestCase
     $company_bank_account = CompanyBankAccount::factory()->create();
     CreditTransaction::factory()->cash()->repayment()->create(['amount' => 500000, 'is_lodged' => false]);
 
-    ray(SuperAdmin::cash_in_office());
-    ray()->showQueries();
-    ray(CreditTransaction::cashInOffice());
-    ray()->stopShowingQueries();
-    ray(PurchaseOrder::cashInOffice());
-    ray(DirectSwapTransaction::cash()->sum('amount'));
-    ray(CashLodgement::sum('amount'));
-    ray(CreditTransaction::all()->toArray());
-
     $this->actingAs($this->sales_rep, 'sales_rep')->post(route('purchaseorders.cashlodgement.create'), ['amount' => 300000, 'company_bank_account_id' => $company_bank_account->id, 'lodgement_date' => now(), 'teller' => UploadedFile::fake()->image('teller.jpg')])
       // ->dumpSession()
       ->assertRedirect(route('purchaseorders.cashlodgement.create'))
@@ -687,7 +678,7 @@ class SalesRepTest extends TestCase
 
     $customer = FzCustomer::factory()->create();
     PurchaseOrder::factory()->count(2)->cash()->notLodged()->create(['total_amount_paid' => 20000]);
-    $cash_in_office = SuperAdmin::cash_in_office();
+    $cash_in_office = SuperAdmin::cashInOffice();
 
     $request_data = array_merge($this->data_to_create_direct_swap(), ['amount' => 15000, 'customer_paid_via' => 'bank']);
 
@@ -710,7 +701,7 @@ class SalesRepTest extends TestCase
     $this->actingAs($this->sales_rep, 'sales_rep')->post(route('purchaseorders.directswaptransactions.create', $customer), array_merge($request_data, ['customer_paid_via' => 'cash']))->assertSessionHas('flash.success', 'Customer trade in recorded.');
 
     $this->assertDatabaseCount('direct_swap_transactions', 2);
-    $this->assertEquals(number_format(($cash_in_office - 15000)), number_format(SuperAdmin::cash_in_office()));
+    $this->assertEquals(number_format(($cash_in_office - 15000)), number_format(SuperAdmin::cashInOffice()));
 
     $rsp = $this->actingAs($this->sales_rep, 'sales_rep')->get(route('purchaseorders.directswaptransactions.create', $customer))->assertOk();
     $page = $this->getResponseData($rsp);

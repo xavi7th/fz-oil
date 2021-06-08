@@ -47,8 +47,8 @@ class FzStock extends BaseModel
   protected $table = "fz_stock";
   protected $fillable = ['fz_product_type_id', 'fz_price_batch_id', 'stock_quantity',];
 
-  const DASHBOARD_ROUTE_PREFIX = 'fz-stock-management';
-  const ROUTE_NAME_PREFIX = 'fzstockmanagement.';
+  const DASHBOARD_ROUTE_PREFIX = 'fz-stock';
+  const ROUTE_NAME_PREFIX = 'fzstock.';
 
   public function product_type()
   {

@@ -67,7 +67,7 @@ class SuperAdmin extends User
   const DASHBOARD_ROUTE_PREFIX = 'super-admins';
   const ROUTE_NAME_PREFIX = 'superadmin.';
 
-  static function cash_in_office(): float
+  static function cashInOffice(): float
   {
     return CreditTransaction::cashInOffice() + PurchaseOrder::cashInOffice() - DirectSwapTransaction::cash()->sum('amount') - CashLodgement::sum('amount');
   }

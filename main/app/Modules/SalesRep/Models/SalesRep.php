@@ -104,7 +104,7 @@ class SalesRep extends User
     return $this->hasMany(CashLodgement::class);
   }
 
-  public function cash_in_office(): float
+  public function cashInOffice(): float
   {
     return $this->recorded_credit_transactions()->cashInOffice() + $this->purchase_orders()->cashInOffice() - $this->direct_swap_transactions()->sum('amount') - $this->cash_lodgements()->sum('amount');
   }
