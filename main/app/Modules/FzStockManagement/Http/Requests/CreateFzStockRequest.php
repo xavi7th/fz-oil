@@ -16,7 +16,7 @@ class CreateFzStockRequest extends FormRequest
     if ($this->isMethod('POST')) {
       return [
         'fz_product_type_id' => ['required', 'exists:fz_product_types,id'],
-        'fz_price_batch_id' => ['exclude_if:fz_product_type_id,null','exclude_if:set_new_price_batch,true','required', 'exists:fz_price_batches,id',fn ($attribute, $value, $fail) =>  optional( DB::table('fz_price_batches')->where('id', $value)->first() )->fz_product_type_id == $this->fz_product_type_id ? null : $fail('The selected price does not belong to ' . DB::table('fz_product_types')->where('id', $this->fz_product_type_id)->first()->product_type)],
+        'fz_price_batch_id' => ['exclude_if:set_new_price_batch,true','required', 'required_with:fz_product_type_id','exists:fz_price_batches,id',fn ($attribute, $value, $fail) =>  optional( DB::table('fz_price_batches')->where('id', $value)->first() )->fz_product_type_id == $this->fz_product_type_id ? null : $fail('The selected price does not belong to ' . DB::table('fz_product_types')->where('id', $this->fz_product_type_id)->first()->product_type)],
         'stock_quantity' => ['required', 'numeric'],
         'set_new_price_batch' => ['nullable', 'boolean'],
         'cost_price' => ['exclude_unless:set_new_price_batch,true','required', 'numeric'],

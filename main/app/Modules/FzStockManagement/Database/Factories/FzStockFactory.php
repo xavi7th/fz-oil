@@ -24,7 +24,7 @@ class FzStockFactory extends Factory
   public function definition()
   {
     return [
-      'fz_product_type_id' => FzProductType::inRandomOrder()->first()->id,
+      'fz_product_type_id' => (FzProductType::inRandomOrder()->first())->id,
       'fz_price_batch_id' => FzPriceBatch::factory()->create()->id,
       'stock_quantity' => $this->faker->randomDigitNotNull,
     ];

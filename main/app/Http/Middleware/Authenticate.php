@@ -42,7 +42,7 @@ class Authenticate extends Middleware
   private function accountSuspended($request, array $guards, $guard)
   {
     $this->auth->guard($guard)->logout();
-    session()->flash('errors', (new ViewErrorBag())->put('default', new MessageBag(['email' => 'Account Suspended. Contact your manager.'])));
+    session()->flash('errors', (new ViewErrorBag())->put('default', new MessageBag(['user_name' => 'Account Suspended. Contact your manager.'])));
 
     throw new AuthenticationException(
       'Unauthenticated.',

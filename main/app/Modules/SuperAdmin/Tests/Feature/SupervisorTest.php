@@ -32,6 +32,7 @@ class SupervisorTest extends TestCase
   /** @test  */
   public function supervisor_can_set_password_and_login()
   {
+    // $this->withoutExceptionHandling();
     /**
     * ? Test unverified require password
     */
@@ -43,21 +44,22 @@ class SupervisorTest extends TestCase
     /**
     * ? password is required to reset password
     */
-    $this->post(route('auth.password'), ['email' => $supervisor->email])->assertSessionHasErrors(['err' => 'A new password is required for your account.']);
-    /**
-    * ? unverified is required to reset password
-    */
-    $this->post(route('auth.password'), ['email' => $this->supervisor->email, 'password' => 'pass'])->assertSessionHas('flash.error', 'Unauthorised');
+    $this->post(route('auth.password'), ['user_name' => $supervisor->user_name])->assertSessionHasErrors(['err' => 'A new password is required for your account.']);
 
     /**
     * ? unverified can reset password
     */
-    $this->post(route('auth.password'), ['email' => $supervisor->email, 'password' => 'pass'])->assertSessionHas('flash.success', 'Password set successfully! Login using your new credentials.');
+    $this->post(route('auth.password'), ['user_name' => $supervisor->user_name, 'password' => 'pass'])->assertSessionHas('flash.success', 'Password set successfully! Login using your new credentials.');
+
+    /**
+    * ? unverified is required to reset password
+    */
+    $this->post(route('auth.password'), ['user_name' => $supervisor->user_name, 'password' => 'pass'])->assertSessionHas('flash.error', 'Unauthorised');
 
     /**
     * ? Test proper login
     */
-    $this->post(route('auth.login'), ['user_name' => $this->supervisor->user_name, 'password' => 'pass', 'remember' => true])
+    $this->post(route('auth.login'), ['user_name' => $supervisor->user_name, 'password' => 'pass', 'remember' => true])
     // ->dumpSession()
     ->assertHeader('x-inertia-location', route('supervisor.dashboard'))
     ->assertStatus(409);
@@ -226,8 +228,8 @@ class SupervisorTest extends TestCase
     ->assertSessionHas('flash.success', 'Stock has been created / updated.');
 
     /**
-     * ! One for gallon and one for the oil we created
-     */
+    * ! One for gallon and one for the oil we created
+    */
     $this->assertDatabaseCount('fz_stock', 2);
     $fz_stock = FzStock::oil()->first();
     $fz_gallon_stock = FzStock::gallon()->first();
@@ -290,67 +292,67 @@ class SupervisorTest extends TestCase
     ->assertSessionHasErrors([
       'selling_price' => 'The selling price field is required.',
       'stock_quantity' => 'The stock quantity field is required.',
-    ]);
+      ]);
 
-    /**
-     * ? Test create price batch and stock
-     */
+      /**
+      * ? Test create price batch and stock
+      */
 
-    $this->assertDatabaseCount('fz_price_batches', 2);
+      $this->assertDatabaseCount('fz_price_batches', 2);
 
-    $this->actingAs($this->supervisor, 'supervisor')->post(route('fzstock.create', $fz_stock), array_merge($this->data_to_create_price_batch_and_stock(), ['fz_product_type_id' => $fz_stock->fz_product_type_id]))
-    // ->dumpSession()
-    ->assertRedirect(route('fzstock.list'))
-    ->assertSessionHasNoErrors()
-    ->assertSessionMissing('flash.error')
-    ->assertSessionHas('flash.success', 'Stock has been created / updated.');
+      $this->actingAs($this->supervisor, 'supervisor')->post(route('fzstock.create', $fz_stock), array_merge($this->data_to_create_price_batch_and_stock(), ['fz_product_type_id' => $fz_stock->fz_product_type_id]))
+      // ->dumpSession()
+      ->assertRedirect(route('fzstock.list'))
+      ->assertSessionHasNoErrors()
+      ->assertSessionMissing('flash.error')
+      ->assertSessionHas('flash.success', 'Stock has been created / updated.');
 
-    $fz_stock->refresh();
-    $fz_gallon_stock->refresh();
+      $fz_stock->refresh();
+      $fz_gallon_stock->refresh();
 
-    $this->assertDatabaseCount('fz_stock', 3);
-    $this->assertDatabaseCount('fz_price_batches', 3);
-    $this->assertEquals(300, $fz_stock->stock_quantity);
-    $this->assertEquals(400, $fz_gallon_stock->stock_quantity);
-    $this->assertEquals(100, FzStock::oil()->latest('id')->first()->stock_quantity);
-
-
-    /**
-     * ? Test cannot create duplicate price batch for stock
-     */
-    $this->actingAs($this->supervisor, 'supervisor')->post(route('fzstock.create', $fz_stock), array_merge($this->data_to_create_price_batch_and_stock(), ['fz_product_type_id' => $fz_stock->fz_product_type_id]))
-    // ->dumpSession()
-    ->assertSessionHasErrors('set_new_price_batch', 'A price batch with this cost and selling prrice already exists for this stock type. Add the items to that price batch instead');
-
-    $fz_stock->refresh();
-    $fz_gallon_stock->refresh();
-
-    $this->assertDatabaseCount('fz_stock', 3);
-    $this->assertDatabaseCount('fz_price_batches', 3);
-    $this->assertEquals(300, $fz_stock->stock_quantity);
-    $this->assertEquals(400, $fz_gallon_stock->stock_quantity);
-    $this->assertEquals(100, FzStock::latest('id')->first()->stock_quantity);
+      $this->assertDatabaseCount('fz_stock', 3);
+      $this->assertDatabaseCount('fz_price_batches', 3);
+      $this->assertEquals(300, $fz_stock->stock_quantity);
+      $this->assertEquals(400, $fz_gallon_stock->stock_quantity);
+      $this->assertEquals(100, FzStock::oil()->latest('id')->first()->stock_quantity);
 
 
-    /**
-    * ? Test view
-    */
-    $rsp = $this->actingAs($this->supervisor, 'supervisor')->get(route('fzstock.list'))->assertOk();
-    $page = $this->getResponseData($rsp);
+      /**
+      * ? Test cannot create duplicate price batch for stock
+      */
+      $this->actingAs($this->supervisor, 'supervisor')->post(route('fzstock.create', $fz_stock), array_merge($this->data_to_create_price_batch_and_stock(), ['fz_product_type_id' => $fz_stock->fz_product_type_id]))
+      // ->dumpSession()
+      ->assertSessionHasErrors('set_new_price_batch', 'A price batch with this cost and selling prrice already exists for this stock type. Add the items to that price batch instead');
 
-    $this->assertEquals('FzStockManagement::ManageProductBatches', $page->component);
-    $this->assertArrayHasKey('errors', (array)$page->props);
-    $this->assertArrayHasKey('fz_stock', (array)$page->props);
-    $this->assertArrayHasKey('fz_stock_count', (array)$page->props);
-    $this->assertArrayHasKey('stock_types', (array)$page->props);
-    $this->assertArrayHasKey('price_batches', (array)$page->props);
-    $this->assertArrayHasKey('can_create_stock', (array)$page->props);
-    $this->assertArrayHasKey('can_edit_stock', (array)$page->props);
-    $this->assertCount(3, (array)$page->props->fz_stock);
+      $fz_stock->refresh();
+      $fz_gallon_stock->refresh();
 
-    $rsp = $this->actingAs($this->supervisor, 'supervisor')->get(route('auth.logout'));
+      $this->assertDatabaseCount('fz_stock', 3);
+      $this->assertDatabaseCount('fz_price_batches', 3);
+      $this->assertEquals(300, $fz_stock->stock_quantity);
+      $this->assertEquals(400, $fz_gallon_stock->stock_quantity);
+      $this->assertEquals(100, FzStock::latest('id')->first()->stock_quantity);
 
 
-    $this->actingAs(SalesRep::factory()->active()->verified()->create(), 'sales_rep')->post(route('fzstock.create'), $this->data_to_create_stock())->assertStatus(403);
+      /**
+      * ? Test view
+      */
+      $rsp = $this->actingAs($this->supervisor, 'supervisor')->get(route('fzstock.list'))->assertOk();
+      $page = $this->getResponseData($rsp);
+
+      $this->assertEquals('FzStockManagement::ManageProductBatches', $page->component);
+      $this->assertArrayHasKey('errors', (array)$page->props);
+      $this->assertArrayHasKey('fz_stock', (array)$page->props);
+      $this->assertArrayHasKey('fz_stock_count', (array)$page->props);
+      $this->assertArrayHasKey('stock_types', (array)$page->props);
+      $this->assertArrayHasKey('price_batches', (array)$page->props);
+      $this->assertArrayHasKey('can_create_stock', (array)$page->props);
+      $this->assertArrayHasKey('can_edit_stock', (array)$page->props);
+      $this->assertCount(3, (array)$page->props->fz_stock);
+
+      $rsp = $this->actingAs($this->supervisor, 'supervisor')->get(route('auth.logout'));
+
+
+      $this->actingAs(SalesRep::factory()->active()->verified()->create(), 'sales_rep')->post(route('fzstock.create'), $this->data_to_create_stock())->assertStatus(403);
+    }
   }
-}
