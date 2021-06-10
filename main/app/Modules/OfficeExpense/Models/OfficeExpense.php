@@ -37,6 +37,7 @@ use Illuminate\Database\Eloquent\Builder;
  * @method static \Illuminate\Database\Eloquent\Builder|OfficeExpense newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|OfficeExpense query()
  * @mixin \Eloquent
+ * @method static Builder|OfficeExpense today()
  */
 class OfficeExpense extends Model
 {

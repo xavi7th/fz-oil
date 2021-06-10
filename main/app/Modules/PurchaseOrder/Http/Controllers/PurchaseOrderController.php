@@ -91,6 +91,7 @@ class PurchaseOrderController extends Controller
         ->setPaymentType($request->payment_type, $request->company_bank_account_id)
         ->setAmount($request->total_selling_price, $request->total_amount_paid)
         ->setSalesRep($request->user()->id)
+        ->setIssueReceipt(true, $request->amount_tendered)
         ->create();
     } catch (\Throwable $th) {
       return redirect()->route('purchaseorders.create', $customer)->withFlash(['error' => $th->getMessage()]);

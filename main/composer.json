@@ -66,7 +66,6 @@
     "compile": [
       "@php artisan migrate:fresh --force",
       "@php artisan config:clear",
-      "@php artisan debugbar:clear",
       "@php artisan route:clear",
       "@php artisan cache:clear",
       "@php artisan view:clear",
@@ -83,7 +82,6 @@
     ],
     "recompile": [
       "@php artisan config:clear",
-      "@php artisan debugbar:clear",
       "@php artisan route:clear",
       "@php artisan cache:clear",
       "@php artisan view:clear",
@@ -98,7 +96,6 @@
     "reseed": [
       "@php artisan migrate:fresh",
       "@php artisan config:clear",
-      "@php artisan debugbar:clear",
       "@php artisan route:clear",
       "@php artisan cache:clear",
       "@php artisan view:clear",

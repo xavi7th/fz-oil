@@ -36,6 +36,7 @@ class CreatePurchaseOrderRequest extends FormRequest
       'swap_quantity' => ['exclude_unless:is_swap_purchase,true', 'required', 'numeric'],
       'payment_type' => ['required', 'in:cash,bank,credit'],
       'total_selling_price' => ['required', 'numeric'],
+      'amount_tendered' => ['required', 'numeric'],
       'total_amount_paid' => ['required', 'numeric', function ($attribute, $value, $fail) {
         $this->payment_type == 'credit' && $value > ($this->customer->credit_balance) ? $fail('This customer\'s credit balance is not up to ' . $value) : null;
       }],

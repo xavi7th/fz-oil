@@ -8,11 +8,13 @@
   import { Portal } from 'svelte-teleport';
   import { inertia } from '@inertiajs/inertia-svelte';
   import { Inertia } from '@inertiajs/inertia';
+import { onMount } from 'svelte';
 
   $title = "Manage Supervisors";
 
   export let supervisors = [],
   staff_count = 0,
+  staff_role_id = 0,
   can_delete = false,
   can_create = false,
   can_activate = false,
@@ -20,8 +22,9 @@
   can_edit = false;
 
   let staffModals, staffToDelete, details = {
-    staff_role_id: 2
+    staff_role_id
   }, files;
+
 
   let createSalesRep = () => {
     Inertia.post(route('supervisor.create'), details,{

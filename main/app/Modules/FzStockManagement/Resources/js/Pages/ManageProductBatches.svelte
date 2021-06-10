@@ -9,6 +9,7 @@
   import { Portal } from 'svelte-teleport';
   import { toCurrency } from '@public-shared/helpers';
   import { Inertia } from '@inertiajs/inertia';
+import { onMount } from 'svelte';
 
   $title = "Manage Product Bacthes";
 
@@ -50,6 +51,13 @@
       }
     })
   }
+
+
+  onMount(() => {
+    if (!price_batches.length) {
+      details.set_new_price_batch = true;
+    }
+  })
 
 </script>
 

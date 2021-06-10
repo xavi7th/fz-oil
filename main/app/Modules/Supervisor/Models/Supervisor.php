@@ -5,6 +5,7 @@ namespace App\Modules\Supervisor\Models;
 use App\User;
 use Illuminate\Database\Eloquent\Builder;
 use App\Modules\SuperAdmin\Models\StaffRole;
+use App\Modules\SuperAdmin\Models\SuperAdmin;
 use App\Modules\SuperAdmin\Traits\IsAStaff;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use App\Modules\Supervisor\Database\Factories\SupervisorFactory;
@@ -63,6 +64,11 @@ class Supervisor extends User
 
   const DASHBOARD_ROUTE_PREFIX = 'supervisors';
   const ROUTE_NAME_PREFIX = 'supervisor.';
+
+  public function cashInOffice()
+  {
+    return SuperAdmin::cashInOffice();
+  }
 
   protected static function newFactory()
   {

@@ -62,6 +62,13 @@ use App\Modules\PurchaseOrder\Database\Factories\PurchaseOrderFactory;
  * @method static Builder|PurchaseOrder whereTotalSellingPrice($value)
  * @method static Builder|PurchaseOrder whereUpdatedAt($value)
  * @mixin \Eloquent
+ * @property int|null $company_bank_account_id
+ * @property-read CompanyBankAccount|null $bank
+ * @property-read FzPriceBatch $price_batch
+ * @property-read FzProductType $product_type
+ * @property-read FzProductType|null $swap_product_type
+ * @method static Builder|PurchaseOrder thisMonth()
+ * @method static Builder|PurchaseOrder whereCompanyBankAccountId($value)
  */
 class PurchaseOrder extends Model
 {

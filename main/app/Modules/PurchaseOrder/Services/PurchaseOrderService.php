@@ -10,6 +10,8 @@ use App\Modules\PurchaseOrder\Models\PurchaseOrder;
 use App\Modules\FzStockManagement\Models\FzProductType;
 use App\Modules\CompanyBankAccount\Models\CompanyBankAccount;
 use App\Modules\PurchaseOrder\Models\DirectSwapTransaction;
+use App\Modules\PurchaseOrder\Models\PurchaseReceipt;
+use App\Modules\SalesRep\Models\SalesRep;
 
 class PurchaseOrderService
 {
@@ -28,6 +30,8 @@ class PurchaseOrderService
   private $fz_stock;
   private $swapped_in_fz_stock;
   private $img_url;
+  private $issue_receipt = false;
+  private $amount_tendered = 0;
 
   public function setProductType($fz_product_type_id)
   {
@@ -72,6 +76,13 @@ class PurchaseOrderService
     return $this;
   }
 
+  public function setIssueReceipt(bool $issue_receipt, float $amount_tendered)
+  {
+    $this->issue_receipt = $issue_receipt;
+    $this->amount_tendered = $amount_tendered;
+    return $this;
+  }
+
   public function setImage($img_index, $save_location)
   {
     $this->img_url = compress_image_upload($img_index, $save_location . '/', $save_location . '/thumb/', 1024, true, 100)['img_url'];
@@ -87,7 +98,6 @@ class PurchaseOrderService
 
   public function create()
   {
-
     if (
       is_null($this->fz_product_type_id) || is_null($this->fz_price_batch_id) || is_null($this->purchased_quantity) || is_null($this->fz_customer_id)
       || is_null($this->payment_type) || ($this->payment_type == 'bank' && is_null($this->bank_id) )|| is_null($this->total_selling_price) || is_null($this->total_amount_paid)
@@ -111,6 +121,28 @@ class PurchaseOrderService
     } else {
       $purchase_order = $this->createPurchaseOrder();
     }
+    /**
+     * //TODO: Create a test for this receipt
+     */
+    if ($this->issue_receipt) {
+      $purchase_receipt = $this->issueReceipt($purchase_order);
+    }
+  }
+
+  public function issueReceipt(PurchaseOrder $purchase_order): PurchaseReceipt
+  {
+    return PurchaseReceipt::create([
+      'purchase_order_id' => $purchase_order->id,
+      'sales_rep_id' => $purchase_order->sales_rep_id,
+      'fz_product_type_id' => $purchase_order->fz_product_type_id,
+      'product' => FzProductType::find($purchase_order->fz_product_type_id)->product_type,
+      'cashier_name' => SalesRep::find($purchase_order->sales_rep_id)->full_name,
+      'payment_type' => $purchase_order->payment_type,
+      'quantity' => $purchase_order->purchased_quantity,
+      'transaction_amount' => $purchase_order->total_amount_paid,
+      'amount_tendered' => $this->amount_tendered,
+      'change_received' => $this->amount_tendered - $purchase_order->total_amount_paid,
+    ]);
   }
 
   public function lodgeCashToBank(string $lodgement_date): CashLodgement

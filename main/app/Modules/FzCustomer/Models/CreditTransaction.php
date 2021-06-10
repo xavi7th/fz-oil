@@ -47,6 +47,7 @@ use App\Modules\FzCustomer\Database\Factories\CreditTransactionFactory;
  * @method static Builder|CreditTransaction whereTransType($value)
  * @method static Builder|CreditTransaction whereUpdatedAt($value)
  * @mixin \Eloquent
+ * @property-read CompanyBankAccount|null $bank
  */
 class CreditTransaction extends Model
 {

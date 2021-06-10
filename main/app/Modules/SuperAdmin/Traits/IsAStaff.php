@@ -9,6 +9,8 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Database\Eloquent\Builder;
+use App\Modules\SuperAdmin\Models\StaffRole;
+use App\Modules\Supervisor\Models\Supervisor;
 use App\Modules\SuperAdmin\Models\ActivityLog;
 use App\Modules\SuperAdmin\Transformers\StaffTransformer;
 use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
@@ -61,6 +63,7 @@ trait IsAStaff
     return Inertia::render('SuperAdmin::Manage' . Str::of(__CLASS__)->afterLast('\\')->plural(), [
       (string)Str::of(class_basename(self::class))->snake()->plural() => (new StaffTransformer)->collectionTransformer(self::all(), 'transformForSuperAdminViewSalesReps'),
       'staff_count' => self::count(),
+      'staff_role_id' => self::class === Supervisor::class ? StaffRole::supervisorId() : StaffRole::salesRepId(),
       'can_delete' => Gate::allows('delete', self::class),
       'can_create' => Gate::allows('create', self::class),
       'can_edit' => Gate::allows('update', self::class),

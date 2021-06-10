@@ -14,7 +14,9 @@
 
   $: console.log((( swapValue(details.swap_product_type_id, details.swap_quantity) || 0)  ));
 
-  let customerOrderModals, details = {};
+  let customerOrderModals, details = {
+    amount_tendered:0
+  };
 
   export let
   customer = {},
@@ -50,7 +52,9 @@
 
     Inertia.post(route('purchaseorders.create',customer), details,{
       onSuccess:()=>{
-        details = {}
+        details = {
+          amount_tendered:0
+        }
       }
     });
 
@@ -151,7 +155,7 @@
               <div class="col-sm-6">
                 <div class="form-group" class:text-danger={(totalSellingPrice(details.fz_price_batch_id, details.purchased_quantity) - swapValue(details.swap_product_type_id, details.swap_quantity)) < 0}>
                   <label for="">Total</label>
-                  <input class="form-control" disabled type="text" value="{( (totalSellingPrice(details.fz_price_batch_id, details.purchased_quantity) - swapValue(details.swap_product_type_id, details.swap_quantity) ) )}" class:text-danger={(totalSellingPrice(details.fz_price_batch_id, details.purchased_quantity) - swapValue(details.swap_product_type_id, details.swap_quantity)) < 0}>
+                  <input class="form-control" disabled type="text" value="{( toCurrency(totalSellingPrice(details.fz_price_batch_id, details.purchased_quantity) - swapValue(details.swap_product_type_id, details.swap_quantity) ) )}" class:text-danger={(totalSellingPrice(details.fz_price_batch_id, details.purchased_quantity) - swapValue(details.swap_product_type_id, details.swap_quantity)) < 0}>
                 </div>
               </div>
             </div>
@@ -169,12 +173,20 @@
                   </div>
                 </div>
               {/if}
-              <div class:col-sm-6={details.payment_type == 'bank'} class:col-sm-12={details.payment_type !== 'bank'}>
+              <div class:col-sm-6={details.payment_type && details.payment_type !== 'credit'} class:col-sm-12={!details.payment_type || details.payment_type == 'credit'}>
                 <div class="form-group">
-                  <label for="">Total Amount Paid</label>
+                  <label for="">Total Amount Due</label>
                   <input class="form-control" type="text" bind:value={details.total_amount_paid}>
                 </div>
               </div>
+             {#if details.payment_type == 'cash'}
+             <div class="col-sm-6">
+              <div class="form-group">
+                <label for="">Amount Tendered</label>
+                <input class="form-control" type="text" bind:value={details.amount_tendered}>
+              </div>
+            </div>
+            {/if}
             </div>
           </fieldset>
           <div class="form-buttons-w">
