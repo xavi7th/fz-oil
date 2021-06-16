@@ -177,7 +177,7 @@ if (!mix.inProduction()) {
 }
 
 if (mix.inProduction()) {
-	mix.bundleAnalyzer();
+	// mix.bundleAnalyzer();
 }
 
 // mix.browserSync({
