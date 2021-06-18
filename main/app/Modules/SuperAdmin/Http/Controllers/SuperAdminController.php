@@ -61,8 +61,8 @@ class SuperAdminController extends Controller
       'total_daily_purchase_order_amount' => PurchaseOrder::today()->sum('total_amount_paid'),
       'total_monthly_purchase_order_count' => PurchaseOrder::today()->count(),
       'total_monthly_purchase_order_amount' => PurchaseOrder::thisMonth()->sum('total_amount_paid'),
-      'total_daily_profit' => PurchaseOrder::today()->get()->sum(fn ($rec) => $rec->total_amount_paid - $rec->total_cost_price ),
-      'total_monthly_profit' => PurchaseOrder::thisMonth()->get()->sum(fn ($rec) => $rec->total_amount_paid - $rec->total_cost_price ),
+      'total_daily_profit' => PurchaseOrder::today()->get()->sum(fn ($rec) => $rec->total_amount_paid + ($rec->swap_value * $rec->swap_quantity) - ($rec->price_batch->cost_price * $rec->purchased_quantity) ),
+      'total_monthly_profit' => PurchaseOrder::thisMonth()->get()->sum(fn ($rec) => $rec->total_amount_paid + ($rec->swap_value * $rec->swap_quantity) - ($rec->price_batch->cost_price * $rec->purchased_quantity) ),
     ];
   }
 }

@@ -92,7 +92,7 @@
           <div class="col-6 col-sm-3 col-xxl-3">
             <a class="element-box el-tablo centered trend-in-corner smaller" href="#">
               <div class="label">Today's Purchase</div>
-              <div class="value">{total_daily_purchase_order_amount}</div>
+              <div class="value">{toCurrency(total_daily_purchase_order_amount)}</div>
             </a>
           </div>
           <div class="col-6 col-sm-3 col-xxl-3">
@@ -104,19 +104,19 @@
           <div class="col-6 col-sm-3 col-xxl-3">
             <a class="element-box el-tablo centered trend-in-corner smaller" href="#">
               <div class="label">This Month's Purchase</div>
-              <div class="value">{total_monthly_purchase_order_amount}</div>
+              <div class="value">{toCurrency(total_monthly_purchase_order_amount)}</div>
             </a>
           </div>
           <div class="col-6 col-sm-3 col-xxl-3">
             <a class="element-box el-tablo centered trend-in-corner smaller" href="#">
-              <div class="label">Today's Expenses</div>
-              <div class="value">{total_daily_profit}</div>
+              <div class="label">Today's Profit</div>
+              <div class="value">{toCurrency(total_daily_profit)}</div>
             </a>
           </div>
           <div class="col-6 col-sm-3 col-xxl-3">
             <a class="element-box el-tablo centered trend-in-corner smaller" href="#">
-              <div class="label">This Month's Expenses</div>
-              <div class="value">{total_monthly_profit}</div>
+              <div class="label">This Month's Profit</div>
+              <div class="value">{toCurrency(total_monthly_profit)}</div>
             </a>
           </div>
         </div>

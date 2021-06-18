@@ -20,6 +20,9 @@ class FzStockManagementController extends Controller
   static function routes()
   {
     Route::prefix(FzStock::DASHBOARD_ROUTE_PREFIX)->name(FzStock::ROUTE_NAME_PREFIX)->group(function () {
+      Route::put('{fz_product_type}/update-swap-value', [self::class, 'updateStock'])->name('update_swap_value');
+    });
+    Route::prefix(FzStock::DASHBOARD_ROUTE_PREFIX)->name(FzStock::ROUTE_NAME_PREFIX)->group(function () {
       Route::get('create', [self::class, 'getStockList'])->name('list')->defaults('menu', __e('Manage Stock', 'viewAny,' . FzStock::class, 'box', false));
       Route::post('create', [self::class, 'createStock'])->name('create');
       Route::put('{fz_stock}/update', [self::class, 'updateStock'])->name('update');
@@ -54,8 +57,12 @@ class FzStockManagementController extends Controller
   {
     $this->authorize('update', FzStock::class);
 
-    $request->updateStock();
-    return redirect()->route('fzstock.list')->withFlash(['success' => 'Stock has been updated.']);
+    if ($request->updateStock()) {
+      return redirect()->route('fzstock.list')->withFlash(['success' => 'Stock has been updated.']);
+    }
+    else{
+      return back()->withFlash(['error' => 'Update failed']);
+    }
   }
 
   public function getProductBatches(Request $request)

@@ -292,6 +292,19 @@ import { onMount } from 'svelte';
                     </div>
                   </div>
                 </div>
+                {#if details.product_type?.product_type == 'gallon'}
+                   <div class="col-sm-12">
+                     <div class="form-group">
+                       <div class="form-control">
+                         <div class="form-check">
+                           <label class="form-check-label">
+                             <input class="form-check-input" type="checkbox" bind:checked={details.update_swap_value}> Update Swap Value
+                           </label>
+                         </div>
+                       </div>
+                     </div>
+                   </div>
+                {/if}
               </div>
               <div class="row">
                 {#if details.update_selling_price}
@@ -310,8 +323,16 @@ import { onMount } from 'svelte';
                   </div>
                 </div>
                 {/if}
+                {#if details.update_swap_value}
+                <div class="col-sm-12">
+                  <div class="form-group">
+                    <label for="">Swap Value</label>
+                    <input class="form-control" placeholder="Enter swap value" type="number" required bind:value={details.swap_value}>
+                  </div>
+                </div>
+                {/if}
               </div>
-              {#if details.update_selling_price || details.update_stock_quantity}
+              {#if details.update_selling_price || details.update_stock_quantity || details.update_swap_value}
                  <button class="btn btn-primary btn-md"><i class="icon-feather-edit"></i><span> Make Edit</span></button>
               {/if}
             </form>

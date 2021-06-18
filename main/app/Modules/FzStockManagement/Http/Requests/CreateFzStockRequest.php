@@ -27,8 +27,10 @@ class CreateFzStockRequest extends FormRequest
       return [
         'update_selling_price' => ['nullable','boolean'],
         'update_stock_quantity' => ['nullable','boolean'],
+        'update_swap_value' => ['nullable','boolean'],
         'selling_price' => ['exclude_unless:update_selling_price,true', 'required', 'numeric'],
         'stock_quantity' => ['exclude_unless:update_stock_quantity,true', 'required', 'numeric'],
+        'swap_value' => ['exclude_unless:update_swap_value,true', 'required', 'numeric'],
       ];
     }
   }
@@ -109,6 +111,10 @@ class CreateFzStockRequest extends FormRequest
     elseif($this->update_selling_price){
       $this->fz_stock->price_batch->selling_price = $this->selling_price;
       return $this->fz_stock->price_batch->save();
+    }
+    elseif($this->update_swap_value){
+      $this->fz_stock->product_type->swap_value = $this->swap_value;
+      return $this->fz_stock->product_type->save();
     }
   }
 

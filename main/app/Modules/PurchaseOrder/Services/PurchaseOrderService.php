@@ -131,6 +131,8 @@ class PurchaseOrderService
 
   public function issueReceipt(PurchaseOrder $purchase_order): PurchaseReceipt
   {
+    $amount = $this->amount_tendered - $purchase_order->total_amount_paid;
+
     return PurchaseReceipt::create([
       'purchase_order_id' => $purchase_order->id,
       'sales_rep_id' => $purchase_order->sales_rep_id,
@@ -141,7 +143,7 @@ class PurchaseOrderService
       'quantity' => $purchase_order->purchased_quantity,
       'transaction_amount' => $purchase_order->total_amount_paid,
       'amount_tendered' => $this->amount_tendered,
-      'change_received' => $this->amount_tendered - $purchase_order->total_amount_paid,
+      'change_received' => $amount <= 0 ? 0 : $amount,
     ]);
   }
 
