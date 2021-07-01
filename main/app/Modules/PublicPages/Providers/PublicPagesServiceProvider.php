@@ -31,7 +31,7 @@ class PublicPagesServiceProvider extends ServiceProvider
     $this->registerConfig();
     $this->registerViews();
     $this->loadMigrationsFrom(module_path($this->moduleName, 'Database/Migrations'));
-    // $this->app->register(DropboxServiceProvider::class);
+    $this->app->register(DropboxServiceProvider::class);
   }
 
   /**

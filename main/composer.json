@@ -22,9 +22,9 @@
     "laravel/ui": "^3.0",
     "nwidart/laravel-modules": "^8.0",
     "rachidlaasri/travel": "^1.0",
+    "spatie/flysystem-dropbox": "^1.1.0",
     "spatie/laravel-backup": "^6.14",
     "tightenco/ziggy": "^1.0",
-    "webparking/laravel-queue-ensurer": "^1.3",
     "wewowweb/laravel-svelte-preset": "^0.1.8"
   },
   "require-dev": {

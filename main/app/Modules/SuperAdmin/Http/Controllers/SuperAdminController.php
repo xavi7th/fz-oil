@@ -8,7 +8,6 @@ use RachidLaasri\Travel\Travel;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Route;
 use App\Modules\FzCustomer\Models\FzCustomer;
-use App\Modules\FzStaff\Services\MenuService;
 use App\Modules\SuperAdmin\Models\SuperAdmin;
 use App\Modules\FzStockManagement\Models\FzStock;
 use App\Modules\OfficeExpense\Models\OfficeExpense;

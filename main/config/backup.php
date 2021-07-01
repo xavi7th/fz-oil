@@ -1,7 +1,5 @@
 <?php
 
-use NotificationChannels\Telegram\TelegramChannel;
-
 return [
 
   'backup' => [
@@ -112,13 +110,13 @@ return [
       /*
         * The filename prefix used for the backup zip file.
         */
-      'filename_prefix' => '',
+      'filename_prefix' => 'fz-',
 
       /*
        * The disk names on which the backups will be stored.
        */
       'disks' => [
-        'local',
+        // 'local',
         'dropbox',
       ],
     ],
@@ -138,15 +136,12 @@ return [
     */
   'notifications' => [
     'notifications' => [
-      \App\Modules\SuperAdmin\Notifications\BackupHasFailed::class => ['slack', TelegramChannel::class],
-      // \Spatie\Backup\Notifications\Notifications\BackupHasFailed::class => ['mail'],
-      \Spatie\Backup\Notifications\Notifications\UnhealthyBackupWasFound::class => ['mail', 'slack'],
+      \Spatie\Backup\Notifications\Notifications\BackupHasFailed::class => ['mail'],
+      \Spatie\Backup\Notifications\Notifications\UnhealthyBackupWasFound::class => ['mail'],
       \Spatie\Backup\Notifications\Notifications\CleanupHasFailed::class => ['mail'],
-      // \Spatie\Backup\Notifications\Notifications\BackupWasSuccessful::class => ['mail'],
-      \App\Modules\SuperAdmin\Notifications\BackupWasSuccessful::class => ['slack', TelegramChannel::class],
-      \Spatie\Backup\Notifications\Notifications\HealthyBackupWasFound::class => ['mail', 'slack'],
-      // \Spatie\Backup\Notifications\Notifications\CleanupWasSuccessful::class => ['mail'],
-      \App\Modules\SuperAdmin\Notifications\CleanupWasSuccessful::class => ['slack',TelegramChannel::class],
+      \Spatie\Backup\Notifications\Notifications\BackupWasSuccessful::class => ['mail'],
+      \Spatie\Backup\Notifications\Notifications\HealthyBackupWasFound::class => ['mail'],
+      \Spatie\Backup\Notifications\Notifications\CleanupWasSuccessful::class => ['mail'],
     ],
 
     /*
@@ -165,12 +160,12 @@ return [
     ],
 
     'slack' => [
-      'webhook_url' => 'https://hooks.slack.com/services/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',
+      'webhook_url' => null,
 
       /*
         * If this is set to null the default channel of the webhook will be used.
         */
-      'channel' => '#e-commerce-website',
+      'channel' => null,
 
       'username' => null,
 
@@ -186,7 +181,7 @@ return [
   'monitor_backups' => [
     [
       'name' => env('APP_NAME', 'laravel-backup'),
-      'disks' => ['local'],
+      'disks' => ['local', 'dropbox'],
       'health_checks' => [
         \Spatie\Backup\Tasks\Monitor\HealthChecks\MaximumAgeInDays::class => 1,
         \Spatie\Backup\Tasks\Monitor\HealthChecks\MaximumStorageInMegabytes::class => 1000,
@@ -245,7 +240,7 @@ return [
         * After cleaning up the backups remove the oldest backup until
         * this amount of megabytes has been reached.
         */
-      'delete_oldest_backups_when_using_more_megabytes_than' => 1000,
+      'delete_oldest_backups_when_using_more_megabytes_than' => 200,
     ],
   ],
 
