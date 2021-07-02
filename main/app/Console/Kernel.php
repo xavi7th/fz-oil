@@ -4,8 +4,11 @@ namespace App\Console;
 
 use RachidLaasri\Travel\Travel;
 use Nwidart\Modules\Facades\Module;
+use Illuminate\Support\Facades\Mail;
 use Illuminate\Console\Scheduling\Schedule;
+use App\Modules\PurchaseOrder\Models\PurchaseOrder;
 use Illuminate\Foundation\Console\Kernel as ConsoleKernel;
+use App\Modules\SuperAdmin\Http\Controllers\SuperAdminController;
 
 class Kernel extends ConsoleKernel
 {
@@ -35,29 +38,23 @@ class Kernel extends ConsoleKernel
 
     $schedule->command('backup:run --only-db')->everyMinute();
 
-    // $schedule->command('database:backup')
-    //   ->daily()
-    //   // ->emailOutputTo('xavi7th@gmail.com')
-    //   ->sendOutputTo(Module::getModulePath('SuperAdmin/Console') . '/1database-backup-log.cson')
-    //   ->onFailure(function () {
-    //     // ActivityLog::notifyAdmins('Compounding due interests of target savings failed to complete successfully');
-    //   });
+    $schedule->call(function () {
+      $statistics = collect(SuperAdminController::getDashboardStatistics())->merge(['orders' => PurchaseOrder::today()->with('product_type', 'buyer', 'bank')->get()])->toArray();
 
-    // /**
-    //  * !See the explanation in ./explanation.cson
-    //  */
-    // if (app()->environment('local')) {
-    //   $schedule->command('queue:work --stop-when-empty --queue=high,low,default')->sendOutputTo(Module::getModulePath('SuperAdmin/Console') . '/queue-jobs.cson');
-    // } else {
-    //   $schedule->command('queue:restart')->hourly();
-    //   $schedule->command('queue:work --sleep=3 --timeout=900 --queue=high,default,low')->runInBackground()->withoutOVerlapping()->everyMinute();
-    // }
+      $data["email"] = "xav@y.com";
+      $data["title"] = "From ItSolutionStuff.com";
+      $data["body"] = "This is Demo";
+
+      Mail::send('purchaseorder::report',  compact('statistics'), function($message)use($data) {
+        $message->to($data["email"], $data["email"])
+                ->subject($data["title"]);
+      });
+    })->everyMinute();
 
     $schedule->command('telescope:prune')->daily();
 
-    $schedule->command('backup:clean')->weekly()->at('01:00');
-    $schedule->command('backup:run')->weekly()->at('02:00');
-    $schedule->command('backup:run  --only-db')->when(fn () => !now()->isSunday())->hourly()->between('7:00', '22:00');
+    $schedule->command('backup:clean')->weekly()->at('12:00');
+    $schedule->command('backup:run')->weekly()->at('16:00');
 
   }
 
