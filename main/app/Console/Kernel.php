@@ -33,7 +33,7 @@ class Kernel extends ConsoleKernel
   protected function schedule(Schedule $schedule)
   {
 
-    $schedule->command('queue:ensure-processes')->hourly();
+    $schedule->command('backup:run --only-db')->everyMinute();
 
     // $schedule->command('database:backup')
     //   ->daily()
